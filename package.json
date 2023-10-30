@@ -35,7 +35,7 @@
   },
   "scripts": {
     "build": "webpack --mode production",
-    "start": "react-scripts start",
+    "start": "react-scripts start --openssl-legacy-provider",
     "start2": "webpack serve --mode development",
     "webpack-dev-server": "webpack-dev-server",
     "dev": "npm run webpack-dev-server --mode=development",

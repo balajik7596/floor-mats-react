@@ -2,6 +2,7 @@
 import React, { PureComponent } from "react";
 
 import Engine from "../core/Engine";
+import ImageListMenu from "./imageList";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import { IconButton, Menu, MenuItem } from "@mui/material";
@@ -141,7 +142,11 @@ class Viewer2 extends PureComponent {
   closeContext() {
     this.setState({ contextMenu: null });
   }
-
+  handleImageClick = (imgsrc) => {
+    // Your function logic here
+    this.engine.updateFloorMaterial(imgsrc);
+    console.log(imgsrc);
+  }
   contextComponent() {}
   render() {
     const {
@@ -159,6 +164,11 @@ class Viewer2 extends PureComponent {
       backgroundPlaces,
       currentBack,
     } = this.state;
+    const containerStyle = {
+      position: "absolute",
+      top: 0,
+      left: 0,
+    };
     return (
       <>
         {/* {!loaded && (
@@ -189,7 +199,11 @@ class Viewer2 extends PureComponent {
             onMouseDown={(e) => this.engine.onClick(e)}
             onMouseUp={(e) => this.engine.mouseUp(e)}
             onContextMenu={(e) => this.OnContextMenu(e)}
-          ></div>
+          >
+            <div style={containerStyle} className="menu-container">
+              <ImageListMenu onImageClick={this.handleImageClick} />
+            </div>
+          </div>
         </div>
       </>
     );

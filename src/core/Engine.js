@@ -1,6 +1,7 @@
 import * as TWEEN from "@tweenjs/tween.js";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { GUI } from 'three/examples/jsm//libs/lil-gui.module.min.js';
 import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
@@ -22,6 +23,7 @@ import {
   toRadians,
 } from "../Utils/MeshUtils";
 import { jsPDF } from "jspdf";
+import { ThreeDRotation } from "@mui/icons-material";
 CameraControls.install({ THREE: THREE });
 
 export const getIsRight = function (updateframe) {
@@ -66,6 +68,29 @@ export default class Engine {
     this.background2 = null;
     this.backgroundSelected = 3;
     this.terminalsData = [];
+    this.floorWidth =5;
+    this.floorLength =5;
+    const loader = new THREE.TextureLoader();
+    const texture = new THREE.TextureLoader().load('/images/steel.jpeg' ); 
+    this.floormaterial = new THREE.MeshBasicMaterial( {
+			map: texture,
+      opacity: 0.5,
+      side: THREE.DoubleSide,
+      transparent: false,
+		 } );
+     this.stdWidth =1; 
+     this.stdLength =1;
+     this.lengthGrp= new THREE.Group();
+     this.widthGrp= new THREE.Group();
+     this.geometry = new THREE.PlaneGeometry(1,1);
+     this.panel = new THREE.Mesh(this.geometry,this.floormaterial);
+
+    //  this.geometry.rotateX(Math.PI/2)
+
+// immediately use the texture for material creation 
+
+const material = new THREE.MeshBasicMaterial( { map:texture } );
+
   }
 
   Dispose() {
@@ -120,6 +145,14 @@ export default class Engine {
     this.camera.lookAt(new THREE.Vector3(0, 10, -20));
     this.camera.position.set(0, 10, 30);
 
+    const gui = new GUI();
+    const effectController = {
+      Length: 10,
+      Width: 10,
+    };
+    gui.add( effectController, 'Length', 1, 50, 1 ).onChange( (val)=>{this.updateFloorMats(val,this.floorWidth);} );
+    gui.add( effectController, 'Width', 1, 50, 1 ).onChange( (val)=>{this.updateFloorMats(this.floorLength,val);} );
+
     // this.controls = new CameraControls(this.camera, this.renderer.domElement);
     // this.controls.minPolarAngle = Math.PI / 4;
     // this.controls.maxPolarAngle = Math.PI / 2;
@@ -167,23 +200,26 @@ export default class Engine {
     this.light.intensity = 0.1;
     this.scene.add(this.camera);
     this.terminals = [];
-    const geometry = new THREE.PlaneGeometry(1000, 1000);
+     const geometry = new THREE.PlaneGeometry(1,1);
     const material = new THREE.MeshPhongMaterial({
       color: 0xffff00,
       opacity: 0.5,
       side: THREE.DoubleSide,
       transparent: true,
     });
-    this.Hiddenplane = new THREE.Mesh(geometry, material);
+    this.Hiddenplane = new THREE.Mesh(geometry, this.floormaterial);
     this.Hiddenplane.position.set(0, 0, -44);
-    this.Hiddenplane.visible = false;
-    this.scene.add(this.Hiddenplane);
+    this.Hiddenplane.rotation.set(Math.PI/2, 0, 0);
+    this.addFloorMats(this.floorLength,this.floorWidth);
+    // this.controls.target.set(this.lengthGrp.position)
+    this.Hiddenplane.visible = true;
+    // this.scene.add(this.Hiddenplane);
     // this.scene.add(this.light);
     this.render();
     const geometry2 = new THREE.BoxGeometry(5, 5, 5);
     const material2 = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
     const cube = new THREE.Mesh(geometry2, material2);
-    this.scene.add(cube);
+    // this.scene.add(cube);
     // this.renderer.domElement.addEventListener("mousedown", (event) => {
     //   this.onClick(event);
     // });
@@ -192,6 +228,43 @@ export default class Engine {
     // });
     this.renderer.domElement.addEventListener("mousemove", (event) => {});
     this.renderer.domElement.addEventListener("resize", (event) => {});
+  }
+
+  addFloorMats(Length,Width){
+    this.scene.remove(this.widthGrp);
+    this.lengthGrp= new THREE.Group();
+    this.widthGrp= new THREE.Group();
+    const n = Length/this.stdLength;
+    for(let i=0;i<n;i++){
+      const panel = this.panel.clone();
+      panel.position.set(i+this.stdLength,0,0)
+      this.lengthGrp.add(panel);
+    }
+    const w = Width/this.stdWidth;
+    for(let i=0;i<w;i++){
+      const grp = this.lengthGrp.clone();
+      grp.position.set(0,i+this.stdWidth,0);
+     this.widthGrp.add(grp);
+    }
+    this.widthGrp.rotateX(Math.PI/2);
+    this.scene.add(this.widthGrp)
+  }
+
+  updateFloorMats(length,width){
+    this.floorLength = length;
+    this.floorWidth = width;
+    this.addFloorMats(length,width);
+  }
+
+  changeFloorLength(val){
+
+    this.floorLength = val;
+    this.Hiddenplane.scale.set(this.floorLength,this.floorWidth,1);
+  }
+
+  changeFloorWidth(val){
+    this.floorWidth = val;
+    this.Hiddenplane.scale.set(this.floorLength,this.floorWidth,1);
   }
 
   onWindowResize() {
@@ -203,6 +276,20 @@ export default class Engine {
 
     this.camera.aspect = width / height;
     this.camera.updateProjectionMatrix();
+  }
+  updateFloorMaterial(imgsrc){
+    const t = new THREE.TextureLoader().load("/"+imgsrc,(texture)=>{
+      this.panel.material.map = texture;
+      this.panel.material.needsUpdate = true;
+    }); 
+    // console.log("'"+imgsrc+"'");
+    // texture.onLoad= (texture)=>{
+    //   console.log("hit");
+      
+    // }
+    // texture.onError=(e) =>{
+    //   console.log(e);
+    // }
   }
   render() {
     TWEEN.update();
