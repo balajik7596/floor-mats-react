@@ -24,7 +24,13 @@ import {
   ZoomOut,
 } from "@mui/icons-material";
 import { t } from "i18next";
-
+const footerTitle = [
+  "Floor Shapes",
+  "Dimensions",
+  "Select Tile And Color",
+  "Pattern",
+  "",
+];
 let SidebarRef = React.createRef();
 class Viewer2 extends PureComponent {
   constructor(props) {
@@ -245,7 +251,6 @@ class Viewer2 extends PureComponent {
             onContextMenu={(e) => this.OnContextMenu(e)}
           >
             <div
-              style={containerStyle}
               className="menu-container"
               style={{
                 position: "absolute",
@@ -329,6 +334,29 @@ class Viewer2 extends PureComponent {
                   />
                 </div>
               ))}
+              {this.state.selectedButtonIndex === 4 ? (
+                <button
+                  className="bg-[#C11D37] h-16 px-2 text-white hover:bg-[#cf4b4b]"
+                  onClick={() =>
+                    this.setState({
+                      selectedButtonIndex: this.state.selectedButtonIndex - 1,
+                    })
+                  }
+                >
+                  {`<< Back`}{" "}
+                </button>
+              ) : (
+                <button
+                  className="bg-[#C11D37] h-16 px-2 text-white hover:bg-[#cf4b4b]"
+                  onClick={() =>
+                    this.setState({
+                      selectedButtonIndex: this.state.selectedButtonIndex + 1,
+                    })
+                  }
+                >
+                  {`Next >>`}{" "}
+                </button>
+              )}
             </div>
           </div>
           {this.state.showImageBoxes && (
@@ -388,26 +416,26 @@ class Viewer2 extends PureComponent {
             <PatternImageListMenu onImageClick={this.handlePatternImageClick} />
           </div>
         )}
-        {!this.state.showImageBoxes && (
-          <>
-            {this.state.selectedButtonIndex === 2 && (
-              <ToggleButton
-                leftText="Vented Tiles"
-                rightText="Smooth PVC"
-                onToggle={(toggled) => this.engine.changeSelectedTile(toggled)}
-              />
-            )}
-            {this.state.selectedButtonIndex === 1 && (
-              <ToggleButton
-                leftText="Feet"
-                rightText="Meter"
-                onToggle={(toggled) => this.engine.changeMeasureUnit(toggled)}
-              />
-            )}
+        {/* {!this.state.showImageBoxes && ( */}
+        <>
+          {this.state.selectedButtonIndex === 2 && (
+            <ToggleButton
+              leftText="Vented Tiles"
+              rightText="Smooth PVC"
+              onToggle={(toggled) => this.engine.changeSelectedTile(toggled)}
+            />
+          )}
+          {this.state.selectedButtonIndex === 1 && (
+            <ToggleButton
+              leftText="Feet"
+              rightText="Meter"
+              onToggle={(toggled) => this.engine.changeMeasureUnit(toggled)}
+            />
+          )}
 
-            <Footer />
-          </>
-        )}
+          <Footer title={footerTitle[this.state.selectedButtonIndex]} />
+        </>
+        {/* )} */}
       </>
     );
   }

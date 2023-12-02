@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.premiumGarage{
+
+color: #000;
+font-family: Satoshi;
+font-style: normal;
+font-weight: 700;
+line-height: 90px; /* 125% */
+}
+.floorTile{
+
+color: #C11D37;
+font-family: Pacifico;
+
+font-weight: 400;
+line-height: 90px; /* 90% */
+text-transform: capitalize;
+}
+.label {
+				color: #FFF;
+				font-family: sans-serif;
+				padding: 2px;
+				background: rgba( 0, 0, 0, .6 );
+
+			}
+.labelRot{ rotate: 90deg;
+}

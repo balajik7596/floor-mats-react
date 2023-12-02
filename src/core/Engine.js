@@ -1,31 +1,17 @@
 import * as TWEEN from "@tweenjs/tween.js";
 import * as THREE from "three";
-import {
-  OrbitControls
-} from "three/examples/jsm/controls/OrbitControls";
-import {
-  DragControls
-} from "three/examples/jsm/controls/DragControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { DragControls } from "three/examples/jsm/controls/DragControls";
 import {
   CSS3DObject,
-  CSS3DRenderer
+  CSS3DRenderer,
 } from "three/examples/jsm/renderers/CSS3DRenderer";
-import {
-  TransformControls
-} from 'three/examples/jsm/controls/TransformControls.js';
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 
-import {
-  GUI
-} from 'three/examples/jsm//libs/lil-gui.module.min.js';
-import {
-  TrackballControls
-} from "three/examples/jsm/controls/TrackballControls";
-import {
-  GLTFLoader
-} from "three/examples/jsm/loaders/GLTFLoader";
-import {
-  RGBELoader
-} from "three/examples/jsm/loaders/RGBELoader.js";
+import { GUI } from "three/examples/jsm//libs/lil-gui.module.min.js";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import Box3Extension from "../Utils/Box3Extension";
 import {
   COLOR_ALICE_BLUE,
@@ -34,12 +20,8 @@ import {
   DOOR_STYLES,
   HANDING_RH_LH,
 } from "../Utils/Common";
-import {
-  DebugEnvironment
-} from "three/examples/jsm/environments/DebugEnvironment";
-import {
-  RGBMLoader
-} from "three/examples/jsm/loaders/RGBMLoader";
+import { DebugEnvironment } from "three/examples/jsm/environments/DebugEnvironment";
+import { RGBMLoader } from "three/examples/jsm/loaders/RGBMLoader";
 import CameraControls from "camera-controls";
 import LockerProperty from "./LockerProperty";
 import {
@@ -47,17 +29,11 @@ import {
   createDimensionLine,
   toRadians,
 } from "../Utils/MeshUtils";
-import {
-  jsPDF
-} from "jspdf";
-import {
-  ThreeDRotation
-} from "@mui/icons-material";
-import {
-  logDOM
-} from "@testing-library/react";
+import { jsPDF } from "jspdf";
+import { ThreeDRotation } from "@mui/icons-material";
+import { logDOM } from "@testing-library/react";
 CameraControls.install({
-  THREE: THREE
+  THREE: THREE,
 });
 
 export const getIsRight = function (updateframe) {
@@ -128,10 +104,12 @@ export default class Engine {
     this.dragStart = [];
     this.dragEnd = [];
     const loader = new THREE.TextureLoader();
-    this.PrimaryColor = '#808080';
+    this.PrimaryColor = "#808080";
     this.isCustomLayout = false;
-    this.secondaryColor = '#FF0000';
-    this.currentTexture = new THREE.TextureLoader().load('../assets/vented.jpg');
+    this.secondaryColor = "#FF0000";
+    this.currentTexture = new THREE.TextureLoader().load(
+      "../assets/vented.jpg"
+    );
     this.floormaterial = new THREE.MeshBasicMaterial({
       map: this.currentTexture,
       color: this.PrimaryColor,
@@ -139,7 +117,7 @@ export default class Engine {
       side: THREE.DoubleSide,
       transparent: true,
     });
-    this.draicon = loader.load('../assets/dragicon.svg');
+    this.draicon = loader.load("../assets/dragicon.svg");
     this.dragPlaneMat = new THREE.MeshBasicMaterial({
       map: this.draicon,
       opacity: 0.9,
@@ -148,17 +126,17 @@ export default class Engine {
     });
     this.stdWidth = 1;
     this.stdLength = 1;
-    this.standardVTileDim = 0.40;
-    this.standardSmoothTileDim = 0.50;
-    this.conversionFactor = 3.280;
+    this.standardVTileDim = 0.4;
+    this.standardSmoothTileDim = 0.5;
+    this.conversionFactor = 3.28;
     this.selectedTileDimension = this.standardVTileDim;
-    this.selectedUnit = 'ft';
+    this.selectedUnit = " FT";
     this.lengthGrp = new THREE.Group();
     this.widthGrp = new THREE.Group();
     this.group = new THREE.Group();
     this.lineGroup = new THREE.Group();
     this.geometry = new THREE.PlaneGeometry(1, 1);
-    this.selectedPattern = 'No Pattern';
+    this.selectedPattern = "No Pattern";
 
     this.panel1 = new THREE.Mesh(this.geometry, this.floormaterial);
     this.panel2 = new THREE.Mesh(this.geometry, this.floormaterial.clone());
@@ -178,15 +156,13 @@ export default class Engine {
     // this.dragEnd = this.dragEnd.bind(this);
     // this.onDrag = this.onDrag.bind(this);
 
-
     //  this.geometry.rotateX(Math.PI/2)
 
-    // immediately use the texture for material creation 
+    // immediately use the texture for material creation
 
     // const material = new THREE.MeshBasicMaterial({
     //   map: texture
     // });
-
   }
 
   Dispose() {
@@ -240,13 +216,11 @@ export default class Engine {
 
     // controls = new TrackballControls( camera, renderer2.domElement );
 
-
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(width, height);
     this.renderer.shadowMap.enabled = true;
     this.CanvasContainer.appendChild(this.renderer.domElement);
     // this.CanvasContainer.appendChild( this.renderer2.domElement );
-
 
     this.camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
     // this.camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 1000);
@@ -257,7 +231,6 @@ export default class Engine {
     this.scene2 = new THREE.Scene();
 
     this.scene.background = new THREE.Color(COLOR_ALICE_BLUE);
-
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     // this.controls.target.set(0, 0, 0);
@@ -289,22 +262,27 @@ export default class Engine {
 
     // this.addFloorMatsNew(this.floorLength, this.floorWidth);
     this.addFloorMats(this.floorLength, this.floorWidth);
-    this.dc = new DragControls([...this.objects], this.camera, this.renderer.domElement);
+    this.dc = new DragControls(
+      [...this.objects],
+      this.camera,
+      this.renderer.domElement
+    );
     // this.dc.addEventListener('drag', this.render());
 
-    this.dc.addEventListener('dragstart', this.dragStartEvent.bind(this));
+    this.dc.addEventListener("dragstart", this.dragStartEvent.bind(this));
 
-    this.dc.addEventListener('drag', this.onDragEvent.bind(this));
+    this.dc.addEventListener("drag", this.onDragEvent.bind(this));
 
-    this.dc.addEventListener('dragend', this.dragEndEvent.bind(this));
+    this.dc.addEventListener("dragend", this.dragEndEvent.bind(this));
     // this.Hiddenplane.visible = true;
     this.render();
 
     this.renderer.domElement.addEventListener("mousemove", (event) => {});
     this.renderer.domElement.addEventListener("resize", (event) => {});
-    document.addEventListener("click", this.onClick());
+    document.addEventListener("click", (event) => {
+      this.onClick(event);
+    });
     // document.addEventListener("dragend", this.dragChange);
-
   }
 
   async CreatePlane() {
@@ -470,7 +448,12 @@ export default class Engine {
     this.initEngine();
   }
 
-  createTextSprite(text, fontSize = 12, textColor = "#ffffff", backgroundColor = "transparent") {
+  createTextSprite(
+    text,
+    fontSize = 12,
+    textColor = "#ffffff",
+    backgroundColor = "transparent"
+  ) {
     // Create a canvas element
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
@@ -480,12 +463,12 @@ export default class Engine {
 
     // Measure text size
     const textMetrics = context.measureText(text);
-    const width = textMetrics.width;
+    const width = 512;
     const height = fontSize;
 
     // Set canvas size
     canvas.width = width;
-    canvas.height = height;
+    canvas.height = 512;
 
     // Set text properties
     context.font = `${fontSize}px Arial`;
@@ -512,7 +495,7 @@ export default class Engine {
 
     // Set sprite scale based on canvas size
     // sprite.scale.set(width / 2, height / 2, 1);
-    sprite.scale.set(0.25, 0.25, 1);
+    sprite.scale.set(15, 15, 15);
 
     // Set sprite position, rotation, and other properties as needed
     // sprite.position.set(x, y, z);
@@ -644,22 +627,21 @@ export default class Engine {
   //   return object;
   // }
 
-
   createLine(length, width, position, name) {
     const linePGeo = new THREE.PlaneGeometry(length, width);
     const linePMat = new THREE.MeshBasicMaterial({
-      color: 0x404040,
+      color: 0xe65c72,
       opacity: 0.7,
-      transparent: true
+      transparent: true,
     });
     const linePlane = new THREE.Mesh(linePGeo, linePMat);
     linePlane.name = name;
     // const dragM = new THREE.Mesh(new THREE.PlaneGeometry(0.1,0.1),this.dragPlaneMat);
     const spriteMaterial = new THREE.SpriteMaterial({
-      map: this.draicon
+      map: this.draicon,
     });
     const sprite = new THREE.Sprite(spriteMaterial);
-    sprite.scale.set(0.1, 0.1, 1);
+    sprite.scale.set(0.3, 0.3, 0.3);
     sprite.name = name;
     // dragM.position.copy(position);
     linePlane.position.copy(position);
@@ -672,32 +654,46 @@ export default class Engine {
     const c = bb.getCenter(new THREE.Vector3());
     let spritePosition, spriteRotataion, textSprite, dimensionT;
     const textOffest = 0.25;
-    if (name === 'left') {
-      dimensionT = ((this.floorLength * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    if (name === "left") {
+      dimensionT =
+        (this.floorLength * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(-textOffest, 0, 0);
+
+      textSprite.position.set(textSprite.scale.x / 2 + 0.25, 0, 0);
+      textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(position.x, 0, 0);
       spriteRotataion = new THREE.Euler(-Math.PI / 2, 0, 0);
-    } else if (name === 'right') {
-      dimensionT = ((this.floorLength * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    } else if (name === "right") {
+      dimensionT =
+        (this.floorLength * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
-
+      textSprite.position.set(textSprite.scale.x / 2 - 0.5, 0, 0);
+      textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(position.x, 0, 0);
       spriteRotataion = new THREE.Euler(Math.PI / 2, 0, 0);
-    } else if (name === 'top') {
-      dimensionT = ((this.floorWidth * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    } else if (name === "top") {
+      dimensionT =
+        (this.floorWidth * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(0, textOffest, 0);
-
+      textSprite.position.set(0, 0, 0);
+      textSprite.position.set(0, -textSprite.scale.y / 2 - 0.5, 0);
       spritePosition = new THREE.Vector3(0, position.y + width, 0);
       spriteRotataion = new THREE.Euler(0, 0, 0);
     } else {
-      dimensionT = ((this.floorWidth * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+      dimensionT =
+        (this.floorWidth * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-
-
+      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.5, 0);
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     }
@@ -716,13 +712,13 @@ export default class Engine {
     const linePMat = new THREE.MeshBasicMaterial({
       color: 0x404040,
       opacity: 0.7,
-      transparent: true
+      transparent: true,
     });
     const linePlane = new THREE.Mesh(linePGeo, linePMat);
     linePlane.name = name;
     // const dragM = new THREE.Mesh(new THREE.PlaneGeometry(0.1,0.1),this.dragPlaneMat);
     const spriteMaterial = new THREE.SpriteMaterial({
-      map: this.draicon
+      map: this.draicon,
     });
     const sprite = new THREE.Sprite(spriteMaterial);
     sprite.scale.set(0.1, 0.1, 1);
@@ -732,53 +728,76 @@ export default class Engine {
     linePlane.add(sprite);
 
     // const dimensionT = (this.floorLength*this.selectedTileDimension).toString()+this.selectedUnit
-
+    console.log(name);
     linePlane.geometry.computeBoundingBox();
     const bb = linePlane.geometry.boundingBox;
     const c = bb.getCenter(new THREE.Vector3());
     let spritePosition, spriteRotataion, textSprite, dimensionT;
     const textOffest = 0.25;
-    if (name === 'left') {
-      dimensionT = ((this.leftL * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    if (name === "left") {
+      dimensionT =
+        (this.leftL * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(-textOffest, 0, 0);
-      spritePosition = new THREE.Vector3(position.x, 0, 0);
-      spriteRotataion = new THREE.Euler(-Math.PI / 2, 0, 0);
-    } else if (name === 'rightU') {
-      dimensionT = ((this.topRLength * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+      textSprite.position.set(textOffest * 5, 0, 0);
+      // spritePosition = new THREE.Vector3(position.x, 0, 0);
+      // spriteRotataion = new THREE.Euler(-Math.PI / 2, 0, 0);
+    } else if (name === "rightU") {
+      dimensionT =
+        (this.topRLength * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
 
       spritePosition = new THREE.Vector3(position.x, 0, 0);
       spriteRotataion = new THREE.Euler(Math.PI / 2, 0, 0);
-    } else if (name === 'top') {
-      dimensionT = ((this.topW * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    } else if (name === "top") {
+      dimensionT =
+        (this.topW * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, textOffest, 0);
 
       spritePosition = new THREE.Vector3(0, position.y + width, 0);
       spriteRotataion = new THREE.Euler(0, 0, 0);
-    } else if(name === 'bot') {
-      dimensionT = ((this.botW * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    } else if (name === "bot") {
+      dimensionT =
+        (this.botW * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-
 
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
-    }else if(name === 'botMid') {
-      dimensionT = (((this.topW- this.botW) * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    } else if (name === "botMid") {
+      dimensionT =
+        (
+          (this.topW - this.botW) *
+          this.selectedTileDimension *
+          this.conversionFactor
+        )
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-
 
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
-    }else if(name === 'lowRL') {
-      dimensionT = (((this.leftL-this.rightUL) * this.selectedTileDimension * this.conversionFactor).toFixed(2)).toString() + this.selectedUnit
+    } else if (name === "lowRL") {
+      dimensionT =
+        (
+          (this.leftL - this.rightUL) *
+          this.selectedTileDimension *
+          this.conversionFactor
+        )
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-
 
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
@@ -796,10 +815,10 @@ export default class Engine {
   changeMeasureUnit(isMeter) {
     console.log(isMeter, "njkdasbkjbkjdafbjk");
     if (isMeter) {
-      this.selectedUnit = 'm';
+      this.selectedUnit = " M";
       this.conversionFactor = 1;
     } else {
-      this.selectedUnit = 'ft';
+      this.selectedUnit = " FT";
       this.conversionFactor = 3.28;
     }
   }
@@ -817,15 +836,15 @@ export default class Engine {
   createLineSprite(position, rotation) {
     // Create a sprite for the text
     const text = "Center Text";
-    const spriteCanvas = document.createElement('canvas');
-    const spriteContext = spriteCanvas.getContext('2d');
-    spriteContext.font = 'Bold 12px Arial';
-    spriteContext.fillStyle = 'black';
+    const spriteCanvas = document.createElement("canvas");
+    const spriteContext = spriteCanvas.getContext("2d");
+    spriteContext.font = "Bold 12px Arial";
+    spriteContext.fillStyle = "black";
     spriteContext.fillText(text, 10, 10); // Position the text in the center
 
     const spriteTexture = new THREE.CanvasTexture(spriteCanvas);
     const spriteMaterial = new THREE.SpriteMaterial({
-      map: spriteTexture
+      map: spriteTexture,
     });
     const textSprite = new THREE.Sprite(spriteMaterial);
     // console.log(line);
@@ -835,7 +854,7 @@ export default class Engine {
 
     // Calculate the center of the line
     // const center = new THREE.Vector3().copy(startPoint).add(endPoint).multiplyScalar(0.5); //    const lineCenter = new THREE.Vector3(1.5, 0, 0); // Assuming line starts at (0,0,0) and ends at (3,0,0)
-    textSprite.rotation.set(rotation.x, rotation.y, rotation.z)
+    textSprite.rotation.set(rotation.x, rotation.y, rotation.z);
     textSprite.position.copy(position);
 
     // Add the text sprite to the scene
@@ -851,8 +870,8 @@ export default class Engine {
     const linemat = new THREE.LineBasicMaterial({
       color: 0xff0000,
       linewidth: 10,
-      linecap: 'round', //ignored by WebGLRenderer
-      linejoin: 'round'
+      linecap: "round", //ignored by WebGLRenderer
+      linejoin: "round",
     });
     // this.createLine([5, 5, 0], [5, -5, 0], 'right'); //v1
     // this.createLine([-5, 5, 0], [-5, -5, 0], 'left'); //v2
@@ -862,7 +881,7 @@ export default class Engine {
     const panel = this.panel.clone();
     panel.name = "panel";
 
-    this.camera.lookAt(this.panel.position)
+    this.camera.lookAt(this.panel.position);
     this.panel.geometry.computeBoundingBox();
     const floorBB = this.panel.geometry.boundingBox; //new THREE.Box3();
     // floorBB.setFromObject(this.widthGrp); //.computeBoundingBox();
@@ -870,7 +889,12 @@ export default class Engine {
     let floorBBMin = floorBB.min;
     this.lineGroup = new THREE.Group();
     this.objects = [];
-    this.createLine(0.5, this.floorWidth, new THREE.Vector3(floorBBMax.x, 0, 0), 'right'); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
+    this.createLine(
+      0.5,
+      this.floorWidth,
+      new THREE.Vector3(floorBBMax.x, 0, 0),
+      "right"
+    ); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
     // this.createLine(0.2, this.floorWidth, new THREE.Vector3(-floorBBMax.x,0,0),'left');//([floorBBMin.x, floorBBMax.y, 0], [floorBBMin.x, floorBBMin.y, 0], 'left'); //v2
     // this.createLine(this.floorLength, 0.2, new THREE.Vector3(0,floorBBMax.y,0),'top');//([floorBBMin.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMax.y, 0], 'top'); //h1
     // this.createLine(this.floorLength, 0.2, new THREE.Vector3(0,-floorBBMax.y,0),'bot');//([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
@@ -886,19 +910,18 @@ export default class Engine {
     this.lengthGrp = new THREE.Group();
     this.widthGrp = new THREE.Group();
     if (!this.isCustomLayout) {
-      if (this.selectedPattern === 'No Pattern') {
+      if (this.selectedPattern === "No Pattern") {
         const l = Length / this.stdLength;
         const w = Width / this.stdWidth;
 
         console.log(Length, Width);
         for (let i = 0; i < w; i++) {
           const panel = this.panel1.clone();
-          panel.position.set(i + this.stdLength, 0, 0)
+          panel.position.set(i + this.stdLength, 0, 0);
           this.lengthGrp.add(panel);
           // this.objects.push(this.lengthGrp);
-
         }
-        this.lengthGrp.position.set(0, 0, 0)
+        this.lengthGrp.position.set(0, 0, 0);
         for (let i = 0; i < l; i++) {
           const grp = this.lengthGrp.clone();
           grp.position.set(0, i + this.stdWidth, 0);
@@ -921,20 +944,23 @@ export default class Engine {
 
         // Calculate the distance from the camera to the group based on the group's size
         // Adjust this value as needed for your scene
-        const distance = halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
+        const distance =
+          halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
 
-        this.camera.position.copy(center.clone().add(new THREE.Vector3(0, 0, distance)));
+        this.camera.position.copy(
+          center.clone().add(new THREE.Vector3(0, 0, distance))
+        );
 
         // You may also want to look at the center of the group
         this.camera.lookAt(center);
         this.addResizeControls();
         this.scene.add(this.widthGrp);
-      } else if (this.selectedPattern === 'Checked')
+      } else if (this.selectedPattern === "Checked")
         this.addUpdateCheckedPattern(this.floorLength, this.floorWidth);
-      else if (this.selectedPattern == 'Box')
+      else if (this.selectedPattern == "Box")
         this.addUpdateSquarePattern(this.floorLength, this.floorWidth);
     } else {
-      if (this.selectedPattern === 'No Pattern') {
+      if (this.selectedPattern === "No Pattern") {
         this.topW = 15;
         this.botW = 11;
         this.leftL = 10;
@@ -943,7 +969,6 @@ export default class Engine {
         const topL = this.rightUL / this.stdLength;
         const fullL = this.leftL / this.stdLength;
 
-
         const w = this.topW / this.stdWidth;
         const botW = this.botW / this.stdWidth;
         console.log("hit");
@@ -951,33 +976,27 @@ export default class Engine {
         let lg2 = new THREE.Group();
         for (let i = 0; i < w; i++) {
           const panel = this.panel1.clone();
-          panel.position.set(i + this.stdWidth, 0, 0)
+          panel.position.set(i + this.stdWidth, 0, 0);
           lg1.add(panel);
           // this.objects.push(this.lengthGrp);
-
         }
         for (let i = 0; i < botW; i++) {
           const panel = this.panel1.clone();
-          panel.position.set(i + this.stdWidth, 0, 0)
+          panel.position.set(i + this.stdWidth, 0, 0);
           lg2.add(panel);
           // this.objects.push(this.lengthGrp);
-
         }
         for (let i = 0; i < fullL; i++) {
-          if(i<topL){
+          if (i < topL) {
             const grp = lg1.clone();
             grp.position.set(0, -(i + this.stdLength), 0);
             this.widthGrp.add(grp);
-          }else{
+          } else {
             const grp = lg2.clone();
-            grp.position.set(0, -(i + this.stdLength) , 0);
+            grp.position.set(0, -(i + this.stdLength), 0);
             this.widthGrp.add(grp);
           }
-
- 
         }
-
-
 
         // for (let i = 0; i < w; i++) {
         //   const panel = this.panel1.clone();
@@ -1023,17 +1042,20 @@ export default class Engine {
 
         // Calculate the distance from the camera to the group based on the group's size
         // Adjust this value as needed for your scene
-        const distance = halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
+        const distance =
+          halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
 
-        this.camera.position.copy(center.clone().add(new THREE.Vector3(0, 0, distance)));
+        this.camera.position.copy(
+          center.clone().add(new THREE.Vector3(0, 0, distance))
+        );
 
         // You may also want to look at the center of the group
         this.camera.lookAt(center);
         this.addResizeControls();
         this.scene.add(this.widthGrp);
-      } else if (this.selectedPattern === 'Checked')
+      } else if (this.selectedPattern === "Checked")
         this.addUpdateCheckedPattern(this.floorLength, this.floorWidth);
-      else if (this.selectedPattern == 'Box')
+      else if (this.selectedPattern == "Box")
         this.addUpdateSquarePattern(this.floorLength, this.floorWidth);
     }
   }
@@ -1070,9 +1092,8 @@ export default class Engine {
     panel.material.color = new THREE.Color(this.PrimaryColor);
     panel.position.set(1, 1, 0);
     patch.add(panel.clone());
-    patch.position.set(0, 0, 0)
+    patch.position.set(0, 0, 0);
     return patch;
-
   }
   addUpdateCheckedPattern(Length, Width) {
     const l = Length / this.stdLength;
@@ -1085,12 +1106,9 @@ export default class Engine {
     });
     for (let i = 0; i < Math.round(w); i += 2) {
       const panel = this.createPatch(); //patch.clone();
-      if (i == 0)
-        panel.position.set(0, 0, 0)
-      else
-        panel.position.set(i, 0, 0)
+      if (i == 0) panel.position.set(0, 0, 0);
+      else panel.position.set(i, 0, 0);
       this.lengthGrp.add(panel.clone());
-
     }
     // this.widthGrp.add(this.lengthGrp);
     for (let i = 0; i < l; i += 2) {
@@ -1102,8 +1120,6 @@ export default class Engine {
     this.widthGrp.rotateX(0);
     this.widthGrp.rotateY(0);
     this.widthGrp.rotateZ(0);
-
-
 
     const groupCenter = new THREE.Vector3();
     const groupBox = new THREE.Box3().setFromObject(this.widthGrp);
@@ -1120,9 +1136,12 @@ export default class Engine {
 
     // Calculate the distance from the camera to the group based on the group's size
     // Adjust this value as needed for your scene
-    const distance = halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
+    const distance =
+      halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
 
-    this.camera.position.copy(center.clone().add(new THREE.Vector3(0, 0, distance)));
+    this.camera.position.copy(
+      center.clone().add(new THREE.Vector3(0, 0, distance))
+    );
 
     // You may also want to look at the center of the group
     this.camera.lookAt(center);
@@ -1133,7 +1152,6 @@ export default class Engine {
   }
 
   CreateAddSquare(l, w) {
-
     const squarePattern = new THREE.Group();
     let n = 5; // row or column count
     // defining an empty string
@@ -1145,22 +1163,19 @@ export default class Engine {
           console.log("square pattern");
           const panel = this.panel2.clone();
           panel.material.color = new THREE.Color(this.secondaryColor);
-          panel.position.set(i + this.stdLength, j, 0)
+          panel.position.set(i + this.stdLength, j, 0);
           squarePattern.add(panel);
           // this.objects.push(this.lengthGrp);
-
         }
       } else {
-
         for (let i = 0; i < w; i++) {
           if (i == 0 || i == w - 1) {
             const panel = this.panel2.clone();
             panel.material.color = new THREE.Color(this.secondaryColor);
-            panel.position.set(i + this.stdLength, j, 0)
+            panel.position.set(i + this.stdLength, j, 0);
             squarePattern.add(panel);
           }
           // this.objects.push(this.lengthGrp);
-
         }
       }
     }
@@ -1174,12 +1189,11 @@ export default class Engine {
     for (let i = 0; i < Width; i++) {
       const panel = this.panel1.clone();
       panel.material.color = new THREE.Color(this.PrimaryColor);
-      panel.position.set(i + this.stdLength, 0, 0)
+      panel.position.set(i + this.stdLength, 0, 0);
       this.lengthGrp.add(panel);
       // this.objects.push(this.lengthGrp);
-
     }
-    this.lengthGrp.position.set(0, 0, 0)
+    this.lengthGrp.position.set(0, 0, 0);
     for (let i = 0; i < Length; i++) {
       const grp = this.lengthGrp.clone();
       grp.position.set(0, i + this.stdWidth, 0);
@@ -1203,9 +1217,12 @@ export default class Engine {
 
     // Calculate the distance from the camera to the group based on the group's size
     // Adjust this value as needed for your scene
-    const distance = halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
+    const distance =
+      halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
 
-    this.camera.position.copy(center.clone().add(new THREE.Vector3(0, 0, distance)));
+    this.camera.position.copy(
+      center.clone().add(new THREE.Vector3(0, 0, distance))
+    );
 
     // You may also want to look at the center of the group
     this.camera.lookAt(center);
@@ -1221,24 +1238,78 @@ export default class Engine {
       let floorBBMin = floorBB.min;
       this.lineGroup = new THREE.Group();
       this.objects = [];
-      this.createLine(0.1, this.floorLength + lOff + 0.1, new THREE.Vector3(floorBBMax.x, 0, 0), 'right'); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
-      this.createLine(0.1, this.floorLength + lOff + 0.1, new THREE.Vector3(-floorBBMax.x, 0, 0), 'left'); //([floorBBMin.x, floorBBMax.y, 0], [floorBBMin.x, floorBBMin.y, 0], 'left'); //v2
-      this.createLine(this.floorWidth + wOff + 0.1, 0.1, new THREE.Vector3(0, floorBBMax.y, 0), 'top'); //([floorBBMin.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMax.y, 0], 'top'); //h1
-      this.createLine(this.floorWidth + wOff + 0.1, 0.1, new THREE.Vector3(0, -floorBBMax.y, 0), 'bot'); //([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
+      this.createLine(
+        0.15,
+        this.floorLength + lOff + 0.1,
+        new THREE.Vector3(floorBBMax.x, 0, 0),
+        "right"
+      ); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
+      this.createLine(
+        0.15,
+        this.floorLength + lOff + 0.1,
+        new THREE.Vector3(-floorBBMax.x, 0, 0),
+        "left"
+      ); //([floorBBMin.x, floorBBMax.y, 0], [floorBBMin.x, floorBBMin.y, 0], 'left'); //v2
+      this.createLine(
+        this.floorWidth + wOff + 0.1,
+        0.15,
+        new THREE.Vector3(0, floorBBMax.y, 0),
+        "top"
+      ); //([floorBBMin.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMax.y, 0], 'top'); //h1
+      this.createLine(
+        this.floorWidth + wOff + 0.1,
+        0.15,
+        new THREE.Vector3(0, -floorBBMax.y, 0),
+        "bot"
+      ); //([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
       this.scene.add(this.lineGroup);
-    }else{
+    } else {
       const floorBB = new THREE.Box3();
       floorBB.setFromObject(this.widthGrp); //.computeBoundingBox();
       let floorBBMax = floorBB.max;
       let floorBBMin = floorBB.min;
       this.lineGroup = new THREE.Group();
       this.objects = [];
-      this.createLineCustomLayout(0.1, this.topRLength + lOff + 0.1, new THREE.Vector3(floorBBMax.x, this.rightUL, 0), 'rightU'); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
-      this.createLineCustomLayout(0.1, this.leftL + lOff + 0.1, new THREE.Vector3(-floorBBMax.x, 0, 0), 'left'); //left
-      this.createLineCustomLayout(this.topW + wOff + 0.1, 0.1, new THREE.Vector3(0, floorBBMax.y, 0), 'top'); //([floorBBMin.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMax.y, 0], 'top'); //h1
-      this.createLineCustomLayout(this.botW + wOff + 0.1, 0.1, new THREE.Vector3(-floorBBMax.x +this.botW/2, -floorBBMax.y, 0), 'bot'); //([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
-      this.createLineCustomLayout((this.topW - this.botW) + wOff + 0.1, 0.1, new THREE.Vector3(this.botW/2, -(floorBBMin.y+this.rightUL), 0), 'botMid'); //botmid
-      this.createLineCustomLayout(0.1, this.leftL - this.rightUL + lOff + 0.1, new THREE.Vector3(-floorBBMax.x+this.botW,  (-floorBBMax.y+this.rightUL), 0), 'lowRL'); //botmid
+      this.createLineCustomLayout(
+        0.1,
+        this.topRLength + lOff + 0.1,
+        new THREE.Vector3(floorBBMax.x, this.rightUL, 0),
+        "rightU"
+      ); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
+      this.createLineCustomLayout(
+        0.1,
+        this.leftL + lOff + 0.1,
+        new THREE.Vector3(-floorBBMax.x, 0, 0),
+        "left"
+      ); //left
+      this.createLineCustomLayout(
+        this.topW + wOff + 0.1,
+        0.1,
+        new THREE.Vector3(0, floorBBMax.y, 0),
+        "top"
+      ); //([floorBBMin.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMax.y, 0], 'top'); //h1
+      this.createLineCustomLayout(
+        this.botW + wOff + 0.1,
+        0.1,
+        new THREE.Vector3(-floorBBMax.x + this.botW / 2, -floorBBMax.y, 0),
+        "bot"
+      ); //([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
+      this.createLineCustomLayout(
+        this.topW - this.botW + wOff + 0.1,
+        0.1,
+        new THREE.Vector3(this.botW / 2, -(floorBBMin.y + this.rightUL), 0),
+        "botMid"
+      ); //botmid
+      this.createLineCustomLayout(
+        0.1,
+        this.leftL - this.rightUL + lOff + 0.1,
+        new THREE.Vector3(
+          -floorBBMax.x + this.botW,
+          -floorBBMax.y + this.rightUL,
+          0
+        ),
+        "lowRL"
+      ); //botmid
 
       this.scene.add(this.lineGroup);
     }
@@ -1251,7 +1322,6 @@ export default class Engine {
   }
 
   changeFloorLength(val) {
-
     this.floorLength = val;
     this.Hiddenplane.scale.set(this.floorLength, this.floorWidth, 1);
   }
@@ -1262,11 +1332,10 @@ export default class Engine {
   }
 
   onClick(event) {
-    console.log("hit");
+    console.log("hit", event);
     event.preventDefault();
-
+    if (!this.dc) return;
     if (true) {
-
       const draggableObjects = this.dc.getObjects();
       draggableObjects.length = 0;
 
@@ -1278,7 +1347,6 @@ export default class Engine {
       const intersections = this.raycaster.intersectObjects(this.objects, true);
       console.log(intersections);
       if (intersections.length > 0) {
-
         const object = intersections[0].object;
         this.selectedLine = object;
         this.dragStart = object.position.clone();
@@ -1293,7 +1361,6 @@ export default class Engine {
         // }
 
         // this.transformControl.attach(object);
-
       } else {
         // if (this.selectedLine..length > 0) {
         //   const obj = this.scene.getObjectByName(this.selectedLine);
@@ -1302,27 +1369,24 @@ export default class Engine {
         // this.transformControl.detach();
         //   this.selectedLine = '';
         // }
-
       }
 
       if (this.group.children.length === 0) {
-
         this.group.transformGroup = false;
         draggableObjects.push(...this.objects);
-
       }
-
     }
 
     this.render();
-
   }
 
   dragStartEvent(event) {
-
     this.initialDragPosition.copy(event.object.position);
     this.dragStart = event.object.position.clone();
-    this.initialMousePosition.set(event.object.position.x, event.object.position.y);
+    this.initialMousePosition.set(
+      event.object.position.x,
+      event.object.position.y
+    );
     this.selectedLine = event.object.clone();
     console.log("hit");
     event.object.material.color.set(0xff0000);
@@ -1347,12 +1411,12 @@ export default class Engine {
       const prevh = this.floorLength;
       let diffwidth = this.dragEnd.x - this.dragStart.x;
       let diffHeight = this.dragEnd.y - this.dragStart.y;
-      if (this.selectedLine.name === 'right') {
+      if (this.selectedLine.name === "right") {
         offsetx = size.x;
-      } else if (this.selectedLine.name === 'left') {
+      } else if (this.selectedLine.name === "left") {
         offsetx = size.x;
         diffwidth = this.dragStart.x - this.dragEnd.x;
-      } else if (this.selectedLine.name === 'top') {
+      } else if (this.selectedLine.name === "top") {
         offsety = size.y;
       } else {
         offsety = size.y;
@@ -1363,7 +1427,10 @@ export default class Engine {
       const length = Math.round(diffHeight + offsety); //this.dragEnd.y - this.dragStart.y;
       // this.currentTexture.repeat.set(length,width)
       console.log("res", width, length);
-      this.updateFloorMats((length > 0) ? length : prevh, (width > 0) ? width : prevW);
+      this.updateFloorMats(
+        length > 0 ? length : prevh,
+        width > 0 ? width : prevW
+      );
     }
     //   this.panel.geometry = new THREE.PlaneGeometry((width > 0) ? width : prevW, (length > 0) ? length : prevh);
     //   if (this.selectedLine.name === 'left')
@@ -1387,11 +1454,9 @@ export default class Engine {
     //   this.updateFloorMats(this.floorLength + Math.abs(event.object.position.y), this.floorWidth);
 
     console.log(this.floorLength, this.floorWidth);
-
   }
 
   onDragEvent(event) {
-
     const object = event.object;
 
     // Calculate the change in mouse position
@@ -1399,11 +1464,15 @@ export default class Engine {
     const deltaMouseY = event.object.position.y - this.initialMousePosition.y;
 
     // Update the object's position along the X-axis
-    if (event.object.name == 'left' || event.object.name == 'right') {
-      event.object.position.x = Math.round(this.initialDragPosition.x + deltaMouseX);
+    if (event.object.name == "left" || event.object.name == "right") {
+      event.object.position.x = Math.round(
+        this.initialDragPosition.x + deltaMouseX
+      );
       event.object.position.y = 0;
     } else {
-      event.object.position.y = Math.round(this.initialDragPosition.y + deltaMouseY);
+      event.object.position.y = Math.round(
+        this.initialDragPosition.y + deltaMouseY
+      );
       event.object.position.x = 0;
     }
   }
@@ -1411,7 +1480,7 @@ export default class Engine {
   dragChange(event) {
     console.log(event);
     if (!this.panel.geometry.boundingBox)
-      this.panel.geometry.computeBoundingBox()
+      this.panel.geometry.computeBoundingBox();
     const size = this.panel.geometry.boundingBox.getSize(new THREE.Vector3());
 
     if (!event.value) {
@@ -1422,12 +1491,12 @@ export default class Engine {
       const prevh = this.panel.geometry.parameters.height;
       let diffwidth = this.dragEnd.x - this.dragStart.x;
       let diffHeight = this.dragEnd.y - this.dragStart.y;
-      if (this.selectedLine.name === 'right') {
+      if (this.selectedLine.name === "right") {
         offsetx = size.x;
-      } else if (this.selectedLine.name === 'left') {
+      } else if (this.selectedLine.name === "left") {
         offsetx = size.x;
         diffwidth = this.dragStart.x - this.dragEnd.x;
-      } else if (this.selectedLine.name === 'top') {
+      } else if (this.selectedLine.name === "top") {
         offsety = size.y;
       } else {
         offsety = size.y;
@@ -1438,15 +1507,34 @@ export default class Engine {
       const length = diffHeight + offsety; //this.dragEnd.y - this.dragStart.y;
       // this.currentTexture.repeat.set(length,width)
       console.log("res", width, length);
-      this.panel.geometry = new THREE.PlaneGeometry((width > 0) ? width : prevW, (length > 0) ? length : prevh);
-      if (this.selectedLine.name === 'left')
-        this.panel.position.set(this.panel.position.x - diffwidth / 2, this.panel.position.y, 0);
-      else if (this.selectedLine.name === 'right')
-        this.panel.position.set(this.panel.position.x + diffwidth / 2, this.panel.position.y, 0);
-      if (this.selectedLine.name === 'top')
-        this.panel.position.set(this.panel.position.x, this.panel.position.y + diffHeight / 2, 0);
+      this.panel.geometry = new THREE.PlaneGeometry(
+        width > 0 ? width : prevW,
+        length > 0 ? length : prevh
+      );
+      if (this.selectedLine.name === "left")
+        this.panel.position.set(
+          this.panel.position.x - diffwidth / 2,
+          this.panel.position.y,
+          0
+        );
+      else if (this.selectedLine.name === "right")
+        this.panel.position.set(
+          this.panel.position.x + diffwidth / 2,
+          this.panel.position.y,
+          0
+        );
+      if (this.selectedLine.name === "top")
+        this.panel.position.set(
+          this.panel.position.x,
+          this.panel.position.y + diffHeight / 2,
+          0
+        );
       else
-        this.panel.position.set(this.panel.position.x, this.panel.position.y - diffHeight / 2, 0);
+        this.panel.position.set(
+          this.panel.position.x,
+          this.panel.position.y - diffHeight / 2,
+          0
+        );
     }
     // else{
     //   this.dragEnd= this.selectedLine.position;
@@ -1455,7 +1543,6 @@ export default class Engine {
     console.log(this.dragStart, this.dragEnd);
     // this.controls.enabled = !event.value;
   }
-
 
   onWindowResize() {
     let width = this.CanvasContainer.offsetWidth;
@@ -1478,7 +1565,10 @@ export default class Engine {
     const loader = new THREE.TextureLoader();
     const bakedTexture = await loader.loadAsync("../assets/pattern1White.png");
     const bakedTexture2 = await loader.loadAsync("../assets/pattern1Red.png");
-    const geometry2 = new THREE.PlaneGeometry(this.floorWidth, this.floorLength);
+    const geometry2 = new THREE.PlaneGeometry(
+      this.floorWidth,
+      this.floorLength
+    );
     const material2 = new THREE.MeshBasicMaterial({
       map: bakedTexture,
       side: THREE.DoubleSide,
@@ -1501,12 +1591,11 @@ export default class Engine {
     this.panel2.material = material3;
     // const plane2 = new THREE.Mesh(geometry2, material3);
     // this.scene.add(plane2);
-    if (this.panel.parent)
-      this.panel.parent.remove(this.panel);
+    if (this.panel.parent) this.panel.parent.remove(this.panel);
     this.panel = new THREE.Group();
     this.panel.add(this.panel1);
     this.panel.add(this.panel2);
-    this.updateFloorMats(this.floorLength, this.floorWidth)
+    this.updateFloorMats(this.floorLength, this.floorWidth);
 
     return;
     let texture = await this.CreateTexture(
@@ -1535,15 +1624,18 @@ export default class Engine {
     //   this.secondaryColor
     // );
 
-    this.currentTexture = new THREE.TextureLoader().load("/" + imgsrc, (texture) => {
-      //   this.currentTexture.wrapS = this.currentTexture.wrapT = THREE.MirroredRepeatWrapping;
-      //   this.currentTexture.repeat.set(this.panel.scale.x, this.panel.scale.y);
+    this.currentTexture = new THREE.TextureLoader().load(
+      "/" + imgsrc,
+      (texture) => {
+        //   this.currentTexture.wrapS = this.currentTexture.wrapT = THREE.MirroredRepeatWrapping;
+        //   this.currentTexture.repeat.set(this.panel.scale.x, this.panel.scale.y);
 
-      this.panel1.material.map = texture;
-      this.panel1.material.needsUpdate = true;
-      this.panel2.material.map = texture;
-      this.panel2.material.needsUpdate = true;
-    });
+        this.panel1.material.map = texture;
+        this.panel1.material.needsUpdate = true;
+        this.panel2.material.map = texture;
+        this.panel2.material.needsUpdate = true;
+      }
+    );
   }
 
   updateFloorColor(color) {

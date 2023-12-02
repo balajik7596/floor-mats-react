@@ -4,6 +4,8 @@ import "./index.css";
 import reportWebVitals from "./reportWebVitals";
 import Viewer from "./components/Viewer";
 import Viewer2 from "./components/Viewer2";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import EntryPage from "./components/EntryPage";
 // import "./i18n";
 const PanelRef = createRef();
 if (process.env.NODE_ENV !== "production") {
@@ -15,16 +17,32 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 export function renderReactComponent(divId, filePath, postQuote) {
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      errorElement: <></>,
+      element: <EntryPage />,
+    },
+    {
+      path: "/Home",
+      errorElement: <></>,
+      element: (
+        <Viewer2
+          isIFrame={process.env.NODE_ENV === "production"}
+          ref={PanelRef}
+          filePath={filePath}
+          CanvasID={divId + "Canvas"}
+          postQuote={postQuote}
+        />
+      ),
+    },
+  ]);
   console.log("rendering js", divId);
   const root = createRoot(document.getElementById(divId));
   root.render(
-    <Viewer2
-      isIFrame={process.env.NODE_ENV === "production"}
-      ref={PanelRef}
-      filePath={filePath}
-      CanvasID={divId + "Canvas"}
-      postQuote={postQuote}
-    />
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
   );
 }
 
