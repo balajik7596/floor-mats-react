@@ -956,6 +956,32 @@ th{
 	bottom: 45px;
 	top: 30px;
 }
+#round-buttons {
+	position: absolute;
+	top: 50%;
+	right: 10px; /* Adjust the right distance as needed */
+	transform: translateY(-50%);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+  }
+  
+  #round-button {
+	width: 50px; /* Adjust the width and height as needed */
+	height: 50px;
+	border-radius: 50%;
+	margin-bottom: 10px; /* Adjust the spacing between buttons as needed */
+	background-color: #007bff; /* Set the background color for the button */
+	display: flex;
+	justify-content: center;
+	align-items: center;
+  }
+  
+  #round-button img {
+	width: 80%; /* Adjust the image size as needed */
+	height: auto;
+	display: block;
+  }
 
 /* #dcCanvas1 {
 	position: absolute;

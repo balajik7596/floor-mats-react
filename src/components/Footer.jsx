@@ -1,34 +1,49 @@
-/* eslint-disable react/prop-types */
-import React, { PureComponent } from "react";
-import ButtonComp from "./ButtonComp";
+import React from 'react';
 
-class Footer extends PureComponent {
-  constructor(props) {
-    super(props);
-    this.state = {
-    };
-  }
-  render() {
+const Footer = () => {
+  const footerStyle = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    color: '#333',
+    padding: '10px',
+    borderRadius: '10px', // Add round edges
+    margin: '10px', // Add space between sides
+  };
 
-    return (
-      <div className="flex flex-row-reverse items-center content-center text-center">
-        <ButtonComp
-          onClick={() => {
-           
-          }}
-        >
-          Save
-        </ButtonComp>
-        <ButtonComp
-          onClick={() => {
-            console.log("clicked");
-          }}
-        >
-          Close
-        </ButtonComp>
+  const leftStyle = {
+    flex: 1,
+  };
 
+  const centerStyle = {
+    flex: 1,
+    textAlign: 'center',
+  };
+
+  const rightStyle = {
+    flex: 1,
+    textAlign: 'right',
+  };
+
+  const imgStyle = {
+    width: 'auto',
+    height: 'auto',
+  };
+
+  return (
+    <div style={footerStyle} className="footer-container">
+      <div style={leftStyle}>
+        <img src="../assets/storelogo.svg" alt="Store Logo" style={imgStyle} />
       </div>
-    );
-  }
-}
+      <div style={centerStyle}>
+        <p>Choose Tile</p>
+      </div>
+      <div style={rightStyle}>
+        <p>$99.99</p>
+      </div>
+    </div>
+  );
+};
+
 export default Footer;
