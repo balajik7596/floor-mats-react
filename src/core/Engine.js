@@ -1,17 +1,35 @@
 import * as TWEEN from "@tweenjs/tween.js";
+// FileA.js
+import {
+  publish
+} from '../components/EventMediator';
 import * as THREE from "three";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
-import { DragControls } from "three/examples/jsm/controls/DragControls";
+import {
+  OrbitControls
+} from "three/examples/jsm/controls/OrbitControls";
+import {
+  DragControls
+} from "three/examples/jsm/controls/DragControls";
 import {
   CSS3DObject,
   CSS3DRenderer,
 } from "three/examples/jsm/renderers/CSS3DRenderer";
-import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
+import {
+  TransformControls
+} from "three/examples/jsm/controls/TransformControls.js";
 
-import { GUI } from "three/examples/jsm//libs/lil-gui.module.min.js";
-import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+import {
+  GUI
+} from "three/examples/jsm//libs/lil-gui.module.min.js";
+import {
+  TrackballControls
+} from "three/examples/jsm/controls/TrackballControls";
+import {
+  GLTFLoader
+} from "three/examples/jsm/loaders/GLTFLoader";
+import {
+  RGBELoader
+} from "three/examples/jsm/loaders/RGBELoader.js";
 import Box3Extension from "../Utils/Box3Extension";
 import {
   COLOR_ALICE_BLUE,
@@ -20,8 +38,12 @@ import {
   DOOR_STYLES,
   HANDING_RH_LH,
 } from "../Utils/Common";
-import { DebugEnvironment } from "three/examples/jsm/environments/DebugEnvironment";
-import { RGBMLoader } from "three/examples/jsm/loaders/RGBMLoader";
+import {
+  DebugEnvironment
+} from "three/examples/jsm/environments/DebugEnvironment";
+import {
+  RGBMLoader
+} from "three/examples/jsm/loaders/RGBMLoader";
 import CameraControls from "camera-controls";
 import LockerProperty from "./LockerProperty";
 import {
@@ -29,9 +51,15 @@ import {
   createDimensionLine,
   toRadians,
 } from "../Utils/MeshUtils";
-import { jsPDF } from "jspdf";
-import { ThreeDRotation } from "@mui/icons-material";
-import { logDOM } from "@testing-library/react";
+import {
+  jsPDF
+} from "jspdf";
+import {
+  ThreeDRotation
+} from "@mui/icons-material";
+import {
+  logDOM
+} from "@testing-library/react";
 CameraControls.install({
   THREE: THREE,
 });
@@ -130,6 +158,7 @@ export default class Engine {
     this.standardSmoothTileDim = 0.5;
     this.conversionFactor = 3.28;
     this.selectedTileDimension = this.standardVTileDim;
+    this.selectedTilePrice = 3900;
     this.selectedUnit = " FT";
     this.lengthGrp = new THREE.Group();
     this.widthGrp = new THREE.Group();
@@ -657,8 +686,8 @@ export default class Engine {
     if (name === "left") {
       dimensionT =
         (this.floorLength * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
 
       textSprite.position.set(textSprite.scale.x / 2 + 0.25, 0, 0);
@@ -668,8 +697,8 @@ export default class Engine {
     } else if (name === "right") {
       dimensionT =
         (this.floorLength * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
       textSprite.position.set(textSprite.scale.x / 2 - 0.5, 0, 0);
@@ -679,8 +708,8 @@ export default class Engine {
     } else if (name === "top") {
       dimensionT =
         (this.floorWidth * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, 0, 0);
       textSprite.position.set(0, -textSprite.scale.y / 2 - 0.5, 0);
@@ -689,8 +718,8 @@ export default class Engine {
     } else {
       dimensionT =
         (this.floorWidth * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
       textSprite.position.set(0, -textSprite.scale.y / 2 + 0.5, 0);
@@ -737,8 +766,8 @@ export default class Engine {
     if (name === "left") {
       dimensionT =
         (this.leftL * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest * 5, 0, 0);
       // spritePosition = new THREE.Vector3(position.x, 0, 0);
@@ -746,8 +775,8 @@ export default class Engine {
     } else if (name === "rightU") {
       dimensionT =
         (this.topRLength * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
 
@@ -756,8 +785,8 @@ export default class Engine {
     } else if (name === "top") {
       dimensionT =
         (this.topW * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, textOffest, 0);
 
@@ -766,8 +795,8 @@ export default class Engine {
     } else if (name === "bot") {
       dimensionT =
         (this.botW * this.selectedTileDimension * this.conversionFactor)
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
 
@@ -780,8 +809,8 @@ export default class Engine {
           this.selectedTileDimension *
           this.conversionFactor
         )
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
 
@@ -794,8 +823,8 @@ export default class Engine {
           this.selectedTileDimension *
           this.conversionFactor
         )
-          .toFixed(2)
-          .toString() + this.selectedUnit;
+        .toFixed(2)
+        .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
 
@@ -826,9 +855,11 @@ export default class Engine {
   changeSelectedTile(isSmoothPvcSelected) {
     if (isSmoothPvcSelected) {
       this.selectedTileDimension = this.standardSmoothTileDim;
+      this.selectedTilePrice = 4200;
       this.updateFloorMaterial("../assets/premiumpvc.png");
     } else {
       this.selectedTileDimension = this.standardVTileDim;
+      this.selectedTilePrice = 3900;
       this.updateFloorMaterial("../assets/vented.jpg");
     }
   }
@@ -1319,6 +1350,9 @@ export default class Engine {
     this.floorLength = length;
     this.floorWidth = width;
     this.addFloorMats(length, width);
+    publish('floorUpdated', {
+      price: (((this.floorLength * this.selectedTileDimension) * (this.floorWidth * this.selectedTileDimension)) * this.selectedTilePrice).toFixed(2)
+    });
   }
 
   changeFloorLength(val) {
