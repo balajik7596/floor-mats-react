@@ -473,7 +473,7 @@ export default class Engine {
 
   InitLayout(isCustomLayout) {
     console.log(isCustomLayout);
-    this.isCustomLayout = isCustomLayout;
+    // this.isCustomLayout = isCustomLayout;
     this.initEngine();
   }
 
