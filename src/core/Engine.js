@@ -121,12 +121,15 @@ export default class Engine {
     this.leftL = 10;
     this.rightUL = 5;
 
-    this.topWidth = 10;
-    this.bottomWidth = 5;
-    this.leftLength = 10;
-    this.topRLength = 5;
-    this.topMid = 5;
-    this.botRLength = 5; //___
+    this.lg1 = new THREE.Group();
+    this.lg2 = new THREE.Group();
+
+    // this.topWidth = 10;
+    // this.bottomWidth = 5;
+    // this.leftLength = 10;
+    // this.topRLength = 5;
+    // this.topMid = 5;
+    // this.botRLength = 5; //___
 
     this.selectedLine = "";
     this.dragStart = [];
@@ -195,13 +198,11 @@ export default class Engine {
   }
 
   Dispose() {
-    console.log("dispose renderer!");
     this.renderer.dispose();
 
     this.scene.traverse((object) => {
       if (!object.isMesh) return;
 
-      console.log("dispose geometry!");
       object.geometry.dispose();
 
       if (object.material.isMaterial) {
@@ -214,14 +215,12 @@ export default class Engine {
   }
 
   cleanMaterial(material) {
-    console.log("dispose material!");
     material.dispose();
 
     // dispose textures
     for (const key of Object.keys(material)) {
       const value = material[key];
       if (value && typeof value === "object" && "minFilter" in value) {
-        console.log("dispose texture!");
         value.dispose();
       }
     }
@@ -472,8 +471,7 @@ export default class Engine {
   }
 
   InitLayout(isCustomLayout) {
-    console.log(isCustomLayout);
-    // this.isCustomLayout = isCustomLayout;
+    this.isCustomLayout = isCustomLayout;
     this.initEngine();
   }
 
@@ -739,10 +737,11 @@ export default class Engine {
   createLineCustomLayout(length, width, position, name) {
     const linePGeo = new THREE.PlaneGeometry(length, width);
     const linePMat = new THREE.MeshBasicMaterial({
-      color: 0x404040,
+      color: 0xe65c72,
       opacity: 0.7,
       transparent: true,
     });
+
     const linePlane = new THREE.Mesh(linePGeo, linePMat);
     linePlane.name = name;
     // const dragM = new THREE.Mesh(new THREE.PlaneGeometry(0.1,0.1),this.dragPlaneMat);
@@ -757,7 +756,6 @@ export default class Engine {
     linePlane.add(sprite);
 
     // const dimensionT = (this.floorLength*this.selectedTileDimension).toString()+this.selectedUnit
-    console.log(name);
     linePlane.geometry.computeBoundingBox();
     const bb = linePlane.geometry.boundingBox;
     const c = bb.getCenter(new THREE.Vector3());
@@ -769,17 +767,19 @@ export default class Engine {
         .toFixed(2)
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(textOffest * 5, 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2 + 0.25, 0, 0);
+      textSprite.material.rotation = Math.PI / 2;
       // spritePosition = new THREE.Vector3(position.x, 0, 0);
       // spriteRotataion = new THREE.Euler(-Math.PI / 2, 0, 0);
     } else if (name === "rightU") {
       dimensionT =
-        (this.topRLength * this.selectedTileDimension * this.conversionFactor)
+        (this.rightUL * this.selectedTileDimension * this.conversionFactor)
         .toFixed(2)
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
-
+      textSprite.position.set(textSprite.scale.x / 2 - 0.5, 0, 0);
+      textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(position.x, 0, 0);
       spriteRotataion = new THREE.Euler(Math.PI / 2, 0, 0);
     } else if (name === "top") {
@@ -788,8 +788,8 @@ export default class Engine {
         .toFixed(2)
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(0, textOffest, 0);
-
+      textSprite.position.set(0, 0, 0);
+      textSprite.position.set(0, -textSprite.scale.y / 2 - 0.5, 0);
       spritePosition = new THREE.Vector3(0, position.y + width, 0);
       spriteRotataion = new THREE.Euler(0, 0, 0);
     } else if (name === "bot") {
@@ -799,7 +799,7 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-
+      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.5, 0);
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     } else if (name === "botMid") {
@@ -813,10 +813,10 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-
+      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.5, 0);
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
-    } else if (name === "lowRL") {
+    } else if (name === "rightlowRL") {
       dimensionT =
         (
           (this.leftL - this.rightUL) *
@@ -826,11 +826,13 @@ export default class Engine {
         .toFixed(2)
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(0, -textOffest, 0);
-
+      textSprite.position.set(textOffest, 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2 - 0.5, 0, 0);
+      textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     }
+    textSprite.name = name;
     linePlane.add(textSprite);
     // textSprite.position.set(textOffest,0,0);
     // this.createLineSprite(spritePosition, spriteRotataion)
@@ -842,7 +844,6 @@ export default class Engine {
   }
 
   changeMeasureUnit(isMeter) {
-    console.log(isMeter, "njkdasbkjbkjdafbjk");
     if (isMeter) {
       this.selectedUnit = " M";
       this.conversionFactor = 1;
@@ -945,7 +946,6 @@ export default class Engine {
         const l = Length / this.stdLength;
         const w = Width / this.stdWidth;
 
-        console.log(Length, Width);
         for (let i = 0; i < w; i++) {
           const panel = this.panel1.clone();
           panel.position.set(i + this.stdLength, 0, 0);
@@ -992,38 +992,33 @@ export default class Engine {
         this.addUpdateSquarePattern(this.floorLength, this.floorWidth);
     } else {
       if (this.selectedPattern === "No Pattern") {
-        this.topW = 15;
-        this.botW = 11;
-        this.leftL = 10;
-        this.rightUL = 5;
-
+        console.log(this.topW, this.botW);
         const topL = this.rightUL / this.stdLength;
         const fullL = this.leftL / this.stdLength;
 
         const w = this.topW / this.stdWidth;
         const botW = this.botW / this.stdWidth;
-        console.log("hit");
-        let lg1 = new THREE.Group();
-        let lg2 = new THREE.Group();
+        this.lg1 = new THREE.Group();
+        this.lg2 = new THREE.Group();
         for (let i = 0; i < w; i++) {
           const panel = this.panel1.clone();
           panel.position.set(i + this.stdWidth, 0, 0);
-          lg1.add(panel);
+          this.lg1.add(panel);
           // this.objects.push(this.lengthGrp);
         }
         for (let i = 0; i < botW; i++) {
           const panel = this.panel1.clone();
           panel.position.set(i + this.stdWidth, 0, 0);
-          lg2.add(panel);
+          this.lg2.add(panel);
           // this.objects.push(this.lengthGrp);
         }
         for (let i = 0; i < fullL; i++) {
           if (i < topL) {
-            const grp = lg1.clone();
+            const grp = this.lg1.clone();
             grp.position.set(0, -(i + this.stdLength), 0);
             this.widthGrp.add(grp);
           } else {
-            const grp = lg2.clone();
+            const grp = this.lg2.clone();
             grp.position.set(0, -(i + this.stdLength), 0);
             this.widthGrp.add(grp);
           }
@@ -1191,7 +1186,6 @@ export default class Engine {
     for (let j = 0; j < l; j++) {
       if (j == 0 || j == l - 1) {
         for (let i = 0; i < w; i++) {
-          console.log("square pattern");
           const panel = this.panel2.clone();
           panel.material.color = new THREE.Color(this.secondaryColor);
           panel.position.set(i + this.stdLength, j, 0);
@@ -1303,8 +1297,8 @@ export default class Engine {
       this.objects = [];
       this.createLineCustomLayout(
         0.1,
-        this.topRLength + lOff + 0.1,
-        new THREE.Vector3(floorBBMax.x, this.rightUL, 0),
+        this.rightUL + lOff + 0.1,
+        new THREE.Vector3(floorBBMax.x, this.rightUL / 2, 0),
         "rightU"
       ); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
       this.createLineCustomLayout(
@@ -1336,10 +1330,10 @@ export default class Engine {
         this.leftL - this.rightUL + lOff + 0.1,
         new THREE.Vector3(
           -floorBBMax.x + this.botW,
-          -floorBBMax.y + this.rightUL,
+          -floorBBMax.y + this.rightUL / 2,
           0
         ),
-        "lowRL"
+        "rightlowRL"
       ); //botmid
 
       this.scene.add(this.lineGroup);
@@ -1366,7 +1360,6 @@ export default class Engine {
   }
 
   onClick(event) {
-    console.log("hit", event);
     event.preventDefault();
     if (!this.dc) return;
     if (true) {
@@ -1379,13 +1372,10 @@ export default class Engine {
       this.raycaster.setFromCamera(this.mouse, this.camera);
 
       const intersections = this.raycaster.intersectObjects(this.objects, true);
-      console.log(intersections);
       if (intersections.length > 0) {
         const object = intersections[0].object;
         this.selectedLine = object;
         this.dragStart = object.position.clone();
-        console.log(object.position);
-
         // if (this.selectedLine.name.includes('left') || this.selectedLine.name.includes('right')) {
         //   this.transformControl.showX = true;
         //   this.transformControl.showY = false;
@@ -1422,49 +1412,83 @@ export default class Engine {
       event.object.position.y
     );
     this.selectedLine = event.object.clone();
-    console.log("hit");
     event.object.material.color.set(0xff0000);
   }
 
   dragEndEvent(event) {
     event.object.material.color.set(0xffffff);
-    console.log("start", this.initialDragPosition, event.object.position.x);
 
     // if (!this.panel.geometry.boundingBox)
     //   this.panel.geometry.computeBoundingBox()
     // const size = this.panel.geometry.boundingBox.getSize(new THREE.Vector3());
 
-    const bbox = new THREE.Box3().setFromObject(this.widthGrp);
-    const size = bbox.getSize(new THREE.Vector3());
-
+    console.log("hit", this.selectedLine, this.isCustomLayout);
     if (!event.value) {
-      this.dragEnd = event.object.position.clone();
-      let offsetx = 0,
-        offsety = 0;
-      const prevW = this.floorWidth;
-      const prevh = this.floorLength;
-      let diffwidth = this.dragEnd.x - this.dragStart.x;
-      let diffHeight = this.dragEnd.y - this.dragStart.y;
-      if (this.selectedLine.name === "right") {
-        offsetx = size.x;
-      } else if (this.selectedLine.name === "left") {
-        offsetx = size.x;
-        diffwidth = this.dragStart.x - this.dragEnd.x;
-      } else if (this.selectedLine.name === "top") {
-        offsety = size.y;
-      } else {
-        offsety = size.y;
-        diffHeight = this.dragStart.y - this.dragEnd.y;
-      }
+      if (!this.isCustomLayout) {
 
-      const width = Math.round(diffwidth + offsetx);
-      const length = Math.round(diffHeight + offsety); //this.dragEnd.y - this.dragStart.y;
-      // this.currentTexture.repeat.set(length,width)
-      console.log("res", width, length);
-      this.updateFloorMats(
-        length > 0 ? length : prevh,
-        width > 0 ? width : prevW
-      );
+        const bbox = new THREE.Box3().setFromObject(this.widthGrp);
+        const size = bbox.getSize(new THREE.Vector3());
+        this.dragEnd = event.object.position.clone();
+        let offsetx = 0,
+          offsety = 0;
+        const prevW = this.floorWidth;
+        const prevh = this.floorLength;
+        let diffwidth = this.dragEnd.x - this.dragStart.x;
+        let diffHeight = this.dragEnd.y - this.dragStart.y;
+        if (this.selectedLine.name.includes('right')) {
+          offsetx = size.x;
+        } else if (this.selectedLine.name.includes('left')) {
+
+          offsetx = size.x;
+          diffwidth = this.dragStart.x - this.dragEnd.x;
+        } else if (this.selectedLine.name.includes("top")) {
+          offsety = size.y;
+        } else {
+          offsety = size.y;
+          diffHeight = this.dragStart.y - this.dragEnd.y;
+        }
+
+        const width = Math.round(diffwidth + offsetx);
+        const length = Math.round(diffHeight + offsety); //this.dragEnd.y - this.dragStart.y;
+        // this.currentTexture.repeat.set(length,width)
+        this.updateFloorMats(
+          length > 0 ? length : prevh,
+          width > 0 ? width : prevW
+        );
+      } else {
+
+        const bbox = new THREE.Box3().setFromObject(this.widthGrp);
+        const size = bbox.getSize(new THREE.Vector3());
+        this.dragEnd = event.object.position.clone();
+        let offsetx = 0,
+          offsety = 0;
+        const prevW = this.floorWidth;
+        const prevh = this.floorLength;
+        let diffwidth = this.dragEnd.x - this.dragStart.x;
+        let diffHeight = this.dragEnd.y - this.dragStart.y;
+        if (this.selectedLine.name.includes('right')) {
+          offsetx = size.x;
+        } else if (this.selectedLine.name.includes('left')) {
+
+          offsetx = size.x;
+          diffwidth = this.dragStart.x - this.dragEnd.x;
+        } else if (this.selectedLine.name.includes("top")) {
+          offsety = size.y;
+        } else {
+          offsety = size.y;
+          diffHeight = this.dragStart.y - this.dragEnd.y;
+        }
+
+        const width = Math.round(diffwidth + offsetx);
+        const length = Math.round(diffHeight + offsety);
+        if (this.selectedLine.name.includes("top")) {
+          console.log(diffHeight,length);
+          this.topW = length;
+        } else if (this.selectedLine.name === "bot") {
+          this.botW = length;
+        } else if (this.selectedLine.name === "botMid") {}
+        this.updateFloorMats(0, 0);
+      }
     }
     //   this.panel.geometry = new THREE.PlaneGeometry((width > 0) ? width : prevW, (length > 0) ? length : prevh);
     //   if (this.selectedLine.name === 'left')
@@ -1487,7 +1511,6 @@ export default class Engine {
     // else
     //   this.updateFloorMats(this.floorLength + Math.abs(event.object.position.y), this.floorWidth);
 
-    console.log(this.floorLength, this.floorWidth);
   }
 
   onDragEvent(event) {
@@ -1498,21 +1521,20 @@ export default class Engine {
     const deltaMouseY = event.object.position.y - this.initialMousePosition.y;
 
     // Update the object's position along the X-axis
-    if (event.object.name == "left" || event.object.name == "right") {
+    if (event.object.name.includes('left') || event.object.name.includes("right")) {
       event.object.position.x = Math.round(
         this.initialDragPosition.x + deltaMouseX
       );
-      event.object.position.y = 0;
+      event.object.position.y = this.initialDragPosition.y;
     } else {
       event.object.position.y = Math.round(
         this.initialDragPosition.y + deltaMouseY
       );
-      event.object.position.x = 0;
+      event.object.position.x = this.initialDragPosition.x;
     }
   }
 
   dragChange(event) {
-    console.log(event);
     if (!this.panel.geometry.boundingBox)
       this.panel.geometry.computeBoundingBox();
     const size = this.panel.geometry.boundingBox.getSize(new THREE.Vector3());
@@ -1540,7 +1562,6 @@ export default class Engine {
       const width = diffwidth + offsetx;
       const length = diffHeight + offsety; //this.dragEnd.y - this.dragStart.y;
       // this.currentTexture.repeat.set(length,width)
-      console.log("res", width, length);
       this.panel.geometry = new THREE.PlaneGeometry(
         width > 0 ? width : prevW,
         length > 0 ? length : prevh
@@ -1574,7 +1595,6 @@ export default class Engine {
     //   this.dragEnd= this.selectedLine.position;
     //   // this.selectedLine='';
     // }
-    console.log(this.dragStart, this.dragEnd);
     // this.controls.enabled = !event.value;
   }
 
@@ -1595,7 +1615,6 @@ export default class Engine {
   }
 
   async updatePatternImage(imgsrc) {
-    console.log("hit");
     const loader = new THREE.TextureLoader();
     const bakedTexture = await loader.loadAsync("../assets/pattern1White.png");
     const bakedTexture2 = await loader.loadAsync("../assets/pattern1Red.png");

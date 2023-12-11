@@ -9,7 +9,6 @@ const Footer = ({ title }) => {
   useEffect(() => {
     const handleFloorUpdate = (payload) => {
       setPrice(payload.price);
-      console.log('Event received:', payload);
     };
 
     const subscription = subscribe('floorUpdated', handleFloorUpdate);
