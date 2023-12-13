@@ -62,7 +62,7 @@ const Footer = ({ title }) => {
       <p className="text-center font-semibold">{title}</p>
 
       <div className="text-right right-6 relative">
-      <p className="text-2xl font-bold">₹ {price}</p>
+      <p className="text-2xl font-bold">&pound; {price}</p>
         <p className="text-xs">Price Per Metre² = 6.25 tiles</p>
       </div>
     </div>

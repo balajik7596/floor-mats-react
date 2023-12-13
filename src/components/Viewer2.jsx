@@ -161,7 +161,7 @@ class Viewer2 extends PureComponent {
     this.engine.updateFloorMaterial(imgsrc);
   };
   handlePatternImageClick = (pattern) => {
-    // if (pattern === "Box") return;
+    if (pattern === "Box" && this.state.isCustomLayout){console.log("hit"); return;}
     this.engine.updateFloorPattern({ pattern: pattern });
   };
   handleButtonClick = (index) => {

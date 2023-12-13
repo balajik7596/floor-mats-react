@@ -155,7 +155,7 @@ export default class Engine {
     this.standardSmoothTileDim = 0.5;
     this.conversionFactor = 3.28;
     this.selectedTileDimension = this.standardVTileDim;
-    this.selectedTilePrice = 3900;
+    this.selectedTilePrice = 35.40;
     this.selectedUnit = " FT";
     this.lengthGrp = new THREE.Group();
     this.widthGrp = new THREE.Group();
@@ -470,61 +470,61 @@ export default class Engine {
     this.initEngine();
   }
 
-  createTextSprite(
-    text,
-    fontSize = 12,
-    textColor = "#ffffff",
-    backgroundColor = "transparent"
-  ) {
-    // Create a canvas element
-    const canvas = document.createElement("canvas");
-    const context = canvas.getContext("2d");
+  // createTextSprite(
+  //   text,
+  //   fontSize = 12,
+  //   textColor = "#ffffff",
+  //   backgroundColor = "transparent"
+  // ) {
+  //   // Create a canvas element
+  //   const canvas = document.createElement("canvas");
+  //   const context = canvas.getContext("2d");
 
-    // Set font properties
-    context.font = `${fontSize}px Arial`;
+  //   // Set font properties
+  //   context.font = `${fontSize}px Arial`;
 
-    // Measure text size
-    const textMetrics = context.measureText(text);
-    const width = 512;
-    const height = fontSize;
+  //   // Measure text size
+  //   const textMetrics = context.measureText(text);
+  //   const width = 512;
+  //   const height = fontSize;
 
-    // Set canvas size
-    canvas.width = width;
-    canvas.height = 512;
+  //   // Set canvas size
+  //   canvas.width = width;
+  //   canvas.height = 512;
 
-    // Set text properties
-    context.font = `${fontSize}px Arial`;
-    context.fillStyle = textColor;
-    context.textAlign = "center";
-    context.textBaseline = "middle";
+  //   // Set text properties
+  //   context.font = `${fontSize}px Arial`;
+  //   context.fillStyle = textColor;
+  //   context.textAlign = "center";
+  //   context.textBaseline = "middle";
 
-    // Draw text on the canvas
-    context.fillText(text, width / 2, height / 2);
+  //   // Draw text on the canvas
+  //   context.fillText(text, width / 2, height / 2);
 
-    // Create a texture from the canvas
-    const texture = new THREE.CanvasTexture(canvas);
-    texture.needsUpdate = true;
+  //   // Create a texture from the canvas
+  //   const texture = new THREE.CanvasTexture(canvas);
+  //   texture.needsUpdate = true;
 
-    // Create a material using the texture
-    const material = new THREE.SpriteMaterial({
-      map: texture,
-      color: 0x000000, // Set to white to use texture color
-      transparent: true,
-    });
+  //   // Create a material using the texture
+  //   const material = new THREE.SpriteMaterial({
+  //     map: texture,
+  //     color: 0x000000, // Set to white to use texture color
+  //     transparent: true,
+  //   });
 
-    // Create a sprite using the material
-    const sprite = new THREE.Sprite(material);
+  //   // Create a sprite using the material
+  //   const sprite = new THREE.Sprite(material);
 
-    // Set sprite scale based on canvas size
-    // sprite.scale.set(width / 2, height / 2, 1);
-    sprite.scale.set(15, 15, 15);
+  //   // Set sprite scale based on canvas size
+  //   // sprite.scale.set(width / 2, height / 2, 1);
+  //   sprite.scale.set(15, 15, 15);
 
-    // Set sprite position, rotation, and other properties as needed
-    // sprite.position.set(x, y, z);
-    // sprite.rotation.set(rx, ry, rz);
+  //   // Set sprite position, rotation, and other properties as needed
+  //   // sprite.position.set(x, y, z);
+  //   // sprite.rotation.set(rx, ry, rz);
 
-    return sprite;
-  }
+  //   return sprite;
+  // }
 
   //   createTextSprite(text, name) {
   //     const canvas = document.createElement("canvas");
@@ -649,6 +649,68 @@ export default class Engine {
   //   return object;
   // }
 
+  createTextSprite(
+    text,
+    fontSize = 12,
+    textColor = "#ffffff",
+    backgroundColor = "transparent"
+  ) {
+    // Create a canvas element
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+  
+    // Set font properties
+    context.font = `${fontSize}px Arial`;
+  
+    // Measure text size
+    const textMetrics = context.measureText(text);
+    const width = textMetrics.width;
+    const height = fontSize;
+  
+    // Set canvas size based on text size
+    canvas.width = width;
+    canvas.height = height;
+  
+    // Clear the canvas
+    context.clearRect(0, 0, canvas.width, canvas.height);
+  
+    // Set text properties
+    context.font = `${fontSize}px Arial`;
+    context.fillStyle = textColor;
+    context.textAlign = "left";
+    context.textBaseline = "middle";
+  
+    // Draw text on the canvas
+    context.fillText(text, 0, height / 2);
+  
+    // Create a texture from the canvas
+    const texture = new THREE.CanvasTexture(canvas);
+    texture.needsUpdate = true;
+  
+    // Calculate scale based on font size
+    const scale = width / height;
+  
+    // Create a material using the texture
+    const material = new THREE.SpriteMaterial({
+      map: texture,
+      color: 0x000000, // Set to white to use texture color
+      transparent: true,
+    });
+  
+    // Create a sprite using the material
+    const sprite = new THREE.Sprite(material);
+  
+    // Set sprite scale based on font size
+    sprite.scale.set(1 , 0.5, 1);
+  
+    // Set sprite position, rotation, and other properties as needed
+    // sprite.position.set(x, y, z);
+    // sprite.rotation.set(rx, ry, rz);
+  
+    return sprite;
+  }
+  
+  
   createLine(length, width, position, name) {
     const linePGeo = new THREE.PlaneGeometry(length, width);
     const linePMat = new THREE.MeshBasicMaterial({
@@ -683,7 +745,7 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
 
-      textSprite.position.set(textSprite.scale.x / 2 + 0.25, 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2 + 0.05, 0, 0);
       textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(position.x, 0, 0);
       spriteRotataion = new THREE.Euler(-Math.PI / 2, 0, 0);
@@ -694,7 +756,7 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
-      textSprite.position.set(textSprite.scale.x / 2 - 0.5, 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2 - 0.95, 0, 0);
       textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(position.x, 0, 0);
       spriteRotataion = new THREE.Euler(Math.PI / 2, 0, 0);
@@ -705,7 +767,7 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, 0, 0);
-      textSprite.position.set(0, -textSprite.scale.y / 2 - 0.5, 0);
+      textSprite.position.set(0, -textSprite.scale.y / 2 - 0.25, 0);
       spritePosition = new THREE.Vector3(0, position.y + width, 0);
       spriteRotataion = new THREE.Euler(0, 0, 0);
     } else {
@@ -715,11 +777,13 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.5, 0);
+      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.65, 0);
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     }
     linePlane.add(textSprite);
+    linePlane.isDraggable = true;
+
     // textSprite.position.set(textOffest,0,0);
     // this.createLineSprite(spritePosition, spriteRotataion)
 
@@ -756,13 +820,14 @@ export default class Engine {
     const c = bb.getCenter(new THREE.Vector3());
     let spritePosition, spriteRotataion, textSprite, dimensionT;
     const textOffest = 0.25;
+    console.log(this.selectedUnit);
     if (name === "left") {
       dimensionT =
         ((this.upperLength + this.lowerLength) * this.selectedTileDimension * this.conversionFactor)
         .toFixed(2)
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(textSprite.scale.x / 2 + 0.25, 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2 , 0, 0);
       textSprite.material.rotation = Math.PI / 2;
       // spritePosition = new THREE.Vector3(position.x, 0, 0);
       // spriteRotataion = new THREE.Euler(-Math.PI / 2, 0, 0);
@@ -773,7 +838,7 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
-      textSprite.position.set(textSprite.scale.x / 2 - 0.5, 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2 - 0.85, 0, 0);
       textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(position.x, 0, 0);
       spriteRotataion = new THREE.Euler(Math.PI / 2, 0, 0);
@@ -784,7 +849,7 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, 0, 0);
-      textSprite.position.set(0, -textSprite.scale.y / 2 - 0.5, 0);
+      textSprite.position.set(0, -textSprite.scale.y / 2 - 0.2, 0);
       // spritePosition = new THREE.Vector3(0, position.y + width, 0);
       // spriteRotataion = new THREE.Euler(0, 0, 0);
     } else if (name === "bot") {
@@ -794,7 +859,7 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.5, 0);
+      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.55, 0);
       // spritePosition = new THREE.Vector3(0, position.y - width, 0);
       // spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     } else if (name === "botMid") {
@@ -808,13 +873,13 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
-      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.5, 0);
+      textSprite.position.set(0, -textSprite.scale.y / 2 + 0.55, 0);
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     } else if (name === "rightL") {
       dimensionT =
         (
-          (this.lowerWidth) *
+          (this.lowerLength) *
           this.selectedTileDimension *
           this.conversionFactor
         )
@@ -822,12 +887,13 @@ export default class Engine {
         .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
-      textSprite.position.set(textSprite.scale.x / 2 - 0.5, 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2 - 0.85, 0, 0);
       textSprite.material.rotation = Math.PI / 2;
       spritePosition = new THREE.Vector3(0, position.y - width, 0);
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     }
 
+    linePlane.isDraggable = true;
     linePlane.add(textSprite);
     // textSprite.position.set(textOffest,0,0);
     // this.createLineSprite(spritePosition, spriteRotataion)
@@ -839,6 +905,7 @@ export default class Engine {
   }
 
   changeMeasureUnit(isMeter) {
+    console.log(isMeter);
     if (isMeter) {
       this.selectedUnit = " M";
       this.conversionFactor = 1;
@@ -851,11 +918,11 @@ export default class Engine {
   changeSelectedTile(isSmoothPvcSelected) {
     if (isSmoothPvcSelected) {
       this.selectedTileDimension = this.standardSmoothTileDim;
-      this.selectedTilePrice = 4200;
+      this.selectedTilePrice = 38.40;
       this.updateFloorMaterial("../assets/premiumpvc.png");
     } else {
       this.selectedTileDimension = this.standardVTileDim;
-      this.selectedTilePrice = 3900;
+      this.selectedTilePrice = 35.40;
       this.updateFloorMaterial("../assets/vented.jpg");
     }
   }
@@ -1048,98 +1115,13 @@ export default class Engine {
         this.addResizeControls();
         this.scene.add(this.widthGrp);
         return;
-        // console.log(this.topW, this.botW);
-        // const topL = this.rightUL / this.stdLength;
-        // const fullL = this.leftL / this.stdLength;
-
-        // const w = this.topW / this.stdWidth;
-        // const botW = this.botW / this.stdWidth;
-        // const topR = this.rightUL / this.stdWidth;
-        // const botR = this.botR / this.stdWidth;
-        // this.lg1 = new THREE.Group();
-        // this.lg2 = new THREE.Group();
-        // for (let i = 0; i < topR; i++) {
-        //   const panel = this.panel1.clone();
-        //   panel.position.set(i + this.stdWidth, 0, 0);
-        //   this.lg1.add(panel);
-        //   // this.objects.push(this.lengthGrp);
-        // }
-        // for (let i = 0; i < botR; i++) {
-        //   const panel = this.panel1.clone();
-        //   panel.position.set(i + this.stdWidth, 0, 0);
-        //   this.lg2.add(panel);
-        //   // this.objects.push(this.lengthGrp);
-        // }
-        // for (let i = 0; i < fullL; i++) {
-        //   if (i < topL) {
-        //     const grp = this.lg1.clone();
-        //     grp.position.set(0, -(i + this.stdLength), 0);
-        //     this.widthGrp.add(grp);
-        //   } else {
-        //     const grp = this.lg2.clone();
-        //     grp.position.set(0, -(i + this.stdLength), 0);
-        //     this.widthGrp.add(grp);
-        //   }
-        // }
-
-        // // for (let i = 0; i < w; i++) {
-        // //   const panel = this.panel1.clone();
-        // //   panel.position.set(i + this.stdLength, 0, 0)
-        // //   this.lengthGrp.add(panel);
-        // //   // this.objects.push(this.lengthGrp);
-
-        // // }
-        // // this.lengthGrp.position.set(0, 0, 0)
-        // // for (let i = 0; i < topL; i++) {
-        // //   const grp = this.lengthGrp.clone();
-        // //   grp.position.set(0, i + this.stdWidth, 0);
-        // //   this.widthGrp.add(grp);
-        // // }
-        // // this.lengthGrp = new THREE.Group();
-
-        // // for (let i = 0; i < botW; i++) {
-        // //   const panel = this.panel1.clone();
-        // //   panel.position.set(i + this.stdLength, topL, 0)
-        // //   this.lengthGrp.add(panel);
-        // //   // this.objects.push(this.lengthGrp);
-
-        // // }
-        // // for (let i = 0; i < fullL - topL; i++) {
-        // //   const grp = this.lengthGrp.clone();
-        // //   grp.position.set(0, (i + this.stdWidth + topL), 0);
-        // //   this.widthGrp.add(grp);
-        // // }
-        // this.widthGrp.position.set(0, 0, 0);
-
-        // const groupCenter = new THREE.Vector3();
-        // const groupBox = new THREE.Box3().setFromObject(this.widthGrp);
-        // groupBox.getCenter(groupCenter);
-        // const translationVector = new THREE.Vector3(0, 0, 0).sub(groupCenter);
-        // this.widthGrp.position.add(translationVector);
-
-        // // Update the camera to fit the centered group within the view
-        // const boundingBox = new THREE.Box3().setFromObject(this.widthGrp);
-        // const center = boundingBox.getCenter(new THREE.Vector3());
-        // const size = boundingBox.getSize(new THREE.Vector3());
-
-        // const halfSize = size.clone().multiplyScalar(0.5);
-
-        // // Calculate the distance from the camera to the group based on the group's size
-        // // Adjust this value as needed for your scene
-        // const distance =
-        //   halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
-
-        // this.camera.position.copy(
-        //   center.clone().add(new THREE.Vector3(0, 0, distance))
-        // );
-
-        // // You may also want to look at the center of the group
-        // this.camera.lookAt(center);
-        // this.addResizeControls();
-        // this.scene.add(this.widthGrp);
-      } else if (this.selectedPattern === "Checked")
-        this.addUpdateCheckedPattern(this.floorLength, this.floorWidth);
-      else if (this.selectedPattern == "Box")
+      } else if (this.selectedPattern === "Checked"){
+        this.upperWidth %2 === 0?(this.upperWidth = this.upperWidth):(this.upperWidth -=1);
+        this.upperLength%2 === 0?(this.upperLength = this.upperLength):(this.upperLength -=1);
+        this.lowerWidth %2 === 0?(this.lowerWidth = this.lowerWidth):(this.lowerWidth -=1);
+        this.lowerLength %2 === 0?(this.lowerLength = this.lowerLength):(this.lowerLength -=1);
+        this.addUpdateCheckedPatternLayout(this.floorLength, this.floorWidth);
+      } else if (this.selectedPattern == "Box")
         this.addUpdateSquarePattern(this.floorLength, this.floorWidth);
     }
   }
@@ -1232,6 +1214,78 @@ export default class Engine {
     const lOff = this.floorLength % 2 !== 0 ? 1 : 0;
     const wOff = this.floorWidth % 2 !== 0 ? 1 : 0;
     this.addResizeControls(lOff, wOff);
+    this.scene.add(this.widthGrp);
+  }
+
+  addUpdateCheckedPatternLayout(Length, Width) {
+    const l = Length / this.stdLength;
+    const w = Width / this.stdWidth;
+    let mat = new THREE.MeshBasicMaterial({
+      map: this.currentTexture,
+      opacity: 0.9,
+      side: THREE.DoubleSide,
+      transparent: true,
+    });
+    // for (let i = 0; i < Math.round(w); i += 2) {
+    //   const panel = this.createPatch(); //patch.clone();
+    //   if (i == 0) panel.position.set(0, 0, 0);
+    //   else panel.position.set(i, 0, 0);
+    //   this.lengthGrp.add(panel.clone());
+    // }
+    this.lg1 = new THREE.Group();
+    this.lg2 = new THREE.Group();
+    for (let i = 0; i < this.upperWidth; i+=2) {
+      const panel = this.createPatch(); //patch.clone();
+      if (i == 0) panel.position.set(0, 0, 0);
+      else panel.position.set(i, 0, 0);
+      this.lg1.add(panel.clone());
+    }
+    for (let i = 0; i < this.lowerWidth; i+=2) {
+      const panel = this.createPatch(); //patch.clone();
+      if (i == 0) panel.position.set(0, 0, 0);
+      else panel.position.set(i, 0, 0);
+      this.lg2.add(panel.clone());
+    }
+    for (let i = 0; i < this.upperLength + this.lowerLength; i+=2) {
+      if (i < this.upperLength) {
+        const grp = this.lg1.clone();
+        grp.position.set(0, -(i + this.stdLength), 0);
+        this.widthGrp.add(grp);
+      } else {
+        const grp = this.lg2.clone();
+        grp.position.set(0, -(i + this.stdLength), 0);
+        this.widthGrp.add(grp);
+      }
+    }
+
+    console.log(this.upperWidth,this.upperLength,this.lowerWidth,this.lowerLength);
+    const groupCenter = new THREE.Vector3();
+    const groupBox = new THREE.Box3().setFromObject(this.widthGrp);
+    groupBox.getCenter(groupCenter);
+    const translationVector = new THREE.Vector3(0, 0, 0).sub(groupCenter);
+    this.widthGrp.position.add(translationVector);
+
+    // Update the camera to fit the centered group within the view
+    const boundingBox = new THREE.Box3().setFromObject(this.widthGrp);
+    const center = boundingBox.getCenter(new THREE.Vector3());
+    const size = boundingBox.getSize(new THREE.Vector3());
+
+    const halfSize = size.clone().multiplyScalar(0.5);
+
+    // Calculate the distance from the camera to the group based on the group's size
+    // Adjust this value as needed for your scene
+    const distance =
+      halfSize.length() / Math.tan((this.camera.fov / 2) * (Math.PI / 180));
+
+    this.camera.position.copy(
+      center.clone().add(new THREE.Vector3(0, 0, distance))
+    );
+
+    // You may also want to look at the center of the group
+    this.camera.lookAt(center);
+    const lOff = this.upperWidth % 2 !== 0 ? 1 : 0;
+    const wOff = this.upperLength % 2 !== 0 ? 1 : 0;
+    this.addResizeControls(0, 0);
     this.scene.add(this.widthGrp);
   }
 
@@ -1406,8 +1460,18 @@ export default class Engine {
     this.floorLength = length;
     this.floorWidth = width;
     this.addFloorMats(length, width);
+    let price = 0;
+    if(!this.isCustomLayout){
+      price = (((this.floorLength * this.selectedTileDimension) * (this.floorWidth * this.selectedTileDimension)) * this.selectedTilePrice).toFixed(2);
+    }else{
+      console.log("dimension",this.upperWidth* this.selectedTileDimension,this.upperLength* this.selectedTileDimension,this.lowerWidth* this.selectedTileDimension,this.lowerLength* this.selectedTileDimension);
+      let upperPart = (((this.upperWidth * this.selectedTileDimension) * (this.upperLength * this.selectedTileDimension)) * this.selectedTilePrice);
+      let lowerPart = (((this.lowerWidth * this.selectedTileDimension) * (this.lowerLength * this.selectedTileDimension)) * this.selectedTilePrice);
+      console.log("price",upperPart,lowerPart);
+      price = (lowerPart + upperPart).toFixed(2);
+    }
     publish('floorUpdated', {
-      price: (((this.floorLength * this.selectedTileDimension) * (this.floorWidth * this.selectedTileDimension)) * this.selectedTilePrice).toFixed(2)
+      price: price
     });
   }
 
@@ -1428,16 +1492,27 @@ export default class Engine {
       const draggableObjects = this.dc.getObjects();
       draggableObjects.length = 0;
 
-      this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      var mouse = new THREE.Vector2();
+      let rect = this.CanvasContainer.getBoundingClientRect();//this.canvas.getBoundingClientRect();
+      this.mouse.x =
+        ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+      this.mouse.y =
+        -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+
+      // this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      // this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
 
       this.raycaster.setFromCamera(this.mouse, this.camera);
 
-      const intersections = this.raycaster.intersectObjects(this.objects, true);
+      const intersections = this.raycaster.intersectObjects(this.objects , true);
+      // this.objects = [];
       console.log("hit", intersections);
       if (intersections.length > 0) {
-        // const object = intersections[0].object;
-        const meshes = intersections.filter((h) => h.object.type === "Mesh");
+        // const object = intersections[0].object.parent;
+        console.log(intersections[0].object.parent);
+        const meshes = intersections.filter((h) => h.object.isDraggable);
+        // this.objects.push(...meshes);
+        console.log("hited",meshes);
         // if (object.type === "Sprite")
         //   return;
         if (meshes.length>0) {
