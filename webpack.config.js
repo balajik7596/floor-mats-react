@@ -63,7 +63,12 @@ module.exports = function (_env, argv) {
     },
     stats: { warnings: false },
     output: {
-      path: path.resolve(__dirname, isProduction ? "../output" : "../output"),
+      path: path.resolve(
+        __dirname,
+        isProduction
+          ? "../../New folder/config-floor-theme/assets"
+          : "../../New folder/config-floor-theme/assets"
+      ),
 
       filename: "locker.js",
       library: "locker",

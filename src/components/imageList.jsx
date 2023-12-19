@@ -3,14 +3,16 @@ import React from "react";
 // Define a data array with image URLs and labels
 const imageList = [
   {
-    src: "../assets/vented.svg",
+    src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.svg?v=1702842587",
     label: "Vented mat",
-    texture: "../assets/vented.jpg",
+    texture:
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.jpg?v=1702842587",
   },
   {
-    src: "../assets/pvcfloormat.svg",
+    src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pvcfloormat.svg?v=1702842587",
     label: "Raised disc",
-    texture: "../assets/Premiumpvc.png",
+    texture:
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc.png?v=1702842587",
   },
 ];
 

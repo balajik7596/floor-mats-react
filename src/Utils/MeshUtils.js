@@ -95,9 +95,20 @@ const convertFeetInch = function (inches) {
   if (isFeetInch(inches)) return inches;
   let units = new BaseUnits();
   units.setValue(Number(inches * 3200));
-  return units.toCM() + " cm";
+  return units.toFeetInchesDisplay();
 };
-
+const convertCentiMeter = function (inches) {
+  if (isFeetInch(inches)) return inches;
+  let units = new BaseUnits();
+  units.setValue(Number(inches * 3200));
+  return units.toCmMmDisplay();
+};
+const convertToMeter = function (inches) {
+  if (isFeetInch(inches)) return inches;
+  let units = new BaseUnits();
+  units.setValue(Number(inches * 3200));
+  return units.toM();
+};
 const isFeetInch = function (input) {
   return /(?:-[ \t]*)?((?:\d+(?:\.\d*)?|(?:\d+[ \t]+)?\d+[ \t]*\/[ \t]*\d+)[ \t]*(?:[']|feet|ft\.?)(?:[ \t]*(?:-[ \t]*)?(?:\d+(?:\.\d*)?|(?:\d+[ \t]+)?\d+[ \t]*\/[ \t]*\d+)[ \t]*(?:["]|inch(?:es)?|in\.?))?|(?:\d+(?:\.\d*)?|(?:\d+[ \t]+)?\d+[ \t]*\/[ \t]*\d+)[ \t]*(?:["]|inch(?:es)?|in\.?))/.test(
     input.toString()
@@ -366,5 +377,7 @@ export {
   DrawCurve,
   toRadians,
   convertFeetInch,
+  convertCentiMeter,
   createDimensionLine,
+  convertToMeter,
 };

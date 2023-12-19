@@ -13,7 +13,7 @@ const ToggleButton = ({ onToggle, leftText, rightText }) => {
     position: "absolute",
     width: "240px", // Adjust the width of the oval
     height: "40px",
-    top: "12%", // Position 25% down from the top
+    top: "2%", // Position 25% down from the top
     left: "50%", // Center horizontally
     transform: "translateX(-50%)", // Center horizontally
     // padding: "10px",

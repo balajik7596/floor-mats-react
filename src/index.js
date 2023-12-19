@@ -16,33 +16,36 @@ if (process.env.NODE_ENV !== "production") {
   // }, 1000);
 }
 
-export function renderReactComponent(divId, filePath, postQuote) {
-  const router = createBrowserRouter([
-    {
-      path: "/",
-      errorElement: <></>,
-      element: <EntryPage />,
-    },
-    {
-      path: "/Home",
-      errorElement: <></>,
-      element: (
-        <Viewer2
-          isIFrame={process.env.NODE_ENV === "production"}
-          ref={PanelRef}
-          filePath={filePath}
-          CanvasID={divId + "Canvas"}
-          postQuote={postQuote}
-        />
-      ),
-    },
-  ]);
-  console.log("rendering js", divId);
+export function renderReactComponent(divId, data) {
+  // const router = createBrowserRouter([
+  //   {
+  //     path: "/",
+  //     errorElement: <></>,
+  //     element: <EntryPage />,
+  //   },
+  //   {
+  //     path: "/Home",
+  //     errorElement: <></>,
+  //     element: (
+  //       <Viewer2
+  //         isIFrame={process.env.NODE_ENV === "production"}
+  //         ref={PanelRef}
+  //         filePath={filePath}
+  //         CanvasID={divId + "Canvas"}
+  //         postQuote={postQuote}
+  //       />
+  //     ),
+  //   },
+  // ]);
+  console.log("rendering js", divId, data);
   const root = createRoot(document.getElementById(divId));
   root.render(
-    <React.StrictMode>
-      <RouterProvider router={router} />
-    </React.StrictMode>
+    <Viewer2
+      isIFrame={process.env.NODE_ENV === "production"}
+      ref={PanelRef}
+      data={data}
+      CanvasID={divId + "Canvas"}
+    />
   );
 }
 

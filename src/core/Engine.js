@@ -1,35 +1,19 @@
 import * as TWEEN from "@tweenjs/tween.js";
 // FileA.js
-import {
-  publish
-} from '../components/EventMediator';
+import { publish } from "../components/EventMediator";
 import * as THREE from "three";
-import {
-  OrbitControls
-} from "three/examples/jsm/controls/OrbitControls";
-import {
-  DragControls
-} from "three/examples/jsm/controls/DragControls";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+import { DragControls } from "three/examples/jsm/controls/DragControls";
 import {
   CSS3DObject,
   CSS3DRenderer,
 } from "three/examples/jsm/renderers/CSS3DRenderer";
-import {
-  TransformControls
-} from "three/examples/jsm/controls/TransformControls.js";
+import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 
-import {
-  GUI
-} from "three/examples/jsm//libs/lil-gui.module.min.js";
-import {
-  TrackballControls
-} from "three/examples/jsm/controls/TrackballControls";
-import {
-  GLTFLoader
-} from "three/examples/jsm/loaders/GLTFLoader";
-import {
-  RGBELoader
-} from "three/examples/jsm/loaders/RGBELoader.js";
+import { GUI } from "three/examples/jsm//libs/lil-gui.module.min.js";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
 import Box3Extension from "../Utils/Box3Extension";
 import {
   COLOR_ALICE_BLUE,
@@ -38,28 +22,22 @@ import {
   DOOR_STYLES,
   HANDING_RH_LH,
 } from "../Utils/Common";
-import {
-  DebugEnvironment
-} from "three/examples/jsm/environments/DebugEnvironment";
-import {
-  RGBMLoader
-} from "three/examples/jsm/loaders/RGBMLoader";
+import { DebugEnvironment } from "three/examples/jsm/environments/DebugEnvironment";
+import { RGBMLoader } from "three/examples/jsm/loaders/RGBMLoader";
 import CameraControls from "camera-controls";
 import LockerProperty from "./LockerProperty";
 import {
+  convertCentiMeter,
+  convertFeetInch,
+  convertToMeter,
   createDimension,
   createDimensionLine,
+  createText,
   toRadians,
 } from "../Utils/MeshUtils";
-import {
-  jsPDF
-} from "jspdf";
-import {
-  ThreeDRotation
-} from "@mui/icons-material";
-import {
-  logDOM
-} from "@testing-library/react";
+import { jsPDF } from "jspdf";
+import { ThreeDRotation } from "@mui/icons-material";
+import { logDOM } from "@testing-library/react";
 CameraControls.install({
   THREE: THREE,
 });
@@ -110,7 +88,8 @@ export default class Engine {
     this.terminalsData = [];
     this.floorWidth = 10;
     this.floorLength = 10;
-
+    this.incrementValue = 0.05;
+    this.isMeter = false;
     //custom layout
     //  ________
     //  |     __|
@@ -133,7 +112,7 @@ export default class Engine {
     this.isCustomLayout = false;
     this.secondaryColor = "#FF0000";
     this.currentTexture = new THREE.TextureLoader().load(
-      "../assets/vented.jpg"
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.jpg?v=1702842587"
     );
     this.floormaterial = new THREE.MeshBasicMaterial({
       map: this.currentTexture,
@@ -142,7 +121,9 @@ export default class Engine {
       side: THREE.DoubleSide,
       transparent: true,
     });
-    this.draicon = loader.load("../assets/dragicon.svg");
+    this.draicon = loader.load(
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/dragicon.svg?v=1702842585"
+    );
     this.dragPlaneMat = new THREE.MeshBasicMaterial({
       map: this.draicon,
       opacity: 0.9,
@@ -155,7 +136,7 @@ export default class Engine {
     this.standardSmoothTileDim = 0.5;
     this.conversionFactor = 3.28;
     this.selectedTileDimension = this.standardVTileDim;
-    this.selectedTilePrice = 35.40;
+    this.selectedTilePrice = 35.4;
     this.selectedUnit = " FT";
     this.lengthGrp = new THREE.Group();
     this.widthGrp = new THREE.Group();
@@ -248,7 +229,7 @@ export default class Engine {
     this.camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
     // this.camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 1000);
     // this.camera.lookAt(new THREE.Vector3(0, 10, -20));
-    this.camera.position.set(0, 0, 50);
+    this.camera.position.set(0, 0, 20);
 
     this.scene = new THREE.Scene();
     this.scene2 = new THREE.Scene();
@@ -284,25 +265,38 @@ export default class Engine {
     });
 
     // this.addFloorMatsNew(this.floorLength, this.floorWidth);
-    this.addFloorMats(this.floorLength, this.floorWidth);
-    this.dc = new DragControls(
-      [...this.objects],
-      this.camera,
-      this.renderer.domElement
-    );
+    // this.addFloorMats(this.floorLength, this.floorWidth);
+    // this.dc = new DragControls(
+    //   [...this.objects],
+    //   this.camera,
+    //   this.renderer.domElement
+    // );
     // this.dc.addEventListener('drag', this.render());
 
-    this.dc.addEventListener("dragstart", this.dragStartEvent.bind(this));
+    // this.dc.addEventListener("dragstart", this.dragStartEvent.bind(this));
 
-    this.dc.addEventListener("drag", this.onDragEvent.bind(this));
+    // this.dc.addEventListener("drag", this.onDragEvent.bind(this));
 
-    this.dc.addEventListener("dragend", this.dragEndEvent.bind(this));
+    // this.dc.addEventListener("dragend", this.dragEndEvent.bind(this));
     // this.Hiddenplane.visible = true;
     this.render();
+    if (this.isCustomLayout) {
+      this.CreateLayout(this.floorLength, this.floorWidth, 4, 6);
+    } else {
+      this.CreateLayout(this.floorLength, this.floorWidth);
+    }
 
-    this.renderer.domElement.addEventListener("mousemove", (event) => {});
+    this.renderer.domElement.addEventListener("mousemove", (event) => {
+      this.MouseMove(event);
+    });
+    this.renderer.domElement.addEventListener("mouseup", (event) => {
+      this.MouseUp(event);
+    });
+    this.renderer.domElement.addEventListener("mousedown", (event) => {
+      this.MouseDown(event);
+    });
     this.renderer.domElement.addEventListener("resize", (event) => {});
-    document.addEventListener("click", (event) => {
+    this.renderer.domElement.addEventListener("click", (event) => {
       this.onClick(event);
     });
     // document.addEventListener("dragend", this.dragChange);
@@ -329,7 +323,7 @@ export default class Engine {
       side: THREE.DoubleSide,
     });
     const plane = new THREE.Mesh(geometry2, material2);
-    this.scene.add(plane);
+    // this.scene.add(plane);
   }
   loadImage(src) {
     return new Promise((resolve, reject) => {
@@ -465,9 +459,15 @@ export default class Engine {
     return texture;
   }
 
-  InitLayout(isCustomLayout) {
+  InitLayout(isCustomLayout, garageData) {
+    this.garageData = garageData;
+    if (this.garageData && garageData.variants) {
+      this.selectedVariant = garageData.variants[0];
+    }
     this.isCustomLayout = isCustomLayout;
-    this.initEngine();
+
+    if (!this.scene) this.initEngine();
+    else this.CreateLayout(10, 10, 4, 6, false);
   }
 
   // createTextSprite(
@@ -658,59 +658,58 @@ export default class Engine {
     // Create a canvas element
     const canvas = document.createElement("canvas");
     const context = canvas.getContext("2d");
-  
+
     // Set font properties
     context.font = `${fontSize}px Arial`;
-  
+
     // Measure text size
     const textMetrics = context.measureText(text);
-    const width = textMetrics.width;
-    const height = fontSize;
-  
+    const width = 512;
+    const height = 512;
+
     // Set canvas size based on text size
     canvas.width = width;
     canvas.height = height;
-  
+
     // Clear the canvas
     context.clearRect(0, 0, canvas.width, canvas.height);
-  
+
     // Set text properties
     context.font = `${fontSize}px Arial`;
     context.fillStyle = textColor;
     context.textAlign = "left";
     context.textBaseline = "middle";
-  
+
     // Draw text on the canvas
-    context.fillText(text, 0, height / 2);
-  
+    context.fillText(text, width / 2, height / 2);
+
     // Create a texture from the canvas
     const texture = new THREE.CanvasTexture(canvas);
     texture.needsUpdate = true;
-  
+
     // Calculate scale based on font size
     const scale = width / height;
-  
+
     // Create a material using the texture
     const material = new THREE.SpriteMaterial({
       map: texture,
       color: 0x000000, // Set to white to use texture color
       transparent: true,
     });
-  
+
     // Create a sprite using the material
     const sprite = new THREE.Sprite(material);
-  
+
     // Set sprite scale based on font size
-    sprite.scale.set(1 , 0.5, 1);
-  
+    sprite.scale.set(1, 1, 1);
+
     // Set sprite position, rotation, and other properties as needed
     // sprite.position.set(x, y, z);
     // sprite.rotation.set(rx, ry, rz);
-  
+
     return sprite;
   }
-  
-  
+
   createLine(length, width, position, name) {
     const linePGeo = new THREE.PlaneGeometry(length, width);
     const linePMat = new THREE.MeshBasicMaterial({
@@ -741,8 +740,8 @@ export default class Engine {
     if (name === "left") {
       dimensionT =
         (this.floorLength * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
 
       textSprite.position.set(textSprite.scale.x / 2 + 0.05, 0, 0);
@@ -752,8 +751,8 @@ export default class Engine {
     } else if (name === "right") {
       dimensionT =
         (this.floorLength * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
       textSprite.position.set(textSprite.scale.x / 2 - 0.95, 0, 0);
@@ -763,8 +762,8 @@ export default class Engine {
     } else if (name === "top") {
       dimensionT =
         (this.floorWidth * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, 0, 0);
       textSprite.position.set(0, -textSprite.scale.y / 2 - 0.25, 0);
@@ -773,8 +772,8 @@ export default class Engine {
     } else {
       dimensionT =
         (this.floorWidth * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
       textSprite.position.set(0, -textSprite.scale.y / 2 + 0.65, 0);
@@ -823,19 +822,23 @@ export default class Engine {
     console.log(this.selectedUnit);
     if (name === "left") {
       dimensionT =
-        ((this.upperLength + this.lowerLength) * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+        (
+          (this.upperLength + this.lowerLength) *
+          this.selectedTileDimension *
+          this.conversionFactor
+        )
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
-      textSprite.position.set(textSprite.scale.x / 2 , 0, 0);
+      textSprite.position.set(textSprite.scale.x / 2, 0, 0);
       textSprite.material.rotation = Math.PI / 2;
       // spritePosition = new THREE.Vector3(position.x, 0, 0);
       // spriteRotataion = new THREE.Euler(-Math.PI / 2, 0, 0);
     } else if (name === "rightU") {
       dimensionT =
         (this.upperLength * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
       textSprite.position.set(textSprite.scale.x / 2 - 0.85, 0, 0);
@@ -845,8 +848,8 @@ export default class Engine {
     } else if (name === "top") {
       dimensionT =
         (this.upperWidth * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, 0, 0);
       textSprite.position.set(0, -textSprite.scale.y / 2 - 0.2, 0);
@@ -855,8 +858,8 @@ export default class Engine {
     } else if (name === "bot") {
       dimensionT =
         (this.lowerWidth * this.selectedTileDimension * this.conversionFactor)
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
       textSprite.position.set(0, -textSprite.scale.y / 2 + 0.55, 0);
@@ -869,8 +872,8 @@ export default class Engine {
           this.selectedTileDimension *
           this.conversionFactor
         )
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(0, -textOffest, 0);
       textSprite.position.set(0, -textSprite.scale.y / 2 + 0.55, 0);
@@ -878,13 +881,9 @@ export default class Engine {
       spriteRotataion = new THREE.Euler(Math.PI, 0, 0);
     } else if (name === "rightL") {
       dimensionT =
-        (
-          (this.lowerLength) *
-          this.selectedTileDimension *
-          this.conversionFactor
-        )
-        .toFixed(2)
-        .toString() + this.selectedUnit;
+        (this.lowerLength * this.selectedTileDimension * this.conversionFactor)
+          .toFixed(2)
+          .toString() + this.selectedUnit;
       textSprite = this.createTextSprite(dimensionT);
       textSprite.position.set(textOffest, 0, 0);
       textSprite.position.set(textSprite.scale.x / 2 - 0.85, 0, 0);
@@ -906,24 +905,35 @@ export default class Engine {
 
   changeMeasureUnit(isMeter) {
     console.log(isMeter);
-    if (isMeter) {
-      this.selectedUnit = " M";
-      this.conversionFactor = 1;
-    } else {
-      this.selectedUnit = " FT";
-      this.conversionFactor = 3.28;
-    }
+    this.isMeter = isMeter;
+    this.UpdateDimensions(
+      this.floorLength,
+      this.floorWidth,
+      this.floorbottomHeight,
+      this.floorbottomWidth
+    );
+    // if (isMeter) {
+    //   this.selectedUnit = " M";
+    //   this.conversionFactor = 1;
+    // } else {
+    //   this.selectedUnit = " FT";
+    //   this.conversionFactor = 3.28;
+    // }
   }
 
   changeSelectedTile(isSmoothPvcSelected) {
     if (isSmoothPvcSelected) {
       this.selectedTileDimension = this.standardSmoothTileDim;
-      this.selectedTilePrice = 38.40;
-      this.updateFloorMaterial("../assets/premiumpvc.png");
+      this.selectedTilePrice = 38.4;
+      this.updateFloorMaterial(
+        "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc.png?v=1702842587"
+      );
     } else {
       this.selectedTileDimension = this.standardVTileDim;
-      this.selectedTilePrice = 35.40;
-      this.updateFloorMaterial("../assets/vented.jpg");
+      this.selectedTilePrice = 35.4;
+      this.updateFloorMaterial(
+        "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.jpg?v=1702842587"
+      );
     }
   }
 
@@ -992,9 +1002,9 @@ export default class Engine {
     // this.createLine(0.2, this.floorWidth, new THREE.Vector3(-floorBBMax.x,0,0),'left');//([floorBBMin.x, floorBBMax.y, 0], [floorBBMin.x, floorBBMin.y, 0], 'left'); //v2
     // this.createLine(this.floorLength, 0.2, new THREE.Vector3(0,floorBBMax.y,0),'top');//([floorBBMin.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMax.y, 0], 'top'); //h1
     // this.createLine(this.floorLength, 0.2, new THREE.Vector3(0,-floorBBMax.y,0),'bot');//([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
-    this.scene.add(this.lineGroup);
+    // this.scene.add(this.lineGroup);
     // this.controls.target.set(this.panel.position)
-    this.scene.add(this.panel);
+    // this.scene.add(this.panel);
   }
   createFloorPattern(scene, upperWidth, lowerWidth, upperLength, lowerLength) {
     this.lg1 = new THREE.Group();
@@ -1077,15 +1087,26 @@ export default class Engine {
         // You may also want to look at the center of the group
         this.camera.lookAt(center);
         this.addResizeControls();
-        this.scene.add(this.widthGrp);
+        // this.scene.add(this.widthGrp);
       } else if (this.selectedPattern === "Checked")
         this.addUpdateCheckedPattern(this.floorLength, this.floorWidth);
       else if (this.selectedPattern == "Box")
         this.addUpdateSquarePattern(this.floorLength, this.floorWidth);
     } else {
       if (this.selectedPattern === "No Pattern") {
-        console.log(this.upperWidth, this.upperLength, this.lowerWidth, this.lowerLength);
-        this.createFloorPattern(this.scene, this.upperWidth, this.lowerWidth, this.upperLength, this.lowerLength);
+        console.log(
+          this.upperWidth,
+          this.upperLength,
+          this.lowerWidth,
+          this.lowerLength
+        );
+        this.createFloorPattern(
+          this.scene,
+          this.upperWidth,
+          this.lowerWidth,
+          this.upperLength,
+          this.lowerLength
+        );
         this.widthGrp.position.set(0, 0, 0);
 
         const groupCenter = new THREE.Vector3();
@@ -1113,13 +1134,21 @@ export default class Engine {
         // You may also want to look at the center of the group
         this.camera.lookAt(center);
         this.addResizeControls();
-        this.scene.add(this.widthGrp);
+        // this.scene.add(this.widthGrp);
         return;
-      } else if (this.selectedPattern === "Checked"){
-        this.upperWidth %2 === 0?(this.upperWidth = this.upperWidth):(this.upperWidth -=1);
-        this.upperLength%2 === 0?(this.upperLength = this.upperLength):(this.upperLength -=1);
-        this.lowerWidth %2 === 0?(this.lowerWidth = this.lowerWidth):(this.lowerWidth -=1);
-        this.lowerLength %2 === 0?(this.lowerLength = this.lowerLength):(this.lowerLength -=1);
+      } else if (this.selectedPattern === "Checked") {
+        this.upperWidth % 2 === 0
+          ? (this.upperWidth = this.upperWidth)
+          : (this.upperWidth -= 1);
+        this.upperLength % 2 === 0
+          ? (this.upperLength = this.upperLength)
+          : (this.upperLength -= 1);
+        this.lowerWidth % 2 === 0
+          ? (this.lowerWidth = this.lowerWidth)
+          : (this.lowerWidth -= 1);
+        this.lowerLength % 2 === 0
+          ? (this.lowerLength = this.lowerLength)
+          : (this.lowerLength -= 1);
         this.addUpdateCheckedPatternLayout(this.floorLength, this.floorWidth);
       } else if (this.selectedPattern == "Box")
         this.addUpdateSquarePattern(this.floorLength, this.floorWidth);
@@ -1214,7 +1243,7 @@ export default class Engine {
     const lOff = this.floorLength % 2 !== 0 ? 1 : 0;
     const wOff = this.floorWidth % 2 !== 0 ? 1 : 0;
     this.addResizeControls(lOff, wOff);
-    this.scene.add(this.widthGrp);
+    // this.scene.add(this.widthGrp);
   }
 
   addUpdateCheckedPatternLayout(Length, Width) {
@@ -1234,19 +1263,19 @@ export default class Engine {
     // }
     this.lg1 = new THREE.Group();
     this.lg2 = new THREE.Group();
-    for (let i = 0; i < this.upperWidth; i+=2) {
+    for (let i = 0; i < this.upperWidth; i += 2) {
       const panel = this.createPatch(); //patch.clone();
       if (i == 0) panel.position.set(0, 0, 0);
       else panel.position.set(i, 0, 0);
       this.lg1.add(panel.clone());
     }
-    for (let i = 0; i < this.lowerWidth; i+=2) {
+    for (let i = 0; i < this.lowerWidth; i += 2) {
       const panel = this.createPatch(); //patch.clone();
       if (i == 0) panel.position.set(0, 0, 0);
       else panel.position.set(i, 0, 0);
       this.lg2.add(panel.clone());
     }
-    for (let i = 0; i < this.upperLength + this.lowerLength; i+=2) {
+    for (let i = 0; i < this.upperLength + this.lowerLength; i += 2) {
       if (i < this.upperLength) {
         const grp = this.lg1.clone();
         grp.position.set(0, -(i + this.stdLength), 0);
@@ -1258,7 +1287,12 @@ export default class Engine {
       }
     }
 
-    console.log(this.upperWidth,this.upperLength,this.lowerWidth,this.lowerLength);
+    console.log(
+      this.upperWidth,
+      this.upperLength,
+      this.lowerWidth,
+      this.lowerLength
+    );
     const groupCenter = new THREE.Vector3();
     const groupBox = new THREE.Box3().setFromObject(this.widthGrp);
     groupBox.getCenter(groupCenter);
@@ -1286,7 +1320,7 @@ export default class Engine {
     const lOff = this.upperWidth % 2 !== 0 ? 1 : 0;
     const wOff = this.upperLength % 2 !== 0 ? 1 : 0;
     this.addResizeControls(0, 0);
-    this.scene.add(this.widthGrp);
+    // this.scene.add(this.widthGrp);
   }
 
   CreateAddSquare(l, w) {
@@ -1364,7 +1398,7 @@ export default class Engine {
     // You may also want to look at the center of the group
     this.camera.lookAt(center);
     this.addResizeControls();
-    this.scene.add(this.widthGrp);
+    // this.scene.add(this.widthGrp);
     return;
   }
   addResizeControls(lOff = 0, wOff = 0) {
@@ -1399,7 +1433,7 @@ export default class Engine {
         new THREE.Vector3(0, -floorBBMax.y, 0),
         "bot"
       ); //([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
-      this.scene.add(this.lineGroup);
+      // this.scene.add(this.lineGroup);
     } else {
       const floorBB = new THREE.Box3();
       floorBB.setFromObject(this.widthGrp); //.computeBoundingBox();
@@ -1417,25 +1451,37 @@ export default class Engine {
       this.createLineCustomLayout(
         this.lowerWidth + wOff + 0.1,
         0.1,
-        new THREE.Vector3(-floorBBMax.x + this.lowerWidth / 2, -floorBBMax.y, 0),
+        new THREE.Vector3(
+          -floorBBMax.x + this.lowerWidth / 2,
+          -floorBBMax.y,
+          0
+        ),
         "bot"
       ); //([floorBBMin.x, floorBBMin.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'bot');
       this.createLineCustomLayout(
         0.1,
-        (this.upperLength + this.lowerLength) + lOff + 0.1,
+        this.upperLength + this.lowerLength + lOff + 0.1,
         new THREE.Vector3(-floorBBMax.x, 0, 0),
         "left"
       ); //left
       this.createLineCustomLayout(
-        (this.upperWidth - this.lowerWidth) + wOff + 0.1,
+        this.upperWidth - this.lowerWidth + wOff + 0.1,
         0.1,
-        new THREE.Vector3(this.lowerWidth / 2, floorBBMax.y - this.upperLength, 0),
+        new THREE.Vector3(
+          this.lowerWidth / 2,
+          floorBBMax.y - this.upperLength,
+          0
+        ),
         "botMid"
       ); //botmid
       this.createLineCustomLayout(
         0.1,
         this.upperLength + lOff + 0.1,
-        new THREE.Vector3(this.upperWidth / 2, floorBBMax.y - this.upperLength / 2, 0),
+        new THREE.Vector3(
+          this.upperWidth / 2,
+          floorBBMax.y - this.upperLength / 2,
+          0
+        ),
         "rightU"
       ); //[floorBBMax.x, floorBBMax.y, 0], [floorBBMax.x, floorBBMin.y, 0], 'right'); //v1
 
@@ -1450,28 +1496,467 @@ export default class Engine {
         "rightL"
       ); //lowrl
 
-      this.scene.add(this.lineGroup);
+      // this.scene.add(this.lineGroup);
       this.lineGrpSprited.position.set(0, 0, 0);
-      this.scene.add(this.lineGrpSprited);
+      // this.scene.add(this.lineGrpSprited);
     }
   }
+  createRectLayout(Layout, width, height) {
+    width = Math.round(width);
+    height = Math.round(height);
+    const geometry = new THREE.PlaneGeometry(1, 1);
+    let mat2 = this.panel1.material.clone();
+    if (this.selectedPattern === "Checked") mat2 = this.panel2.material.clone();
+    let mat1 = this.panel1.material.clone();
+    const plane = new THREE.Mesh(geometry, mat1);
+    let singleRow = new THREE.Group();
+    let offsetX = 0;
+    for (let w = 0; w < width - 1; w += 2) {
+      const element = plane.clone();
+      if (w % 4 === 0) element.material = mat2;
+      element.position.set(offsetX, 0, 0);
+      singleRow.add(element);
+      offsetX += 1;
+    }
+    if (offsetX * 2 < width) {
+      const element = plane.clone();
+      if ((width / 2) % 4 === 0) element.material = mat2;
+      element.position.set(offsetX, 0, 0);
+      singleRow.add(element);
+    }
+    offsetX = 0;
+    for (let w = 0; w < width - 1; w += 2) {
+      const element = plane.clone();
+      if (w % 4 !== 0) element.material = mat2;
+      element.position.set(offsetX, 1, 0);
+      singleRow.add(element);
+      offsetX += 1;
+    }
+    console.log("offsetX", offsetX, width);
+    if (offsetX * 2 < width) {
+      const element = plane.clone();
+      if ((width / 2) % 4 !== 0) element.material = mat2;
+      element.position.set(offsetX, 1, 0);
+      singleRow.add(element);
+    }
+    let offsetY = 0;
+    for (let h = 0; h < height - 2; h += 4) {
+      const element = singleRow.clone();
+      element.position.set(0.5, offsetY, 0);
+      Layout.add(element);
+      offsetY += 2;
+    }
+    if (offsetY * 2 < height) {
+      offsetX = 0;
+      for (let w = 0; w < width - 1; w += 2) {
+        const element = plane.clone();
+        if (w % 4 === 0) element.material = mat2;
+        element.position.set(offsetX + 0.5, offsetY, 0);
+        Layout.add(element);
+        offsetX += 1;
+      }
+      if (offsetX * 2 < width) {
+        const element = plane.clone();
+        if ((width / 2) % 4 === 0) element.material = mat2;
+        element.position.set(offsetX + 0.5, offsetY, 0);
+        Layout.add(element);
+      }
+    }
+  }
+  createSecondLayerCustom(Layout, width, height, bottomWidth, bottomHeight) {
+    width = Math.round(width);
+    height = Math.round(height);
+    bottomWidth = Math.round(bottomWidth);
+    bottomHeight = Math.round(bottomHeight);
+    const geometry = new THREE.PlaneGeometry(0.5, 0.5);
 
+    let mat1 = this.panel1.material.clone();
+    const plane = new THREE.Mesh(geometry, mat1);
+    plane.material = this.panel2.material.clone();
+    plane.material.map = plane.material.map.clone();
+    plane.material.map.repeat.set(0.5, 0.5);
+    let SecondLayer = new THREE.Group();
+    SecondLayer.position.set(0, 0, 0.01);
+    Layout.add(SecondLayer);
+    let offsetX = 0.75;
+    for (let w = 0; w < width - 2; w += 1) {
+      const element = plane.clone();
+
+      element.position.set(offsetX, height / 2 - 1.25, 0);
+      SecondLayer.add(element);
+      offsetX += 0.5;
+    }
+    offsetX = 0.75;
+    for (let w = 0; w < bottomWidth - 2; w += 1) {
+      const element = plane.clone();
+
+      element.position.set(offsetX, -bottomHeight / 2 + 0.25, 0);
+      SecondLayer.add(element);
+      offsetX += 0.5;
+    }
+    let remainingWidth = width - bottomWidth;
+    offsetX + bottomWidth / 2;
+    for (let w = 0; w < remainingWidth; w += 1) {
+      const element = plane.clone();
+
+      element.position.set(offsetX, +0.25, 0);
+      SecondLayer.add(element);
+      offsetX += 0.5;
+    }
+    let offsetY = 0.75;
+    console.log(width);
+    for (let h = 0; h < height - 4; h += 1) {
+      const element = plane.clone();
+      element.position.set(width / 2 - 0.75, offsetY, 0);
+      SecondLayer.add(element);
+      offsetY += 0.5;
+    }
+    offsetY = 0.75 - bottomHeight / 2;
+    console.log(width);
+    for (let h = 0; h < bottomHeight; h += 1) {
+      const element = plane.clone();
+      element.position.set(bottomWidth / 2 - 0.75, offsetY, 0);
+      SecondLayer.add(element);
+      offsetY += 0.5;
+    }
+
+    offsetY = 0.75 - bottomHeight / 2;
+    console.log(width);
+    for (let h = 0; h < height + bottomHeight - 4; h += 1) {
+      const element = plane.clone();
+      element.position.set(0.75, offsetY, 0);
+      SecondLayer.add(element);
+      offsetY += 0.5;
+    }
+  }
+  createSecondLayer(Layout, width, height) {
+    const geometry = new THREE.PlaneGeometry(0.5, 0.5);
+
+    let mat1 = this.panel1.material.clone();
+    const plane = new THREE.Mesh(geometry, mat1);
+    plane.material = this.panel2.material.clone();
+    plane.material.map = plane.material.map.clone();
+    plane.material.map.repeat.set(0.5, 0.5);
+    let SecondLayer = new THREE.Group();
+    SecondLayer.position.set(0, 0, 0.01);
+    Layout.add(SecondLayer);
+    let offsetX = 0.75;
+    for (let w = 0; w < width - 2; w += 1) {
+      const element = plane.clone();
+
+      element.position.set(offsetX, 0.25, 0);
+      SecondLayer.add(element);
+      offsetX += 0.5;
+    }
+    offsetX = 0.75;
+    for (let w = 0; w < width - 2; w += 1) {
+      const element = plane.clone();
+
+      element.position.set(offsetX, height / 2 - 1.25, 0);
+      SecondLayer.add(element);
+      offsetX += 0.5;
+    }
+    let offsetY = 0.75;
+    for (let h = 0; h < height - 4; h += 1) {
+      const element = plane.clone();
+      element.position.set(0.75, offsetY, 0);
+      SecondLayer.add(element);
+      offsetY += 0.5;
+    }
+    offsetY = 0.75;
+    console.log(width);
+    for (let h = 0; h < height - 4; h += 1) {
+      const element = plane.clone();
+      element.position.set(width / 2 - 0.75, offsetY, 0);
+      SecondLayer.add(element);
+      offsetY += 0.5;
+    }
+  }
+  CreateLayout(height, width, bottomHeight, bottomWidth, isDraging) {
+    console.log(height, width);
+
+    this.floorLength = height;
+    this.floorWidth = width;
+    if (bottomWidth) {
+      this.floorbottomWidth = bottomWidth;
+      this.floorbottomHeight = bottomHeight;
+    }
+
+    if (this.Layout) this.scene.remove(this.Layout);
+    this.Layout = new THREE.Group();
+    this.Layout.position.set(-width / 4 - 0.5, -height / 4, 0);
+    let { top, bottom, left, right, bottomRight, bottomTop } = this.getEdges();
+    if (isDraging) {
+      this.Layout.position.set(
+        left.position.x - 2.5,
+        bottom.position.y - 2.0,
+        0
+      );
+      if (bottomTop) {
+        this.Layout.position.set(
+          left.position.x - 2.5,
+          bottomTop.position.y - 2.0,
+          0
+        );
+      }
+      this.LayoutLeft = this.Layout.position.x;
+      this.LayoutTop = this.Layout.position.y;
+    } else {
+      if (this.LayoutLeft && this.LayoutTop) {
+        this.Layout.position.set(this.LayoutLeft, this.LayoutTop, 0);
+      }
+    }
+    this.scene.add(this.Layout);
+    if (this.isCustomLayout) {
+      this.createRectLayout(this.Layout, width, height);
+      let bottomGrp = new THREE.Group();
+      if (!bottomTop)
+        bottomGrp.position.set(
+          0,
+          -this.Layout.position.y - 2.5 - bottomHeight / 2,
+          0
+        );
+      else
+        bottomGrp.position.set(
+          0,
+          -this.Layout.position.y - 3.0 - bottomHeight / 2,
+          0
+        );
+      this.Layout.add(bottomGrp);
+      this.createRectLayout(bottomGrp, bottomWidth, bottomHeight);
+      if (this.selectedPattern === "Box")
+        this.createSecondLayerCustom(
+          this.Layout,
+          width,
+          height,
+          bottomWidth,
+          bottomHeight
+        );
+    } else {
+      this.createRectLayout(this.Layout, width, height);
+      if (this.selectedPattern === "Box")
+        this.createSecondLayer(this.Layout, width, height);
+    }
+
+    // console.log(offsetY * 2, height);
+    if (!isDraging) {
+      if (!this.isCustomLayout) {
+        this.createEdgeLines(height, width);
+      } else {
+        this.createCustomEdgeLines(height, width, bottomHeight, bottomWidth);
+      }
+    } else this.UpdateDimensions(height, width, bottomHeight, bottomWidth);
+    let price = 0;
+    if (this.selectedVariant) {
+      let squareFeet = this.floorLength * this.floorWidth;
+
+      if (this.isCustomLayout) {
+        squareFeet += this.floorbottomHeight * this.floorbottomWidth;
+      }
+      let meterval = convertToMeter(squareFeet * 12) * 6.25;
+      meterval = Math.round(meterval) * 0.01;
+      price = Math.round(meterval * this.selectedVariant.price);
+      publish("floorUpdated", {
+        price: price,
+      });
+    }
+  }
+  createCustomEdgeLines(height, width, bottomHeight, bottomWidth) {
+    if (this.Edges) this.scene.remove(this.Edges);
+    this.Edges = new THREE.Group();
+    this.Edges.position.set(-width / 4, -height / 4, 0);
+    this.scene.add(this.Edges);
+    const geometry = new THREE.PlaneGeometry(0.2, height / 2);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      side: THREE.DoubleSide,
+    });
+
+    const right = new THREE.Mesh(geometry, material);
+    right.position.set(width / 2 - 0.5, height / 4 - 0.5, 0);
+    const geometryLeft = new THREE.PlaneGeometry(
+      0.2,
+      height / 2 + bottomHeight / 2
+    );
+    const left = new THREE.Mesh(geometryLeft, material);
+    left.position.set(-0.5, height / 4 - bottomHeight / 4 - 0.5, 0);
+
+    const geometryHorz = new THREE.PlaneGeometry(width / 2 + 0.2, 0.2);
+    const top = new THREE.Mesh(geometryHorz, material);
+    top.position.set(width / 4 - 0.5, height / 2 - 0.5, 0);
+
+    // const bottom = top.clone();
+    // bottom.position.set(width / 4 - 0.5, -0.5, 0);
+
+    right.isDragLine = true;
+    left.isDragLine = true;
+    top.isDragLine = true;
+
+    right.name = "right";
+    left.name = "left";
+    top.name = "top";
+
+    this.Edges.add(left);
+    this.Edges.add(right);
+    this.Edges.add(top);
+    // this.Edges.add(bottom);
+    const geometryHorzb = new THREE.PlaneGeometry(bottomWidth / 2 + 0.2, 0.2);
+    const bottom = new THREE.Mesh(geometryHorzb, material);
+    bottom.position.set(bottomWidth / 4 - 0.5, -bottomHeight / 2 - 0.5, 0);
+
+    const geometryBr = new THREE.PlaneGeometry(0.2, bottomHeight / 2);
+    const bottomRight = new THREE.Mesh(geometryBr, material);
+    bottomRight.position.set(bottomWidth / 2 - 0.5, -bottomHeight / 4 - 0.5, 0);
+
+    let widthDiff = width - bottomWidth;
+    console.log("diff", widthDiff);
+    const geometryHorzT = new THREE.PlaneGeometry(widthDiff / 2 + 0.2, 0.2);
+    const bottomTop = new THREE.Mesh(geometryHorzT, material);
+    bottomTop.position.set(width / 4 + widthDiff / 4, -0.5, 0);
+
+    bottom.name = "bottom";
+    bottom.isDragLine = true;
+    this.Edges.add(bottom);
+
+    bottomRight.name = "bottomright";
+    bottomRight.isDragLine = true;
+    this.Edges.add(bottomRight);
+
+    bottomTop.name = "bottomtop";
+    bottomTop.isDragLine = true;
+    this.Edges.add(bottomTop);
+    this.UpdateDimensions(height, width, bottomHeight, bottomWidth);
+  }
+  createEdgeLines(height, width) {
+    if (this.Edges) this.scene.remove(this.Edges);
+    this.Edges = new THREE.Group();
+    this.Edges.position.set(-width / 4, -height / 4, 0);
+    this.scene.add(this.Edges);
+    const geometry = new THREE.PlaneGeometry(0.2, height / 2);
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xff0000,
+      side: THREE.DoubleSide,
+    });
+
+    const right = new THREE.Mesh(geometry, material);
+    right.position.set(width / 2 - 0.5, height / 4 - 0.5, 0);
+
+    const left = right.clone();
+    left.position.set(-0.5, height / 4 - 0.5, 0);
+
+    const geometryHorz = new THREE.PlaneGeometry(width / 2 + 0.2, 0.2);
+    const top = new THREE.Mesh(geometryHorz, material);
+    top.position.set(width / 4 - 0.5, height / 2 - 0.5, 0);
+
+    const bottom = top.clone();
+    bottom.position.set(width / 4 - 0.5, -0.5, 0);
+
+    right.isDragLine = true;
+    left.isDragLine = true;
+    top.isDragLine = true;
+    bottom.isDragLine = true;
+    right.name = "right";
+    left.name = "left";
+    top.name = "top";
+    bottom.name = "bottom";
+    this.Edges.add(left);
+    this.Edges.add(right);
+    this.Edges.add(top);
+    this.Edges.add(bottom);
+    this.UpdateDimensions(height, width, 0, 0);
+  }
+  UpdateDimensions(height, width, bottomHeight, bottomWidth) {
+    let { top, bottom, left, right, bottomRight, bottomTop } = this.getEdges();
+
+    let allLines = [top, bottom, left, right, bottomRight, bottomTop];
+    for (let i = 0; i < allLines.length; i++) {
+      const element = allLines[i];
+      if (element) {
+        for (let j = 0; j < element.children.length; j++) {
+          const element2 = element.children[j];
+          element.remove(element2);
+        }
+      }
+    }
+    let heightL = this.converToDisplayUnit(height * 12);
+    let heightR = heightL;
+    let widthT = this.converToDisplayUnit(width * 12);
+    let widthB = widthT;
+    let widthTop = 0;
+    let heightRight = 0;
+    if (this.isCustomLayout) {
+      heightL = this.converToDisplayUnit((height + bottomHeight) * 12);
+      widthB = this.converToDisplayUnit(bottomWidth * 12);
+      heightRight = this.converToDisplayUnit(bottomHeight * 12);
+      widthTop = this.converToDisplayUnit(Math.abs(width - bottomWidth) * 12);
+      let textRightB = createText(heightRight, "black", 8);
+      textRightB.position.set(-0.2, 0, 0.3);
+      textRightB.material.rotation = Math.PI / 2;
+      bottomRight.add(textRightB);
+
+      let textTopB = createText(widthTop, "black", 8);
+      textTopB.position.set(0, 0.2, 0.3);
+      bottomTop.add(textTopB);
+    }
+    let textSprite = createText(heightR, "black", 8);
+    textSprite.position.set(-0.2, 0, 0.3);
+    textSprite.material.rotation = Math.PI / 2;
+    right.add(textSprite);
+    let textLeft = createText(heightL, "black", 8);
+    textLeft.material.rotation = Math.PI / 2;
+    textLeft.position.set(0.6, 0, 0.3);
+    left.add(textLeft);
+
+    let textTop = createText(widthT, "black", 8);
+    textTop.position.set(0, -0.6, 0.3);
+    top.add(textTop);
+    let textbottom = createText(widthB, "black", 8);
+    textbottom.position.set(0, 0.2, 0.3);
+    bottom.add(textbottom);
+  }
+  converToDisplayUnit(val) {
+    if (this.isMeter) return convertCentiMeter(val);
+    else return convertFeetInch(val);
+  }
   updateFloorMats(length, width) {
+    this.CreateLayout(length, width, null, null, true);
+
+    return;
+
     this.floorLength = length;
     this.floorWidth = width;
     this.addFloorMats(length, width);
     let price = 0;
-    if(!this.isCustomLayout){
-      price = (((this.floorLength * this.selectedTileDimension) * (this.floorWidth * this.selectedTileDimension)) * this.selectedTilePrice).toFixed(2);
-    }else{
-      console.log("dimension",this.upperWidth* this.selectedTileDimension,this.upperLength* this.selectedTileDimension,this.lowerWidth* this.selectedTileDimension,this.lowerLength* this.selectedTileDimension);
-      let upperPart = (((this.upperWidth * this.selectedTileDimension) * (this.upperLength * this.selectedTileDimension)) * this.selectedTilePrice);
-      let lowerPart = (((this.lowerWidth * this.selectedTileDimension) * (this.lowerLength * this.selectedTileDimension)) * this.selectedTilePrice);
-      console.log("price",upperPart,lowerPart);
+    if (!this.isCustomLayout) {
+      price = (
+        this.floorLength *
+        this.selectedTileDimension *
+        (this.floorWidth * this.selectedTileDimension) *
+        this.selectedTilePrice
+      ).toFixed(2);
+    } else {
+      console.log(
+        "dimension",
+        this.upperWidth * this.selectedTileDimension,
+        this.upperLength * this.selectedTileDimension,
+        this.lowerWidth * this.selectedTileDimension,
+        this.lowerLength * this.selectedTileDimension
+      );
+      let upperPart =
+        this.upperWidth *
+        this.selectedTileDimension *
+        (this.upperLength * this.selectedTileDimension) *
+        this.selectedTilePrice;
+      let lowerPart =
+        this.lowerWidth *
+        this.selectedTileDimension *
+        (this.lowerLength * this.selectedTileDimension) *
+        this.selectedTilePrice;
+      console.log("price", upperPart, lowerPart);
       price = (lowerPart + upperPart).toFixed(2);
     }
-    publish('floorUpdated', {
-      price: price
+    publish("floorUpdated", {
+      price: price,
     });
   }
 
@@ -1484,51 +1969,309 @@ export default class Engine {
     this.floorWidth = val;
     this.Hiddenplane.scale.set(this.floorLength, this.floorWidth, 1);
   }
+  MouseUp(event) {
+    this.IsMouseDown = false;
+    this.prevIntersect = null;
+  }
+  MouseDown(event) {
+    this.IsMouseDown = true;
+    if (this.hoveredEdge) {
+    }
+  }
+  getEdges() {
+    if (!this.Edges)
+      return {
+        top: null,
+        bottom: null,
+        left: null,
+        right: null,
+        bottomRight: null,
+        bottomTop: null,
+      };
+    let top = this.Edges.children.filter((item) =>
+      item.name.includes("top")
+    )[0];
+    let bottom = this.Edges.children.filter((item) =>
+      item.name.includes("bottom")
+    )[0];
+    let left = this.Edges.children.filter((item) =>
+      item.name.includes("left")
+    )[0];
+    let right = this.Edges.children.filter((item) =>
+      item.name.includes("right")
+    )[0];
+    let bottomRight = this.Edges.children.filter((item) =>
+      item.name.includes("bottomright")
+    )[0];
+    let bottomTop = this.Edges.children.filter((item) =>
+      item.name.includes("bottomtop")
+    )[0];
+    return { top, bottom, left, right, bottomRight, bottomTop };
+  }
+  DragEdge(edge, mouse) {
+    // console.log("drag", edge);
+    if (!edge) return;
+    let isXaxis = edge.name.includes("left") || edge.name.includes("right");
+    let diffx = this.getIncrementValue(mouse, isXaxis);
+    if (Math.abs(diffx) > 0) {
+      let widthBottom = this.floorbottomWidth / 2;
+      let heightBottom = this.floorbottomHeight / 2;
+      console.log(diffx);
+      let { top, bottom, left, right, bottomRight, bottomTop } =
+        this.getEdges();
+      if (edge.name.includes("left") || edge.name.includes("right")) {
+        edge.position.set(
+          edge.position.x - diffx,
+          edge.position.y,
+          edge.position.z
+        );
+        let width = -left.position.x + right.position.x;
+        if (bottomRight)
+          widthBottom = -left.position.x + bottomRight.position.x;
+        if (edge.name.includes("bottomright")) {
+          console.log("bottom width", widthBottom);
+          bottomTop.geometry = new THREE.PlaneGeometry(
+            width - widthBottom + 0.2,
+            0.2
+          );
+          bottomTop.position.set(
+            bottomTop.position.x - diffx / 2,
+            bottomTop.position.y,
+            bottomTop.position.z
+          );
+          bottom.geometry = new THREE.PlaneGeometry(widthBottom + 0.2, 0.2);
+          bottom.position.set(
+            bottom.position.x - diffx / 2,
+            bottom.position.y,
+            bottom.position.z
+          );
+        } else {
+          top.geometry = new THREE.PlaneGeometry(width + 0.2, 0.2);
+          top.position.set(
+            top.position.x - diffx / 2,
+            top.position.y,
+            top.position.z
+          );
+          if (bottomTop) {
+            if (edge.name.includes("left")) {
+              bottom.geometry = new THREE.PlaneGeometry(widthBottom + 0.2, 0.2);
+              bottom.position.set(
+                bottom.position.x - diffx / 2,
+                bottom.position.y,
+                bottom.position.z
+              );
+            } else {
+              bottomTop.geometry = new THREE.PlaneGeometry(
+                width - this.floorbottomWidth / 2 + 0.2,
+                0.2
+              );
+              bottomTop.position.set(
+                bottomTop.position.x - diffx / 2,
+                bottomTop.position.y,
+                bottomTop.position.z
+              );
+            }
+          } else {
+            bottom.geometry = new THREE.PlaneGeometry(width + 0.2, 0.2);
+            bottom.position.set(
+              bottom.position.x - diffx / 2,
+              bottom.position.y,
+              bottom.position.z
+            );
+          }
+        }
+      } else {
+        edge.position.set(
+          edge.position.x,
+          edge.position.y + diffx,
+          edge.position.z
+        );
+        console.log(top.position.y, bottom.position.y);
+        let height = top.position.y - bottom.position.y;
 
+        if (bottomTop) {
+          height = top.position.y - bottomTop.position.y;
+          heightBottom = bottomTop.position.y - bottom.position.y;
+          if (edge.name === "bottomright") {
+          } else if (edge.name === "bottom") {
+            left.geometry = new THREE.PlaneGeometry(0.2, height + heightBottom);
+            left.position.set(
+              left.position.x,
+              left.position.y + diffx / 2,
+              left.position.z
+            );
+            bottomRight.geometry = new THREE.PlaneGeometry(0.2, heightBottom);
+            bottomRight.position.set(
+              bottomRight.position.x,
+              bottomRight.position.y + diffx / 2,
+              bottomRight.position.z
+            );
+          } else {
+            left.geometry = new THREE.PlaneGeometry(0.2, height + heightBottom);
+            left.position.set(
+              left.position.x,
+              left.position.y + diffx / 2,
+              left.position.z
+            );
+            right.geometry = new THREE.PlaneGeometry(0.2, height);
+            right.position.set(
+              right.position.x,
+              right.position.y + diffx / 2,
+              right.position.z
+            );
+          }
+        } else {
+          left.geometry = new THREE.PlaneGeometry(0.2, height);
+          left.position.set(
+            left.position.x,
+            left.position.y + diffx / 2,
+            left.position.z
+          );
+          right.geometry = new THREE.PlaneGeometry(0.2, height);
+          right.position.set(
+            right.position.x,
+            right.position.y + diffx / 2,
+            right.position.z
+          );
+        }
+      }
+      if (bottomRight) {
+        widthBottom = -left.position.x + bottomRight.position.x;
+        heightBottom = bottomTop.position.y - bottom.position.y;
+      }
+      let Owidth = -left.position.x + right.position.x;
+      let Oheight = top.position.y - bottom.position.y;
+      if (bottomTop) Oheight = top.position.y - bottomTop.position.y;
+      let _height = parseInt(Oheight / 0.5);
+      _height *= 4;
+      let _width = parseInt(Owidth / 0.5);
+      _width *= 4;
+
+      if (!(_height === this.floorLength && _width === this.floorWidth)) {
+        //  return;
+        if (!this.isCustomLayout) {
+          this.CreateLayout(Oheight * 2, Owidth * 2 - 1, null, null, true);
+        } else {
+          this.CreateLayout(
+            Oheight * 2,
+            Owidth * 2 - 1,
+            heightBottom * 2 - 1,
+            widthBottom * 2 - 1,
+            true
+          );
+        }
+      }
+    }
+  }
+  getIncrementValue(mouse, isVertical) {
+    const ray = new THREE.Raycaster();
+    ray.setFromCamera(mouse, this.camera);
+    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+    const raycaster = new THREE.Raycaster();
+    const intersect2 = new THREE.Vector3();
+    raycaster.setFromCamera(mouse, this.camera);
+    raycaster.ray.intersectPlane(plane, intersect2);
+    const movedPosition = intersect2;
+    let inc = 0;
+    if (!this.prevIntersect) {
+      this.prevIntersect = movedPosition;
+      return 0;
+    }
+    let incValue = 0;
+    if (!isVertical) {
+      incValue = movedPosition.y - this.prevIntersect.y;
+      incValue += this.remainingval;
+      const divident =
+        parseInt(incValue / this.incrementValue) * this.incrementValue;
+      this.remainingval = incValue - divident;
+      incValue = divident;
+      this.prevIntersect = movedPosition;
+    } else {
+      incValue = this.prevIntersect.x - movedPosition.x;
+      if (
+        !(
+          (this.remainingval > 0 && incValue > 0) ||
+          (this.remainingval < 0 && incValue < 0)
+        )
+      ) {
+        this.remainingval = 0;
+      }
+      incValue += this.remainingval;
+      const divident =
+        parseInt(incValue / this.incrementValue) * this.incrementValue;
+      this.remainingval = incValue - divident;
+      incValue = divident;
+      this.prevIntersect = movedPosition;
+    }
+    return incValue;
+  }
+  MouseMove(event) {
+    event.preventDefault();
+    var mouse = new THREE.Vector2();
+    let rect = this.CanvasContainer.getBoundingClientRect(); //this.canvas.getBoundingClientRect();
+    this.mouse.x =
+      ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
+    this.mouse.y =
+      -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
+    this.raycaster.setFromCamera(this.mouse, this.camera);
+    if (this.IsMouseDown) {
+      this.DragEdge(this.hoveredEdge, this.mouse);
+    } else {
+      let intersections = this.raycaster.intersectObjects(
+        this.scene.children,
+        true
+      );
+      // this.objects = [];
+      intersections = intersections.filter((item) => item.object.isDragLine);
+      if (intersections.length > 0) {
+        console.log("hit", intersections);
+        this.hoveredEdge = intersections[0].object;
+      } else {
+        this.hoveredEdge = null;
+      }
+    }
+    this.prevMouse = this.mouse;
+  }
   onClick(event) {
     event.preventDefault();
-    if (!this.dc) return;
+    // if (!this.dc) return;
     if (true) {
-      const draggableObjects = this.dc.getObjects();
-      draggableObjects.length = 0;
+      // const draggableObjects = this.dc.getObjects();
+      // draggableObjects.length = 0;
 
       var mouse = new THREE.Vector2();
-      let rect = this.CanvasContainer.getBoundingClientRect();//this.canvas.getBoundingClientRect();
+      let rect = this.CanvasContainer.getBoundingClientRect(); //this.canvas.getBoundingClientRect();
       this.mouse.x =
         ((event.clientX - rect.left) / (rect.right - rect.left)) * 2 - 1;
       this.mouse.y =
         -((event.clientY - rect.top) / (rect.bottom - rect.top)) * 2 + 1;
 
-      // this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-      // this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
       this.raycaster.setFromCamera(this.mouse, this.camera);
 
-      const intersections = this.raycaster.intersectObjects(this.objects , true);
+      const intersections = this.raycaster.intersectObjects(this.objects, true);
       // this.objects = [];
       console.log("hit", intersections);
-      if (intersections.length > 0) {
-        // const object = intersections[0].object.parent;
-        console.log(intersections[0].object.parent);
-        const meshes = intersections.filter((h) => h.object.isDraggable);
-        // this.objects.push(...meshes);
-        console.log("hited",meshes);
-        // if (object.type === "Sprite")
-        //   return;
-        if (meshes.length>0) {
-          this.selectedLine = meshes[0].object;
-          this.dragStart = meshes[0].object.position.clone();
-        }else{
-          this.selectedLine = null;
-        }
-      } else {
+      // if (intersections.length > 0) {
+      //   // const object = intersections[0].object.parent;
+      //   console.log(intersections[0].object.parent);
+      //   const meshes = intersections.filter((h) => h.object.isDraggable);
+      //   // this.objects.push(...meshes);
+      //   console.log("hited", meshes);
+      //   // if (object.type === "Sprite")
+      //   //   return;
+      //   if (meshes.length > 0) {
+      //     this.selectedLine = meshes[0].object;
+      //     this.dragStart = meshes[0].object.position.clone();
+      //   } else {
+      //     this.selectedLine = null;
+      //   }
+      // } else {
+      // }
 
-      }
-
-      if (this.group.children.length === 0) {
-        this.group.transformGroup = false;
-        draggableObjects.push(...this.objects);
-      }
+      // if (this.group.children.length === 0) {
+      //   this.group.transformGroup = false;
+      //   draggableObjects.push(...this.objects);
+      // }
     }
 
     this.render();
@@ -1548,10 +2291,13 @@ export default class Engine {
   }
 
   dragEndEvent(event) {
-    if (!event.value && event.object.type !== "Sprite" && this.selectedLine !== null) {
+    if (
+      !event.value &&
+      event.object.type !== "Sprite" &&
+      this.selectedLine !== null
+    ) {
       event.object.material.color.set(0xffffff);
       if (!this.isCustomLayout) {
-
         const bbox = new THREE.Box3().setFromObject(this.widthGrp);
         const size = bbox.getSize(new THREE.Vector3());
         this.dragEnd = event.object.position.clone();
@@ -1561,10 +2307,9 @@ export default class Engine {
         const prevh = this.floorLength;
         let diffwidth = this.dragEnd.x - this.dragStart.x;
         let diffHeight = this.dragEnd.y - this.dragStart.y;
-        if (this.selectedLine.name.includes('right')) {
+        if (this.selectedLine.name.includes("right")) {
           offsetx = size.x;
-        } else if (this.selectedLine.name.includes('left')) {
-
+        } else if (this.selectedLine.name.includes("left")) {
           offsetx = size.x;
           diffwidth = this.dragStart.x - this.dragEnd.x;
         } else if (this.selectedLine.name.includes("top")) {
@@ -1595,11 +2340,11 @@ export default class Engine {
 
         let diffwidth = this.dragEnd.x - this.dragStart.x;
         let diffHeight = this.dragEnd.y - this.dragStart.y;
-        if (this.selectedLine.name.includes('rightU')) {
+        if (this.selectedLine.name.includes("rightU")) {
           offsetx = size.x;
-        } else if (this.selectedLine.name === 'rightL') {
+        } else if (this.selectedLine.name === "rightL") {
           offsetx = this.lowerWidth;
-        } else if (this.selectedLine.name.includes('left')) {
+        } else if (this.selectedLine.name.includes("left")) {
           offsetx = size.x;
           diffwidth = this.dragStart.x - this.dragEnd.x;
         } else if (this.selectedLine.name.includes("top")) {
@@ -1612,7 +2357,10 @@ export default class Engine {
         const length = Math.round(diffHeight + offsety);
         console.log(diffwidth, length);
 
-        if (this.selectedLine.name.includes("top") || this.selectedLine.name === "botMid") {
+        if (
+          this.selectedLine.name.includes("top") ||
+          this.selectedLine.name === "botMid"
+        ) {
           this.upperLength = length > 0 ? length : preUL;
         } else if (this.selectedLine.name === "bot") {
           this.lowerLength = length > 0 ? length : preLL;
@@ -1621,7 +2369,7 @@ export default class Engine {
           this.lowerWidth = this.lowerWidth + Math.round(diffwidth);
         } else if (this.selectedLine.name === "rightU") {
           this.upperWidth = width > 0 ? width : prevUW;
-        } else if (this.selectedLine.name === 'rightL') {
+        } else if (this.selectedLine.name === "rightL") {
           this.lowerWidth = width > 0 ? width : prevLW;
         }
         this.updateFloorMats(0, 0);
@@ -1647,7 +2395,6 @@ export default class Engine {
     //   this.updateFloorMats(this.floorLength, this.floorWidth + Math.abs(event.object.position.x));
     // else
     //   this.updateFloorMats(this.floorLength + Math.abs(event.object.position.y), this.floorWidth);
-
   }
 
   onDragEvent(event) {
@@ -1659,7 +2406,10 @@ export default class Engine {
       const deltaMouseY = event.object.position.y - this.initialMousePosition.y;
 
       // Update the object's position along the X-axis
-      if (event.object.name.includes('left') || event.object.name.includes("right")) {
+      if (
+        event.object.name.includes("left") ||
+        event.object.name.includes("right")
+      ) {
         event.object.position.x = Math.round(
           this.initialDragPosition.x + deltaMouseX
         );
@@ -1749,14 +2499,25 @@ export default class Engine {
   }
 
   updateFloorPattern(patternDetails) {
+    console.log(patternDetails);
     this.selectedPattern = patternDetails.pattern;
-    this.updateFloorMats(this.floorLength, this.floorWidth);
+    this.CreateLayout(
+      this.floorLength,
+      this.floorWidth,
+      this.floorbottomHeight,
+      this.floorbottomWidth,
+      true
+    );
   }
 
   async updatePatternImage(imgsrc) {
     const loader = new THREE.TextureLoader();
-    const bakedTexture = await loader.loadAsync("../assets/pattern1White.png");
-    const bakedTexture2 = await loader.loadAsync("../assets/pattern1Red.png");
+    const bakedTexture = await loader.loadAsync(
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pattern1White.png?v=1702842587"
+    );
+    const bakedTexture2 = await loader.loadAsync(
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pattern1Red.png?v=1702842588"
+    );
     const geometry2 = new THREE.PlaneGeometry(
       this.floorWidth,
       this.floorLength
@@ -1816,24 +2577,42 @@ export default class Engine {
     //   this.secondaryColor
     // );
 
-    this.currentTexture = new THREE.TextureLoader().load(
-      "/" + imgsrc,
-      (texture) => {
-        //   this.currentTexture.wrapS = this.currentTexture.wrapT = THREE.MirroredRepeatWrapping;
-        //   this.currentTexture.repeat.set(this.panel.scale.x, this.panel.scale.y);
+    this.currentTexture = new THREE.TextureLoader().load(imgsrc, (texture) => {
+      //   this.currentTexture.wrapS = this.currentTexture.wrapT = THREE.MirroredRepeatWrapping;
+      //   this.currentTexture.repeat.set(this.panel.scale.x, this.panel.scale.y);
 
-        this.panel1.material.map = texture;
-        this.panel1.material.needsUpdate = true;
-        this.panel2.material.map = texture;
-        this.panel2.material.needsUpdate = true;
-      }
-    );
+      this.panel1.material.map = texture;
+      this.panel1.material.needsUpdate = true;
+      this.panel2.material.map = texture;
+      this.panel2.material.needsUpdate = true;
+    });
   }
 
-  updateFloorColor(color) {
-    this.PrimaryColor = color;
-    this.panel1.material.color = new THREE.Color(color);
-    this.updateFloorMats(this.floorLength, this.floorWidth);
+  updateFloorColor(color, type, variant) {
+    console.log(color, type, variant);
+    this.selectedVariant = variant;
+    if (this.selectedPattern === "Checked" || this.selectedPattern === "Box") {
+      if (type === "Primary") {
+        this.PrimaryColor = color;
+        this.panel1.material.color = new THREE.Color(color);
+      } else {
+        this.secondaryColor = color;
+        this.panel2.material.color = new THREE.Color(color);
+      }
+    } else {
+      this.PrimaryColor = color;
+      this.panel1.material.color = new THREE.Color(color);
+      this.secondaryColor = color;
+      this.panel2.material.color = new THREE.Color(color);
+    }
+
+    this.CreateLayout(
+      this.floorLength,
+      this.floorWidth,
+      this.floorbottomHeight,
+      this.floorbottomWidth,
+      true
+    );
     // this.updateFloorMaterial("");
     // console.log(color);
     // // return;

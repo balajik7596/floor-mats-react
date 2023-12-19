@@ -50,13 +50,7 @@
       location.replace("https://" + window.location.hostname);
     }
     window.addEventListener("DOMContentLoaded", function () {
-      locker.renderReactComponent(
-        "root",
-        window.location.hostname.includes("localhost")
-          ? "http://localhost:3000/"
-          : "https://" + window.location.hostname + "/pub/Configrator/",
-        "https://" + window.location.hostname + "/configrator/index/index"
-      );
+      locker.renderReactComponent("root");
       setTimeout(() => {
         locker.reactinitDCScene();
         locker.reactComp().submitClick();
