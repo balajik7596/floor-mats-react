@@ -88,8 +88,8 @@ export default class Engine {
     this.terminalsData = [];
     this.floorWidth = 10;
     this.floorLength = 10;
-    this.incrementValue = 0.05;
-    this.isMeter = false;
+    this.incrementValue = 1;
+    this.isMeter = true;
     //custom layout
     //  ________
     //  |     __|
@@ -253,7 +253,7 @@ export default class Engine {
 
     this.light = new THREE.DirectionalLight(COLOR_WHITE);
     this.light.position.set(0, -40, 100);
-    this.light.intensity = 0.1;
+    this.light.intensity = 0.5;
     this.scene.add(this.camera);
     this.terminals = [];
     const geometry = new THREE.PlaneGeometry(1, 1);
@@ -905,7 +905,7 @@ export default class Engine {
 
   changeMeasureUnit(isMeter) {
     console.log(isMeter);
-    this.isMeter = isMeter;
+    this.isMeter = !isMeter;
     this.UpdateDimensions(
       this.floorLength,
       this.floorWidth,
@@ -926,7 +926,7 @@ export default class Engine {
       this.selectedTileDimension = this.standardSmoothTileDim;
       this.selectedTilePrice = 38.4;
       this.updateFloorMaterial(
-        "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc.png?v=1702842587"
+        "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premium.png?v=1703159876"
       );
     } else {
       this.selectedTileDimension = this.standardVTileDim;
@@ -1753,7 +1753,8 @@ export default class Engine {
       if (this.isCustomLayout) {
         squareFeet += this.floorbottomHeight * this.floorbottomWidth;
       }
-      let meterval = convertToMeter(squareFeet * 12) * 6.25;
+      console.log("total meters", squareFeet * 10);
+      let meterval = squareFeet;
       meterval = Math.round(meterval) * 0.01;
       price = Math.round(meterval * this.selectedVariant.price);
       publish("floorUpdated", {
@@ -1878,44 +1879,44 @@ export default class Engine {
         }
       }
     }
-    let heightL = this.converToDisplayUnit(height * 12);
+    let heightL = this.converToDisplayUnit(height * 10);
     let heightR = heightL;
-    let widthT = this.converToDisplayUnit(width * 12);
+    let widthT = this.converToDisplayUnit(width * 10);
     let widthB = widthT;
     let widthTop = 0;
     let heightRight = 0;
     if (this.isCustomLayout) {
-      heightL = this.converToDisplayUnit((height + bottomHeight) * 12);
-      widthB = this.converToDisplayUnit(bottomWidth * 12);
-      heightRight = this.converToDisplayUnit(bottomHeight * 12);
-      widthTop = this.converToDisplayUnit(Math.abs(width - bottomWidth) * 12);
+      heightL = this.converToDisplayUnit((height + bottomHeight) * 10);
+      widthB = this.converToDisplayUnit(bottomWidth * 10);
+      heightRight = this.converToDisplayUnit(bottomHeight * 10);
+      widthTop = this.converToDisplayUnit(Math.abs(width - bottomWidth) * 10);
       let textRightB = createText(heightRight, "black", 8);
-      textRightB.position.set(-0.2, 0, 0.3);
+      textRightB.position.set(0.6, 0, 0.3);
       textRightB.material.rotation = Math.PI / 2;
       bottomRight.add(textRightB);
 
       let textTopB = createText(widthTop, "black", 8);
-      textTopB.position.set(0, 0.2, 0.3);
+      textTopB.position.set(0, -0.6, 0.3);
       bottomTop.add(textTopB);
     }
     let textSprite = createText(heightR, "black", 8);
-    textSprite.position.set(-0.2, 0, 0.3);
+    textSprite.position.set(0.6, 0, 0.3);
     textSprite.material.rotation = Math.PI / 2;
     right.add(textSprite);
     let textLeft = createText(heightL, "black", 8);
     textLeft.material.rotation = Math.PI / 2;
-    textLeft.position.set(0.6, 0, 0.3);
+    textLeft.position.set(-0.2, 0, 0.3);
     left.add(textLeft);
 
     let textTop = createText(widthT, "black", 8);
-    textTop.position.set(0, -0.6, 0.3);
+    textTop.position.set(0, 0.2, 0.3);
     top.add(textTop);
     let textbottom = createText(widthB, "black", 8);
-    textbottom.position.set(0, 0.2, 0.3);
+    textbottom.position.set(0, -0.6, 0.3);
     bottom.add(textbottom);
   }
   converToDisplayUnit(val) {
-    if (this.isMeter) return convertCentiMeter(val);
+    if (this.isMeter) return convertCentiMeter(val / 2.54);
     else return convertFeetInch(val);
   }
   updateFloorMats(length, width) {
@@ -2180,6 +2181,7 @@ export default class Engine {
     let incValue = 0;
     if (!isVertical) {
       incValue = movedPosition.y - this.prevIntersect.y;
+
       incValue += this.remainingval;
       const divident =
         parseInt(incValue / this.incrementValue) * this.incrementValue;
@@ -2188,14 +2190,14 @@ export default class Engine {
       this.prevIntersect = movedPosition;
     } else {
       incValue = this.prevIntersect.x - movedPosition.x;
-      if (
-        !(
-          (this.remainingval > 0 && incValue > 0) ||
-          (this.remainingval < 0 && incValue < 0)
-        )
-      ) {
-        this.remainingval = 0;
-      }
+      // if (
+      //   !(
+      //     (this.remainingval > 0 && incValue > 0) ||
+      //     (this.remainingval < 0 && incValue < 0)
+      //   )
+      // ) {
+      //   this.remainingval = 0;
+      // }
       incValue += this.remainingval;
       const divident =
         parseInt(incValue / this.incrementValue) * this.incrementValue;
@@ -2228,6 +2230,16 @@ export default class Engine {
         this.hoveredEdge = intersections[0].object;
       } else {
         this.hoveredEdge = null;
+      }
+      if (this.hoveredEdge) {
+        if (
+          this.hoveredEdge.name.toLowerCase().includes("left") ||
+          this.hoveredEdge.name.toLowerCase().includes("right")
+        ) {
+          this.CanvasContainer.style.cursor = "ew-resize";
+        } else this.CanvasContainer.style.cursor = "ns-resize";
+      } else {
+        this.CanvasContainer.style.cursor = "default";
       }
     }
     this.prevMouse = this.mouse;
@@ -2501,6 +2513,12 @@ export default class Engine {
   updateFloorPattern(patternDetails) {
     console.log(patternDetails);
     this.selectedPattern = patternDetails.pattern;
+    this.PrimaryColor = "white";
+    this.panel1.material.color = new THREE.Color("white");
+    if (this.selectedPattern === "Checked" || this.selectedPattern === "Box") {
+      this.secondaryColor = "red";
+      this.panel2.material.color = new THREE.Color("red");
+    }
     this.CreateLayout(
       this.floorLength,
       this.floorWidth,
@@ -2548,8 +2566,14 @@ export default class Engine {
     this.panel = new THREE.Group();
     this.panel.add(this.panel1);
     this.panel.add(this.panel2);
-    this.updateFloorMats(this.floorLength, this.floorWidth);
-
+    // this.updateFloorMats(this.floorLength, this.floorWidth);
+    this.CreateLayout(
+      this.floorLength,
+      this.floorWidth,
+      this.floorbottomHeight,
+      this.floorbottomWidth,
+      true
+    );
     return;
     let texture = await this.CreateTexture(
       "../assets/pattern1White.png",
@@ -2585,6 +2609,13 @@ export default class Engine {
       this.panel1.material.needsUpdate = true;
       this.panel2.material.map = texture;
       this.panel2.material.needsUpdate = true;
+      this.CreateLayout(
+        this.floorLength,
+        this.floorWidth,
+        this.floorbottomHeight,
+        this.floorbottomWidth,
+        true
+      );
     });
   }
 

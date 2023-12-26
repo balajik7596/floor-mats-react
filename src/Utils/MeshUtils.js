@@ -101,7 +101,7 @@ const convertCentiMeter = function (inches) {
   if (isFeetInch(inches)) return inches;
   let units = new BaseUnits();
   units.setValue(Number(inches * 3200));
-  return units.toCmMmDisplay();
+  return units.toM() * 10 + " M";
 };
 const convertToMeter = function (inches) {
   if (isFeetInch(inches)) return inches;

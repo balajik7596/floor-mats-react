@@ -12,7 +12,7 @@ const imageList = [
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pvcfloormat.svg?v=1702842587",
     label: "Raised disc",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc.png?v=1702842587",
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc_5e5fbe5b-6b88-4d35-9333-a776f5daae6a.png?v=1703160296",
   },
 ];
 

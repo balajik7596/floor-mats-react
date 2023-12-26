@@ -218,7 +218,7 @@ class Viewer2 extends PureComponent {
       squareFeet +=
         this.engine.floorbottomHeight * this.engine.floorbottomWidth;
     }
-    let meterval = convertToMeter(squareFeet * 12);
+    let meterval = squareFeet;
     meterval = Math.round(meterval);
     console.log(meterval);
     if (document.getElementById("quantity")) {
@@ -270,10 +270,10 @@ class Viewer2 extends PureComponent {
         src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/choosepattern.svg?v=1702842585",
         label: "Raised disc mat",
       },
-      {
-        src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/home.svg?v=1702842585",
-        label: "Raised disc mat",
-      },
+      // {
+      //   src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/home.svg?v=1702842585",
+      //   label: "Raised disc mat",
+      // },
     ];
     this.toggleImageBoxes = () => {
       this.setState({ showImageBoxes: !this.state.showImageBoxes });
@@ -445,31 +445,14 @@ class Viewer2 extends PureComponent {
                     />
                   </div>
                 ))}
-                {this.state.selectedButtonIndex === 4 ? (
-                  <button
-                    className="bg-[#C11D37] h-16 px-2 text-white hover:bg-[#cf4b4b]"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      this.setState({
-                        selectedButtonIndex: this.state.selectedButtonIndex - 1,
-                      });
-                    }}
-                  >
-                    {`<< Back`}{" "}
-                  </button>
-                ) : (
-                  <button
-                    className="bg-[#C11D37] h-16 px-2 text-white hover:bg-[#cf4b4b]"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      this.setState({
-                        selectedButtonIndex: this.state.selectedButtonIndex + 1,
-                      });
-                    }}
-                  >
-                    {`Next >>`}{" "}
-                  </button>
-                )}
+                <button
+                  className="bg-[#C11D37] h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
+                  onClick={() => {
+                    this.checkoutItem();
+                  }}
+                >
+                  Check Out
+                </button>
               </div>
             </div>
             {this.state.selectedButtonIndex === 0 && (
@@ -559,8 +542,8 @@ class Viewer2 extends PureComponent {
           )} */}
             {this.state.selectedButtonIndex === 1 && (
               <ToggleButton
-                leftText="Feet"
-                rightText="Meter"
+                leftText="Meter"
+                rightText="Feet"
                 onToggle={(toggled) => this.engine.changeMeasureUnit(toggled)}
               />
             )}

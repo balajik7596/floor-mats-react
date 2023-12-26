@@ -64,7 +64,7 @@ const Footer = ({ title, isLast, checkout }) => {
         <p className="text-2xl font-bold">&pound; {price}</p>
         <p className="text-xs">Price Per Metre² = 6.25 tiles</p>
       </div>
-      {isLast && (
+      {/* {isLast && (
         <div className="text-right right-6 relative">
           <button
             className="bg-[#C11D37] h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
@@ -75,7 +75,7 @@ const Footer = ({ title, isLast, checkout }) => {
             Check Out
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };
