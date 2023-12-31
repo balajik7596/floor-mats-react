@@ -18,9 +18,9 @@ const imageList = [
 
 // Create the ImageListMenu component
 const ImageListMenu = ({ onImageClick }) => {
-  const handleClick = (imageName) => {
+  const handleClick = (imageName, type) => {
     if (onImageClick) {
-      onImageClick(imageName);
+      onImageClick(imageName, type);
     }
   };
 
@@ -33,7 +33,7 @@ const ImageListMenu = ({ onImageClick }) => {
               style={{ width: "80px", height: "80px" }}
               src={image.src}
               alt={image.label}
-              onClick={() => handleClick(image.texture.toString())}
+              onClick={() => handleClick(image.texture.toString(), image.label)}
             />
           </li>
         ))}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { subscribe } from "./EventMediator";
 
-const Footer = ({ title, isLast, checkout }) => {
+const Footer = ({ title, isLast, tileType }) => {
   const [price, setPrice] = useState(62400);
 
   useEffect(() => {
@@ -62,7 +62,11 @@ const Footer = ({ title, isLast, checkout }) => {
 
       <div className="text-right right-6 relative">
         <p className="text-2xl font-bold">&pound; {price}</p>
-        <p className="text-xs">Price Per Metre² = 6.25 tiles</p>
+        {tileType === "Vented mat" ? (
+          <p className="text-xs">Price Per Metre² = 6.25 tiles</p>
+        ) : (
+          <p className="text-xs">Price Per Metre² = 4 tiles</p>
+        )}
       </div>
       {/* {isLast && (
         <div className="text-right right-6 relative">

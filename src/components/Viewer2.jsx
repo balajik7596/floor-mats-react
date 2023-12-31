@@ -11,10 +11,13 @@ import ToggleButton from "./togglebutton";
 import CloseIcon from "@mui/icons-material/Close";
 import {
   FormControl,
+  FormHelperText,
   IconButton,
+  InputAdornment,
   InputLabel,
   Menu,
   MenuItem,
+  OutlinedInput,
   Select,
 } from "@mui/material";
 import BottomPanel from "./BottomPanel";
@@ -79,6 +82,9 @@ class Viewer2 extends PureComponent {
       patternColor: "Primary",
       loadergif: "",
       showEntryPage: true,
+      tileType: "Vented mat",
+      width: 10,
+      height: 10,
       garageData: props.data ? props.data : defaultData,
       backgroundPlaces: [
         "Office",
@@ -104,6 +110,7 @@ class Viewer2 extends PureComponent {
     this.handleColorClick = this.handleColorClick.bind(this);
     this.handleImageClick = this.handleImageClick.bind(this);
     this.handleButtonClick = this.handleButtonClick.bind(this);
+    this.UpdateLayout = this.UpdateLayout.bind(this);
   }
   componentDidMount() {
     // this.initCanvas();
@@ -147,9 +154,18 @@ class Viewer2 extends PureComponent {
       // this.engine.initEngine();
       this.engine.onUpdateChange = this.UpdateStyle;
       this.engine.loadingComplete = this.LoadingCompleted;
+      this.engine.onUpdateLayout = this.UpdateLayout;
       this.engine.PostForm = this.PostForm;
     }
     return this.engine;
+  }
+  UpdateLayout() {
+    if (this.engine) {
+      this.setState({
+        width: this.engine.floorWidth,
+        height: this.engine.floorLength,
+      });
+    }
   }
   PostForm(data) {
     SidebarRef.current?.postData(data);
@@ -188,7 +204,8 @@ class Viewer2 extends PureComponent {
   closeContext() {
     this.setState({ contextMenu: null });
   }
-  handleImageClick = (imgsrc) => {
+  handleImageClick = (imgsrc, type) => {
+    this.setState({ tileType: type });
     this.engine.updateFloorMaterial(imgsrc);
   };
   handlePatternImageClick = (pattern) => {
@@ -201,6 +218,7 @@ class Viewer2 extends PureComponent {
   handleButtonClick = (index) => {
     // if (this.state.showImageBoxes) return;
     this.setState({ selectedButtonIndex: index });
+    this.engine.DraggingEnable(index !== 2);
 
     console.log("Button clicked:", index);
   };
@@ -247,6 +265,9 @@ class Viewer2 extends PureComponent {
       currentBack,
       garageData,
       selectedButtonIndex,
+      tileType,
+      height,
+      width,
     } = this.state;
     const containerStyle = {
       position: "absolute",
@@ -335,7 +356,7 @@ class Viewer2 extends PureComponent {
                   alignItems: "center",
                 }}
               >
-                {this.state.selectedButtonIndex == 2 && (
+                {this.state.selectedButtonIndex == 1 && (
                   <div className="grid grid-cols-1">
                     <div
                       style={{
@@ -348,6 +369,20 @@ class Viewer2 extends PureComponent {
                       <div style={{ marginLeft: "50px" }}>
                         <ImageListMenu onImageClick={this.handleImageClick} />
                       </div>
+                    </div>
+                  </div>
+                )}
+
+                {this.state.selectedButtonIndex == 2 && (
+                  <div className="grid grid-cols-1">
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       <div
                         className="grid grid-cols-2"
                         style={{ marginLeft: "20px" }}
@@ -554,13 +589,72 @@ class Viewer2 extends PureComponent {
             <Footer
               title={footerTitle[this.state.selectedButtonIndex]}
               isLast={this.state.selectedButtonIndex === 3}
-              checkout={() => {
-                this.checkoutItem();
-              }}
+              tileType={tileType}
+              // checkout={() => {
+              //   this.checkoutItem();
+              // }}
             />
           </>
           {/* )} */}
+          {this.state.selectedButtonIndex == 1 && (
+            <div
+              className=""
+              style={{
+                zIndex: 100,
+                position: "absolute",
+                left: "50px",
+                top: "0",
+              }}
+            >
+              <div className="grid grid-cols-1">
+                <FormControl sx={{ m: 0, width: "15ch" }} variant="outlined">
+                  <FormHelperText id="outlined-weight-helper-text">
+                    Width
+                  </FormHelperText>
+                  <OutlinedInput
+                    value={width}
+                    onChange={(e) => this.setState({ width: e.target.value })}
+                    id="outlined-adornment-weight"
+                    endAdornment={
+                      <InputAdornment position="end">M</InputAdornment>
+                    }
+                    aria-describedby="outlined-weight-helper-text"
+                    inputProps={{
+                      "aria-label": "width",
+                    }}
+                  />
+                </FormControl>
+                <FormControl sx={{ m: 0, width: "15ch" }} variant="outlined">
+                  <FormHelperText id="outlined-weight-helper-text">
+                    Height
+                  </FormHelperText>
+                  <OutlinedInput
+                    id="outlined-adornment-weight"
+                    value={height}
+                    onChange={(e) => this.setState({ height: e.target.value })}
+                    endAdornment={
+                      <InputAdornment position="end">M</InputAdornment>
+                    }
+                    aria-describedby="outlined-weight-helper-text"
+                    inputProps={{
+                      "aria-label": "Height",
+                    }}
+                  />
+                </FormControl>
+                <button
+                  className="bg-green-700 text-white mt-2 py-2 rounded-lg shadow-lg"
+                  onClick={() => {
+                    this.engine.UpdateWidthHeight(width, height);
+                  }}
+                >
+                  {" "}
+                  Update
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+
         {showEntryPage && (
           <div className="fixed z-50 top-0 left-0">
             <EntryPage

@@ -90,6 +90,7 @@ export default class Engine {
     this.floorLength = 10;
     this.incrementValue = 1;
     this.isMeter = true;
+    this.Dragging = true;
     //custom layout
     //  ________
     //  |     __|
@@ -1672,11 +1673,18 @@ export default class Engine {
       offsetY += 0.5;
     }
   }
+  DraggingEnable(isEnable) {
+    this.Dragging = isEnable;
+  }
+  UpdateWidthHeight(width, height) {
+    this.CreateLayout(height, width, height * 0.75, width * 0.5);
+  }
   CreateLayout(height, width, bottomHeight, bottomWidth, isDraging) {
     console.log(height, width);
 
     this.floorLength = height;
     this.floorWidth = width;
+    if (this.onUpdateLayout) this.onUpdateLayout();
     if (bottomWidth) {
       this.floorbottomWidth = bottomWidth;
       this.floorbottomHeight = bottomHeight;
@@ -2163,6 +2171,7 @@ export default class Engine {
         }
       }
     }
+    if (this.onUpdateLayout) this.onUpdateLayout();
   }
   getIncrementValue(mouse, isVertical) {
     const ray = new THREE.Raycaster();
@@ -2208,6 +2217,7 @@ export default class Engine {
     return incValue;
   }
   MouseMove(event) {
+    if (!this.Dragging) return;
     event.preventDefault();
     var mouse = new THREE.Vector2();
     let rect = this.CanvasContainer.getBoundingClientRect(); //this.canvas.getBoundingClientRect();
