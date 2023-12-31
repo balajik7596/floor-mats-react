@@ -366,7 +366,7 @@ class Viewer2 extends PureComponent {
                         justifyContent: "center",
                       }}
                     >
-                      <div style={{ marginLeft: "50px" }}>
+                      <div style={{ marginLeft: "50px", marginTop: "70px" }}>
                         <ImageListMenu onImageClick={this.handleImageClick} />
                       </div>
                     </div>
