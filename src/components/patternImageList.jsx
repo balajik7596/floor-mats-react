@@ -45,7 +45,7 @@ const PatternImageListMenu = ({ onImageClick }) => {
         {imageList.map((image, index) => (
           <li
             key={index}
-            style={{ marginRight: "10px" }}
+            style={{ marginLeft: "10px" }}
             onMouseEnter={() => handleMouseEnter(index)}
             onMouseLeave={handleMouseLeave}
           >

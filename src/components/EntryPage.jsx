@@ -9,11 +9,11 @@ class EntryPage extends PureComponent {
   render() {
     return (
       <div className="w-screen h-full bg-white" style={{ height: "100vh" }}>
-        <div className="w-full h-12  pt-2">
+        {/* <div className="w-full h-12  pt-2">
           <button className="text-bold font-bold">
             <ExitToAppIcon sx={{ height: "30px", width: "30px" }} /> Sign In
           </button>
-        </div>
+        </div> */}
         <div className="grid grid-cols-2 relative" style={{ top: "15%" }}>
           <div className="relative left-[15%] top-[15%]">
             <img

@@ -294,7 +294,7 @@ class Viewer2 extends PureComponent {
     ];
     return (
       <>
-        <>
+        <div className="fixed w-full h-full z-50 top-0 left-0 bg-white">
           <div className="flex-col flex font-sans  bg-[#fffdfd] font-[Open_Sans] ">
             <div className="absolute z-50 right-4 top-6 ">
               <button
@@ -345,10 +345,13 @@ class Viewer2 extends PureComponent {
                         justifyContent: "center",
                       }}
                     >
-                      <div style={{ marginRight: "50px" }}>
+                      <div style={{ marginLeft: "50px" }}>
                         <ImageListMenu onImageClick={this.handleImageClick} />
                       </div>
-                      <div className="grid grid-cols-2">
+                      <div
+                        className="grid grid-cols-2"
+                        style={{ marginLeft: "20px" }}
+                      >
                         <div className="col-span-2">
                           <FormControl fullWidth>
                             <InputLabel id="demo-simple-select-label">
@@ -557,7 +560,7 @@ class Viewer2 extends PureComponent {
             />
           </>
           {/* )} */}
-        </>
+        </div>
         {showEntryPage && (
           <div className="fixed z-50 top-0 left-0">
             <EntryPage
