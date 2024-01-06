@@ -81,10 +81,12 @@ class Viewer2 extends PureComponent {
       loaded: false,
       patternColor: "Primary",
       loadergif: "",
-      showEntryPage: true,
+      showEntryPage: false,
       tileType: "Vented mat",
       width: 10,
       height: 10,
+      bottomwidth: 1,
+      bottomheight: 1,
       garageData: props.data ? props.data : defaultData,
       backgroundPlaces: [
         "Office",
@@ -265,9 +267,12 @@ class Viewer2 extends PureComponent {
       currentBack,
       garageData,
       selectedButtonIndex,
+      isCustomLayout,
       tileType,
       height,
       width,
+      bottomwidth,
+      bottomheight,
     } = this.state;
     const containerStyle = {
       position: "absolute",
@@ -607,44 +612,119 @@ class Viewer2 extends PureComponent {
               }}
             >
               <div className="grid grid-cols-1">
-                <FormControl sx={{ m: 0, width: "15ch" }} variant="outlined">
-                  <FormHelperText id="outlined-weight-helper-text">
-                    Width
-                  </FormHelperText>
-                  <OutlinedInput
-                    value={width}
-                    onChange={(e) => this.setState({ width: e.target.value })}
-                    id="outlined-adornment-weight"
-                    endAdornment={
-                      <InputAdornment position="end">M</InputAdornment>
-                    }
-                    aria-describedby="outlined-weight-helper-text"
-                    inputProps={{
-                      "aria-label": "width",
-                    }}
-                  />
-                </FormControl>
-                <FormControl sx={{ m: 0, width: "15ch" }} variant="outlined">
-                  <FormHelperText id="outlined-weight-helper-text">
-                    Height
-                  </FormHelperText>
-                  <OutlinedInput
-                    id="outlined-adornment-weight"
-                    value={height}
-                    onChange={(e) => this.setState({ height: e.target.value })}
-                    endAdornment={
-                      <InputAdornment position="end">M</InputAdornment>
-                    }
-                    aria-describedby="outlined-weight-helper-text"
-                    inputProps={{
-                      "aria-label": "Height",
-                    }}
-                  />
-                </FormControl>
+                <div
+                  className={`grid  gap-2 ${
+                    isCustomLayout ? "grid-cols-2" : "grid-cols-1"
+                  }`}
+                >
+                  <div className="grid grid-cols-1">
+                    <FormControl
+                      sx={{ m: 0, width: "12ch" }}
+                      variant="outlined"
+                    >
+                      <FormHelperText id="outlined-weight-helper-text">
+                        Width
+                      </FormHelperText>
+                      <OutlinedInput
+                        value={width}
+                        onChange={(e) =>
+                          this.setState({ width: e.target.value })
+                        }
+                        id="outlined-adornment-weight"
+                        endAdornment={
+                          <InputAdornment position="end">M</InputAdornment>
+                        }
+                        type="number"
+                        aria-describedby="outlined-weight-helper-text"
+                        inputProps={{
+                          "aria-label": "width",
+                        }}
+                      />
+                    </FormControl>
+                    <FormControl
+                      sx={{ m: 0, width: "12ch" }}
+                      variant="outlined"
+                    >
+                      <FormHelperText id="outlined-weight-helper-text">
+                        Height
+                      </FormHelperText>
+                      <OutlinedInput
+                        type="number"
+                        id="outlined-adornment-weight"
+                        value={height}
+                        onChange={(e) =>
+                          this.setState({ height: e.target.value })
+                        }
+                        endAdornment={
+                          <InputAdornment position="end">M</InputAdornment>
+                        }
+                        aria-describedby="outlined-weight-helper-text"
+                        inputProps={{
+                          "aria-label": "Height",
+                        }}
+                      />
+                    </FormControl>
+                  </div>
+                  {isCustomLayout && (
+                    <div className="grid grid-cols-1">
+                      <FormControl
+                        sx={{ m: 0, width: "15ch" }}
+                        variant="outlined"
+                      >
+                        <FormHelperText id="outlined-weight-helper-text">
+                          Bottom Width
+                        </FormHelperText>
+                        <OutlinedInput
+                          value={bottomwidth}
+                          onChange={(e) =>
+                            this.setState({ bottomwidth: e.target.value })
+                          }
+                          id="outlined-adornment-weight"
+                          endAdornment={
+                            <InputAdornment position="end">M</InputAdornment>
+                          }
+                          type="number"
+                          aria-describedby="outlined-weight-helper-text"
+                          inputProps={{
+                            "aria-label": "width",
+                          }}
+                        />
+                      </FormControl>
+                      <FormControl
+                        sx={{ m: 0, width: "15ch" }}
+                        variant="outlined"
+                      >
+                        <FormHelperText id="outlined-weight-helper-text">
+                          Bottom Height
+                        </FormHelperText>
+                        <OutlinedInput
+                          type="number"
+                          id="outlined-adornment-weight"
+                          value={bottomheight}
+                          onChange={(e) =>
+                            this.setState({ bottomheight: e.target.value })
+                          }
+                          endAdornment={
+                            <InputAdornment position="end">M</InputAdornment>
+                          }
+                          aria-describedby="outlined-weight-helper-text"
+                          inputProps={{
+                            "aria-label": "Height",
+                          }}
+                        />
+                      </FormControl>
+                    </div>
+                  )}
+                </div>
                 <button
                   className="bg-green-700 text-white mt-2 py-2 rounded-lg shadow-lg"
                   onClick={() => {
-                    this.engine.UpdateWidthHeight(width, height);
+                    this.engine.UpdateWidthHeight(
+                      Number.parseInt(width),
+                      Number.parseInt(height),
+                      Number.parseInt(bottomwidth),
+                      Number.parseInt(bottomheight)
+                    );
                   }}
                 >
                   {" "}

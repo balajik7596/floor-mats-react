@@ -86,11 +86,13 @@ export default class Engine {
     this.background2 = null;
     this.backgroundSelected = 3;
     this.terminalsData = [];
-    this.floorWidth = 10;
-    this.floorLength = 10;
+    this.floorWidth = 1;
+    this.floorLength = 1;
     this.incrementValue = 1;
     this.isMeter = true;
     this.Dragging = true;
+    this.lineWidth = 0.05;
+    this.textSize = 4;
     //custom layout
     //  ________
     //  |     __|
@@ -282,7 +284,7 @@ export default class Engine {
     // this.Hiddenplane.visible = true;
     this.render();
     if (this.isCustomLayout) {
-      this.CreateLayout(this.floorLength, this.floorWidth, 4, 6);
+      this.CreateLayout(2, 2, 1, 1);
     } else {
       this.CreateLayout(this.floorLength, this.floorWidth);
     }
@@ -468,7 +470,7 @@ export default class Engine {
     this.isCustomLayout = isCustomLayout;
 
     if (!this.scene) this.initEngine();
-    else this.CreateLayout(10, 10, 4, 6, false);
+    else this.CreateLayout(2, 2, 1, 1, false);
   }
 
   // createTextSprite(
@@ -1505,19 +1507,24 @@ export default class Engine {
   createRectLayout(Layout, width, height) {
     width = Math.round(width);
     height = Math.round(height);
-    const geometry = new THREE.PlaneGeometry(1, 1);
+    console.log("rect layout");
+    const geometry = new THREE.PlaneGeometry(0.5, 0.5);
     let mat2 = this.panel1.material.clone();
     if (this.selectedPattern === "Checked") mat2 = this.panel2.material.clone();
     let mat1 = this.panel1.material.clone();
     const plane = new THREE.Mesh(geometry, mat1);
+    // mat1.map.offset.set()
+    mat1.map.repeat.set(1, 1);
+    mat1.map.wrapS = mat1.map.wrapT = THREE.MirroredRepeatWrapping;
     let singleRow = new THREE.Group();
+    // singleRow.position.set(-0.25, 0.25, 0);
     let offsetX = 0;
-    for (let w = 0; w < width - 1; w += 2) {
+    for (let w = 0; w < width - 0.25; w += 0.5) {
       const element = plane.clone();
       if (w % 4 === 0) element.material = mat2;
       element.position.set(offsetX, 0, 0);
       singleRow.add(element);
-      offsetX += 1;
+      offsetX += 0.5;
     }
     if (offsetX * 2 < width) {
       const element = plane.clone();
@@ -1526,12 +1533,12 @@ export default class Engine {
       singleRow.add(element);
     }
     offsetX = 0;
-    for (let w = 0; w < width - 1; w += 2) {
+    for (let w = 0; w < width - 0.25; w += 0.5) {
       const element = plane.clone();
       if (w % 4 !== 0) element.material = mat2;
-      element.position.set(offsetX, 1, 0);
+      element.position.set(offsetX, 0.5, 0);
       singleRow.add(element);
-      offsetX += 1;
+      offsetX += 0.5;
     }
     console.log("offsetX", offsetX, width);
     if (offsetX * 2 < width) {
@@ -1540,26 +1547,26 @@ export default class Engine {
       element.position.set(offsetX, 1, 0);
       singleRow.add(element);
     }
-    let offsetY = 0;
-    for (let h = 0; h < height - 2; h += 4) {
+    let offsetY = 0.25;
+    for (let h = 0; h < height; h += 1) {
       const element = singleRow.clone();
-      element.position.set(0.5, offsetY, 0);
+      element.position.set(0.25, offsetY, 0);
       Layout.add(element);
-      offsetY += 2;
+      offsetY += 1;
     }
     if (offsetY * 2 < height) {
-      offsetX = 0;
+      offsetX = 0.25;
       for (let w = 0; w < width - 1; w += 2) {
         const element = plane.clone();
         if (w % 4 === 0) element.material = mat2;
-        element.position.set(offsetX + 0.5, offsetY, 0);
+        element.position.set(offsetX + 0.25, offsetY, 0);
         Layout.add(element);
         offsetX += 1;
       }
       if (offsetX * 2 < width) {
         const element = plane.clone();
         if ((width / 2) % 4 === 0) element.material = mat2;
-        element.position.set(offsetX + 0.5, offsetY, 0);
+        element.position.set(offsetX + 0.25, offsetY, 0);
         Layout.add(element);
       }
     }
@@ -1676,8 +1683,8 @@ export default class Engine {
   DraggingEnable(isEnable) {
     this.Dragging = isEnable;
   }
-  UpdateWidthHeight(width, height) {
-    this.CreateLayout(height, width, height * 0.75, width * 0.5);
+  UpdateWidthHeight(width, height, bottomWidth, bottomHeight) {
+    this.CreateLayout(height, width, bottomHeight, bottomWidth);
   }
   CreateLayout(height, width, bottomHeight, bottomWidth, isDraging) {
     console.log(height, width);
@@ -1691,46 +1698,41 @@ export default class Engine {
     }
 
     if (this.Layout) this.scene.remove(this.Layout);
+    if (this.LayoutBottom) this.scene.remove(this.LayoutBottom);
     this.Layout = new THREE.Group();
-    this.Layout.position.set(-width / 4 - 0.5, -height / 4, 0);
+    this.LayoutBottom = new THREE.Group();
+    this.Layout.position.set(-width / 2 + 0.25, -height / 2 - 0.25, 0);
     let { top, bottom, left, right, bottomRight, bottomTop } = this.getEdges();
     if (isDraging) {
-      this.Layout.position.set(
-        left.position.x - 2.5,
-        bottom.position.y - 2.0,
-        0
-      );
+      this.Layout.position.set(left.position.x, bottom.position.y, 0);
       if (bottomTop) {
-        this.Layout.position.set(
-          left.position.x - 2.5,
-          bottomTop.position.y - 2.0,
-          0
-        );
+        this.Layout.position.set(left.position.x, bottomTop.position.y, 0);
       }
       this.LayoutLeft = this.Layout.position.x;
       this.LayoutTop = this.Layout.position.y;
     } else {
-      if (this.LayoutLeft && this.LayoutTop) {
-        this.Layout.position.set(this.LayoutLeft, this.LayoutTop, 0);
-      }
+      // if (this.LayoutLeft && this.LayoutTop) {
+      //   this.Layout.position.set(this.LayoutLeft, this.LayoutTop, 0);
+      // }
     }
     this.scene.add(this.Layout);
+    this.scene.add(this.LayoutBottom);
     if (this.isCustomLayout) {
       this.createRectLayout(this.Layout, width, height);
       let bottomGrp = new THREE.Group();
-      if (!bottomTop)
+      if (!bottomTop || !isDraging)
         bottomGrp.position.set(
-          0,
-          -this.Layout.position.y - 2.5 - bottomHeight / 2,
+          -width / 2 + 0.25,
+          -height / 2 - bottomHeight - 0.25,
           0
         );
       else
         bottomGrp.position.set(
-          0,
-          -this.Layout.position.y - 3.0 - bottomHeight / 2,
+          left.position.x,
+          top.position.y - height - bottomHeight,
           0
         );
-      this.Layout.add(bottomGrp);
+      this.LayoutBottom.add(bottomGrp);
       this.createRectLayout(bottomGrp, bottomWidth, bottomHeight);
       if (this.selectedPattern === "Box")
         this.createSecondLayerCustom(
@@ -1773,26 +1775,30 @@ export default class Engine {
   createCustomEdgeLines(height, width, bottomHeight, bottomWidth) {
     if (this.Edges) this.scene.remove(this.Edges);
     this.Edges = new THREE.Group();
-    this.Edges.position.set(-width / 4, -height / 4, 0);
+    // this.Edges.position.set(-width / 4, -height / 4, 0);
     this.scene.add(this.Edges);
-    const geometry = new THREE.PlaneGeometry(0.2, height / 2);
+    const geometry = new THREE.PlaneGeometry(this.lineWidth, height);
     const material = new THREE.MeshBasicMaterial({
       color: 0xff0000,
       side: THREE.DoubleSide,
     });
 
     const right = new THREE.Mesh(geometry, material);
-    right.position.set(width / 2 - 0.5, height / 4 - 0.5, 0);
+    right.position.set(width / 2 + 0.25, -0.25, 0);
+    // right.position.set(width / 2 - 0.5, height / 4 - 0.5, 0);
     const geometryLeft = new THREE.PlaneGeometry(
-      0.2,
-      height / 2 + bottomHeight / 2
+      this.lineWidth,
+      height + bottomHeight
     );
     const left = new THREE.Mesh(geometryLeft, material);
-    left.position.set(-0.5, height / 4 - bottomHeight / 4 - 0.5, 0);
+    left.position.set(-width / 2 + 0.25, -0.25 - bottomHeight / 2, 0);
 
-    const geometryHorz = new THREE.PlaneGeometry(width / 2 + 0.2, 0.2);
+    const geometryHorz = new THREE.PlaneGeometry(
+      width + this.lineWidth,
+      this.lineWidth
+    );
     const top = new THREE.Mesh(geometryHorz, material);
-    top.position.set(width / 4 - 0.5, height / 2 - 0.5, 0);
+    top.position.set(0.25, height / 2 - 0.25, 0);
 
     // const bottom = top.clone();
     // bottom.position.set(width / 4 - 0.5, -0.5, 0);
@@ -1809,19 +1815,37 @@ export default class Engine {
     this.Edges.add(right);
     this.Edges.add(top);
     // this.Edges.add(bottom);
-    const geometryHorzb = new THREE.PlaneGeometry(bottomWidth / 2 + 0.2, 0.2);
+    const geometryHorzb = new THREE.PlaneGeometry(
+      bottomWidth + this.lineWidth,
+      this.lineWidth
+    );
     const bottom = new THREE.Mesh(geometryHorzb, material);
-    bottom.position.set(bottomWidth / 4 - 0.5, -bottomHeight / 2 - 0.5, 0);
+    bottom.position.set(
+      -width / 2 + bottomWidth / 2 + 0.25,
+      -height / 2 - bottomHeight - 0.25,
+      0
+    );
 
-    const geometryBr = new THREE.PlaneGeometry(0.2, bottomHeight / 2);
+    const geometryBr = new THREE.PlaneGeometry(this.lineWidth, bottomHeight);
     const bottomRight = new THREE.Mesh(geometryBr, material);
-    bottomRight.position.set(bottomWidth / 2 - 0.5, -bottomHeight / 4 - 0.5, 0);
+    bottomRight.position.set(
+      -width / 2 + bottomWidth + 0.25,
+      -height / 2 - bottomHeight / 2 - 0.25,
+      0
+    );
 
     let widthDiff = width - bottomWidth;
     console.log("diff", widthDiff);
-    const geometryHorzT = new THREE.PlaneGeometry(widthDiff / 2 + 0.2, 0.2);
+    const geometryHorzT = new THREE.PlaneGeometry(
+      widthDiff + this.lineWidth,
+      this.lineWidth
+    );
     const bottomTop = new THREE.Mesh(geometryHorzT, material);
-    bottomTop.position.set(width / 4 + widthDiff / 4, -0.5, 0);
+    bottomTop.position.set(
+      -width / 2 + bottomWidth + widthDiff / 2 + 0.25,
+      -height / 2 - 0.25,
+      0
+    );
 
     bottom.name = "bottom";
     bottom.isDragLine = true;
@@ -1836,29 +1860,35 @@ export default class Engine {
     this.Edges.add(bottomTop);
     this.UpdateDimensions(height, width, bottomHeight, bottomWidth);
   }
-  createEdgeLines(height, width) {
+  createEdgeLines(_height, _width) {
+    let width = _width * 1;
+    let height = _height * 1;
+    let offset = 0.05;
     if (this.Edges) this.scene.remove(this.Edges);
     this.Edges = new THREE.Group();
-    this.Edges.position.set(-width / 4, -height / 4, 0);
+    // this.Edges.position.set(width / 2, height / 2, 0);
     this.scene.add(this.Edges);
-    const geometry = new THREE.PlaneGeometry(0.2, height / 2);
+    const geometry = new THREE.PlaneGeometry(this.lineWidth, height);
     const material = new THREE.MeshBasicMaterial({
       color: 0xff0000,
       side: THREE.DoubleSide,
     });
 
     const right = new THREE.Mesh(geometry, material);
-    right.position.set(width / 2 - 0.5, height / 4 - 0.5, 0);
+    right.position.set(width / 2 + 0.25, -0.25, 0);
 
     const left = right.clone();
-    left.position.set(-0.5, height / 4 - 0.5, 0);
+    left.position.set(-width / 2 + 0.25, -0.25, 0);
 
-    const geometryHorz = new THREE.PlaneGeometry(width / 2 + 0.2, 0.2);
+    const geometryHorz = new THREE.PlaneGeometry(
+      width + this.lineWidth,
+      this.lineWidth
+    );
     const top = new THREE.Mesh(geometryHorz, material);
-    top.position.set(width / 4 - 0.5, height / 2 - 0.5, 0);
+    top.position.set(0.25, height / 2 - 0.25, 0);
 
     const bottom = top.clone();
-    bottom.position.set(width / 4 - 0.5, -0.5, 0);
+    bottom.position.set(0.25, -height / 2 - 0.25, 0);
 
     right.isDragLine = true;
     left.isDragLine = true;
@@ -1898,29 +1928,29 @@ export default class Engine {
       widthB = this.converToDisplayUnit(bottomWidth * 10);
       heightRight = this.converToDisplayUnit(bottomHeight * 10);
       widthTop = this.converToDisplayUnit(Math.abs(width - bottomWidth) * 10);
-      let textRightB = createText(heightRight, "black", 8);
-      textRightB.position.set(0.6, 0, 0.3);
-      textRightB.material.rotation = Math.PI / 2;
+      let textRightB = createText(heightRight, "black", this.textSize);
+      textRightB.position.set(0.3, -0.25, 0.3);
+      // textRightB.material.rotation = Math.PI / 2;
       bottomRight.add(textRightB);
 
-      let textTopB = createText(widthTop, "black", 8);
-      textTopB.position.set(0, -0.6, 0.3);
+      let textTopB = createText(widthTop, "black", this.textSize);
+      textTopB.position.set(0, -0.2, 0.3);
       bottomTop.add(textTopB);
     }
-    let textSprite = createText(heightR, "black", 8);
-    textSprite.position.set(0.6, 0, 0.3);
-    textSprite.material.rotation = Math.PI / 2;
+    let textSprite = createText(heightR, "black", this.textSize);
+    textSprite.position.set(0.3, -0.05, 0.25);
+    // textSprite.material.rotation = Math.PI / 2;
     right.add(textSprite);
-    let textLeft = createText(heightL, "black", 8);
-    textLeft.material.rotation = Math.PI / 2;
-    textLeft.position.set(-0.2, 0, 0.3);
+    let textLeft = createText(heightL, "black", this.textSize);
+    // textLeft.material.rotation = Math.PI / 2;
+    textLeft.position.set(-0.3, -0.05, 0.3);
     left.add(textLeft);
 
-    let textTop = createText(widthT, "black", 8);
-    textTop.position.set(0, 0.2, 0.3);
+    let textTop = createText(widthT, "black", this.textSize);
+    textTop.position.set(0, 0.1, 0.3);
     top.add(textTop);
-    let textbottom = createText(widthB, "black", 8);
-    textbottom.position.set(0, -0.6, 0.3);
+    let textbottom = createText(widthB, "black", this.textSize);
+    textbottom.position.set(0, -0.3, 0.3);
     bottom.add(textbottom);
   }
   converToDisplayUnit(val) {
@@ -2040,22 +2070,28 @@ export default class Engine {
         if (edge.name.includes("bottomright")) {
           console.log("bottom width", widthBottom);
           bottomTop.geometry = new THREE.PlaneGeometry(
-            width - widthBottom + 0.2,
-            0.2
+            width - widthBottom + this.lineWidth,
+            this.lineWidth
           );
           bottomTop.position.set(
             bottomTop.position.x - diffx / 2,
             bottomTop.position.y,
             bottomTop.position.z
           );
-          bottom.geometry = new THREE.PlaneGeometry(widthBottom + 0.2, 0.2);
+          bottom.geometry = new THREE.PlaneGeometry(
+            widthBottom + this.lineWidth,
+            this.lineWidth
+          );
           bottom.position.set(
             bottom.position.x - diffx / 2,
             bottom.position.y,
             bottom.position.z
           );
         } else {
-          top.geometry = new THREE.PlaneGeometry(width + 0.2, 0.2);
+          top.geometry = new THREE.PlaneGeometry(
+            width + this.lineWidth,
+            this.lineWidth
+          );
           top.position.set(
             top.position.x - diffx / 2,
             top.position.y,
@@ -2063,16 +2099,20 @@ export default class Engine {
           );
           if (bottomTop) {
             if (edge.name.includes("left")) {
-              bottom.geometry = new THREE.PlaneGeometry(widthBottom + 0.2, 0.2);
+              bottom.geometry = new THREE.PlaneGeometry(
+                widthBottom + this.lineWidth,
+                this.lineWidth
+              );
               bottom.position.set(
                 bottom.position.x - diffx / 2,
                 bottom.position.y,
                 bottom.position.z
               );
             } else {
+              let diffwidth = width - this.floorbottomWidth;
               bottomTop.geometry = new THREE.PlaneGeometry(
-                width - this.floorbottomWidth / 2 + 0.2,
-                0.2
+                diffwidth + this.lineWidth,
+                this.lineWidth
               );
               bottomTop.position.set(
                 bottomTop.position.x - diffx / 2,
@@ -2081,7 +2121,10 @@ export default class Engine {
               );
             }
           } else {
-            bottom.geometry = new THREE.PlaneGeometry(width + 0.2, 0.2);
+            bottom.geometry = new THREE.PlaneGeometry(
+              width + this.lineWidth,
+              this.lineWidth
+            );
             bottom.position.set(
               bottom.position.x - diffx / 2,
               bottom.position.y,
@@ -2103,26 +2146,48 @@ export default class Engine {
           heightBottom = bottomTop.position.y - bottom.position.y;
           if (edge.name === "bottomright") {
           } else if (edge.name === "bottom") {
-            left.geometry = new THREE.PlaneGeometry(0.2, height + heightBottom);
+            left.geometry = new THREE.PlaneGeometry(
+              this.lineWidth,
+              height + heightBottom
+            );
             left.position.set(
               left.position.x,
               left.position.y + diffx / 2,
               left.position.z
             );
-            bottomRight.geometry = new THREE.PlaneGeometry(0.2, heightBottom);
+            bottomRight.geometry = new THREE.PlaneGeometry(
+              this.lineWidth,
+              heightBottom
+            );
             bottomRight.position.set(
               bottomRight.position.x,
               bottomRight.position.y + diffx / 2,
               bottomRight.position.z
             );
           } else {
-            left.geometry = new THREE.PlaneGeometry(0.2, height + heightBottom);
-            left.position.set(
-              left.position.x,
-              left.position.y + diffx / 2,
-              left.position.z
-            );
-            right.geometry = new THREE.PlaneGeometry(0.2, height);
+            if (edge.name === "bottomtop") {
+              bottomRight.geometry = new THREE.PlaneGeometry(
+                this.lineWidth,
+                heightBottom
+              );
+              bottomRight.position.set(
+                bottomRight.position.x,
+                bottomRight.position.y + diffx / 2,
+                bottomRight.position.z
+              );
+            } else {
+              left.geometry = new THREE.PlaneGeometry(
+                this.lineWidth,
+                height + heightBottom
+              );
+              left.position.set(
+                left.position.x,
+                left.position.y + diffx / 2,
+                left.position.z
+              );
+            }
+
+            right.geometry = new THREE.PlaneGeometry(this.lineWidth, height);
             right.position.set(
               right.position.x,
               right.position.y + diffx / 2,
@@ -2130,13 +2195,13 @@ export default class Engine {
             );
           }
         } else {
-          left.geometry = new THREE.PlaneGeometry(0.2, height);
+          left.geometry = new THREE.PlaneGeometry(this.lineWidth, height);
           left.position.set(
             left.position.x,
             left.position.y + diffx / 2,
             left.position.z
           );
-          right.geometry = new THREE.PlaneGeometry(0.2, height);
+          right.geometry = new THREE.PlaneGeometry(this.lineWidth, height);
           right.position.set(
             right.position.x,
             right.position.y + diffx / 2,
@@ -2159,15 +2224,9 @@ export default class Engine {
       if (!(_height === this.floorLength && _width === this.floorWidth)) {
         //  return;
         if (!this.isCustomLayout) {
-          this.CreateLayout(Oheight * 2, Owidth * 2 - 1, null, null, true);
+          this.CreateLayout(Oheight, Owidth, null, null, true);
         } else {
-          this.CreateLayout(
-            Oheight * 2,
-            Owidth * 2 - 1,
-            heightBottom * 2 - 1,
-            widthBottom * 2 - 1,
-            true
-          );
+          this.CreateLayout(Oheight, Owidth, heightBottom, widthBottom, true);
         }
       }
     }
