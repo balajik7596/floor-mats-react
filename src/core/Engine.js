@@ -284,7 +284,7 @@ export default class Engine {
     // this.Hiddenplane.visible = true;
     this.render();
     if (this.isCustomLayout) {
-      this.CreateLayout(2, 2, 1, 1);
+      this.CreateLayout(3, 3, 2, 2);
     } else {
       this.CreateLayout(this.floorLength, this.floorWidth);
     }
@@ -1521,7 +1521,7 @@ export default class Engine {
     let offsetX = 0;
     for (let w = 0; w < width - 0.25; w += 0.5) {
       const element = plane.clone();
-      if (w % 4 === 0) element.material = mat2;
+      if ((w * 2) % 2 === 0) element.material = mat2;
       element.position.set(offsetX, 0, 0);
       singleRow.add(element);
       offsetX += 0.5;
@@ -1535,7 +1535,7 @@ export default class Engine {
     offsetX = 0;
     for (let w = 0; w < width - 0.25; w += 0.5) {
       const element = plane.clone();
-      if (w % 4 !== 0) element.material = mat2;
+      if ((w * 2) % 2 !== 0) element.material = mat2;
       element.position.set(offsetX, 0.5, 0);
       singleRow.add(element);
       offsetX += 0.5;
@@ -1576,7 +1576,7 @@ export default class Engine {
     height = Math.round(height);
     bottomWidth = Math.round(bottomWidth);
     bottomHeight = Math.round(bottomHeight);
-    const geometry = new THREE.PlaneGeometry(0.5, 0.5);
+    const geometry = new THREE.PlaneGeometry(0.25, 0.25);
 
     let mat1 = this.panel1.material.clone();
     const plane = new THREE.Mesh(geometry, mat1);
@@ -1586,98 +1586,110 @@ export default class Engine {
     let SecondLayer = new THREE.Group();
     SecondLayer.position.set(0, 0, 0.01);
     Layout.add(SecondLayer);
-    let offsetX = 0.75;
-    for (let w = 0; w < width - 2; w += 1) {
+    let offsetX = 0.25 + 0.25 / 2;
+    for (let w = 0; w < width - 0.5; w += 0.25) {
       const element = plane.clone();
 
-      element.position.set(offsetX, height / 2 - 1.25, 0);
+      element.position.set(offsetX, height - 0.25 - 0.25 / 2, 0);
       SecondLayer.add(element);
-      offsetX += 0.5;
+      offsetX += 0.25;
     }
-    offsetX = 0.75;
-    for (let w = 0; w < bottomWidth - 2; w += 1) {
+
+    offsetX = 0.25 + 0.25 / 2;
+    for (let w = 0; w < bottomWidth - 0.5; w += 0.25) {
       const element = plane.clone();
 
-      element.position.set(offsetX, -bottomHeight / 2 + 0.25, 0);
+      element.position.set(offsetX, -bottomHeight + 0.25 + 0.25 / 2, 0);
       SecondLayer.add(element);
-      offsetX += 0.5;
+      offsetX += 0.25;
     }
     let remainingWidth = width - bottomWidth;
-    offsetX + bottomWidth / 2;
-    for (let w = 0; w < remainingWidth; w += 1) {
+    offsetX = -0.25 / 2 + bottomWidth;
+    for (let w = 0; w < remainingWidth; w += 0.25) {
       const element = plane.clone();
 
-      element.position.set(offsetX, +0.25, 0);
+      element.position.set(offsetX, +0.25 + 0.25 / 2, 0);
       SecondLayer.add(element);
-      offsetX += 0.5;
+      offsetX += 0.25;
     }
     let offsetY = 0.75;
-    console.log(width);
-    for (let h = 0; h < height - 4; h += 1) {
+    for (let h = 0; h < height - 1; h += 0.25) {
       const element = plane.clone();
-      element.position.set(width / 2 - 0.75, offsetY, 0);
+      element.position.set(
+        width - 0.25 / 2 - 0.25,
+        -0.25 + 0.25 / 2 + offsetY,
+        0
+      );
       SecondLayer.add(element);
-      offsetY += 0.5;
+      offsetY += 0.25;
     }
-    offsetY = 0.75 - bottomHeight / 2;
+    offsetY = 0.75 - bottomHeight;
     console.log(width);
-    for (let h = 0; h < bottomHeight; h += 1) {
+    for (let h = 0; h < bottomHeight; h += 0.25) {
       const element = plane.clone();
-      element.position.set(bottomWidth / 2 - 0.75, offsetY, 0);
+      element.position.set(
+        bottomWidth - 0.25 / 2 - 0.25,
+        -0.25 + 0.25 / 2 + offsetY,
+        0
+      );
       SecondLayer.add(element);
-      offsetY += 0.5;
+      offsetY += 0.25;
     }
 
-    offsetY = 0.75 - bottomHeight / 2;
-    console.log(width);
-    for (let h = 0; h < height + bottomHeight - 4; h += 1) {
+    offsetY = 0.75 - bottomHeight;
+    //  offsetY = 0.75;
+    for (let h = 0; h < height + bottomHeight - 1; h += 0.25) {
       const element = plane.clone();
-      element.position.set(0.75, offsetY, 0);
+      element.position.set(0.25 + 0.25 / 2, -0.25 + 0.25 / 2 + offsetY, 0);
       SecondLayer.add(element);
-      offsetY += 0.5;
+      offsetY += 0.25;
     }
+    offsetY = 0.75;
   }
-  createSecondLayer(Layout, width, height) {
-    const geometry = new THREE.PlaneGeometry(0.5, 0.5);
+  createSecondLayer(SecondLayer, width, height) {
+    const geometry = new THREE.PlaneGeometry(0.25, 0.25);
 
     let mat1 = this.panel1.material.clone();
     const plane = new THREE.Mesh(geometry, mat1);
     plane.material = this.panel2.material.clone();
     plane.material.map = plane.material.map.clone();
     plane.material.map.repeat.set(0.5, 0.5);
-    let SecondLayer = new THREE.Group();
-    SecondLayer.position.set(0, 0, 0.01);
-    Layout.add(SecondLayer);
-    let offsetX = 0.75;
-    for (let w = 0; w < width - 2; w += 1) {
+    // let SecondLayer = new THREE.Group();
+    // // SecondLayer.position.set(-width / 2 + 0.5, 0, 0.01);
+    // Layout.add(SecondLayer);
+    let offsetX = 0.25 + 0.25 / 2;
+    for (let w = 0; w < width - 0.5; w += 0.25) {
       const element = plane.clone();
 
-      element.position.set(offsetX, 0.25, 0);
+      element.position.set(offsetX, height - 0.25 - 0.25 / 2, 0);
       SecondLayer.add(element);
-      offsetX += 0.5;
+      offsetX += 0.25;
     }
-    offsetX = 0.75;
-    for (let w = 0; w < width - 2; w += 1) {
+    offsetX = 0.25 + 0.25 / 2;
+    for (let w = 0; w < width - 0.5; w += 0.25) {
       const element = plane.clone();
 
-      element.position.set(offsetX, height / 2 - 1.25, 0);
+      element.position.set(offsetX, 0.25 + 0.25 / 2, 0);
       SecondLayer.add(element);
-      offsetX += 0.5;
+      offsetX += 0.25;
     }
     let offsetY = 0.75;
-    for (let h = 0; h < height - 4; h += 1) {
+    for (let h = 0; h < height - 1; h += 0.25) {
       const element = plane.clone();
-      element.position.set(0.75, offsetY, 0);
+      element.position.set(0.25 + 0.25 / 2, -0.25 + 0.25 / 2 + offsetY, 0);
       SecondLayer.add(element);
-      offsetY += 0.5;
+      offsetY += 0.25;
     }
     offsetY = 0.75;
-    console.log(width);
-    for (let h = 0; h < height - 4; h += 1) {
+    for (let h = 0; h < height - 1; h += 0.25) {
       const element = plane.clone();
-      element.position.set(width / 2 - 0.75, offsetY, 0);
+      element.position.set(
+        width - 0.25 / 2 - 0.25,
+        -0.25 + 0.25 / 2 + offsetY,
+        0
+      );
       SecondLayer.add(element);
-      offsetY += 0.5;
+      offsetY += 0.25;
     }
   }
   DraggingEnable(isEnable) {
@@ -1699,8 +1711,10 @@ export default class Engine {
 
     if (this.Layout) this.scene.remove(this.Layout);
     if (this.LayoutBottom) this.scene.remove(this.LayoutBottom);
+    if (this.LayoutSecond) this.scene.remove(this.LayoutSecond);
     this.Layout = new THREE.Group();
     this.LayoutBottom = new THREE.Group();
+    this.LayoutSecond = new THREE.Group();
     this.Layout.position.set(-width / 2 + 0.25, -height / 2 - 0.25, 0);
     let { top, bottom, left, right, bottomRight, bottomTop } = this.getEdges();
     if (isDraging) {
@@ -1715,8 +1729,14 @@ export default class Engine {
       //   this.Layout.position.set(this.LayoutLeft, this.LayoutTop, 0);
       // }
     }
+    this.LayoutSecond.position.set(
+      this.Layout.position.x,
+      this.Layout.position.y,
+      this.Layout.position.z
+    );
     this.scene.add(this.Layout);
     this.scene.add(this.LayoutBottom);
+    this.scene.add(this.LayoutSecond);
     if (this.isCustomLayout) {
       this.createRectLayout(this.Layout, width, height);
       let bottomGrp = new THREE.Group();
@@ -1745,7 +1765,7 @@ export default class Engine {
     } else {
       this.createRectLayout(this.Layout, width, height);
       if (this.selectedPattern === "Box")
-        this.createSecondLayer(this.Layout, width, height);
+        this.createSecondLayer(this.LayoutSecond, width, height);
     }
 
     // console.log(offsetY * 2, height);
@@ -2053,9 +2073,32 @@ export default class Engine {
     let isXaxis = edge.name.includes("left") || edge.name.includes("right");
     let diffx = this.getIncrementValue(mouse, isXaxis);
     if (Math.abs(diffx) > 0) {
+      console.log(diffx, "dragged");
       let widthBottom = this.floorbottomWidth / 2;
       let heightBottom = this.floorbottomHeight / 2;
       console.log(diffx);
+      // if (isXaxis) {
+      if (this.isCustomLayout) {
+        if (edge.name.includes("bottomright")) {
+          if (this.floorbottomWidth - diffx <= 0) return;
+        } else if (edge.name.includes("left") || edge.name.includes("right")) {
+          if (this.floorWidth - diffx <= 0) return;
+        } else if (edge.name.includes("bottomtop")) {
+          if (this.floorLength - diffx <= 0) return;
+        } else if (edge.name.includes("top")) {
+          if (this.floorLength + diffx <= 0) return;
+        } else if (edge.name.includes("bottom")) {
+          if (this.floorbottomHeight - diffx <= 0) return;
+        }
+      } else {
+        if (edge.name.includes("left") || edge.name.includes("right")) {
+          if (this.floorWidth - diffx <= 0) return;
+        } else if (edge.name.includes("top") || edge.name.includes("bottom")) {
+          if (this.floorLength + diffx <= 0) return;
+        }
+      }
+
+      // }
       let { top, bottom, left, right, bottomRight, bottomTop } =
         this.getEdges();
       if (edge.name.includes("left") || edge.name.includes("right")) {

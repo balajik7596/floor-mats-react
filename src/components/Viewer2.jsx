@@ -718,7 +718,8 @@ class Viewer2 extends PureComponent {
                 </div>
                 <button
                   className="bg-green-700 text-white mt-2 py-2 rounded-lg shadow-lg"
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
                     this.engine.UpdateWidthHeight(
                       Number.parseInt(width),
                       Number.parseInt(height),
