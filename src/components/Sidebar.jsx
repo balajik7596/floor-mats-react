@@ -256,8 +256,8 @@ class Sidebar extends PureComponent {
 
                 {/* <ImageListMenu onImageClick={this.handleImageClick} /> */}
                 <div>
-                  <div className="grid grid-cols-1 gap-2">
-                    <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-2">
+                  <div className="grid grid-cols-1 gap-1">
+                    <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
                       Layout Size
                     </h2>
                     <div className="flex flex-row items-center content-center gap-x-2">
@@ -308,8 +308,8 @@ class Sidebar extends PureComponent {
                     </div>
                   </div>
                   {isCustomLayout && (
-                    <div className="grid grid-cols-1 gap-2">
-                      <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-2">
+                    <div className="grid grid-cols-1 gap-1">
+                      <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
                         Bottom Layout Size
                       </h2>
                       <div className="flex flex-row items-center content-center gap-x-2">
@@ -362,7 +362,7 @@ class Sidebar extends PureComponent {
                   )}
                   <div className="pr-4 pl-8">
                     <button
-                      className="bg-green-600 hover:bg-green-500 rounded-lg shadow-green-800 w-full text-white mt-2 py-1 shadow-lg"
+                      className="bg-green-600 hover:bg-green-500 rounded-lg shadow-green-800 w-full text-white mt-1 py-1 shadow-lg"
                       onClick={(e) => {
                         e.preventDefault();
                         this.props
@@ -380,7 +380,7 @@ class Sidebar extends PureComponent {
                     </button>
                   </div>
                   <div className="">
-                    <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white my-2">
+                    <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white my-1">
                       Color
                     </h2>
                     <div className="flex flex-row items-center content-center gap-x-2">
@@ -429,7 +429,7 @@ class Sidebar extends PureComponent {
                       </div>
                     </div>
                     {currentPattern !== "No Pattern" && (
-                      <div className="flex flex-row items-center content-center gap-x-2 py-2">
+                      <div className="flex flex-row items-center content-center gap-x-2 py-1">
                         <p className="w-1/2 text-right items-center content-center">
                           Secondary
                         </p>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 import { subscribe } from "./EventMediator";
 
-const Footer = ({ title, isLast, tileType }) => {
+const Footer = ({ title, isLast, tileType, checkoutItem }) => {
   const [price, setPrice] = useState(62400);
   const [quantity, setQuantity] = useState(1);
   useEffect(() => {
@@ -79,7 +79,7 @@ const Footer = ({ title, isLast, tileType }) => {
           className="bg-[#C11D37] w-1/2  right-0 h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
           onClick={(e) => {
             e.preventDefault();
-            this.props.checkoutItem();
+            checkoutItem();
           }}
         >
           Check Out
