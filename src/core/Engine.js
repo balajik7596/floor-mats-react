@@ -52,7 +52,8 @@ export const isNumber = function (n) {
 };
 const clock = new THREE.Clock();
 export default class Engine {
-  constructor(canvasID, filePath) {
+  constructor(canvasID, filePath, id) {
+    this.productId = id;
     this.renderer = null;
     this.renderer2 = null;
     this.camera = null;
@@ -88,7 +89,7 @@ export default class Engine {
     this.terminalsData = [];
     this.floorWidth = 1;
     this.floorLength = 1;
-    this.incrementValue = 1;
+    this.incrementValue = 0.1;
     this.isMeter = true;
     this.Dragging = true;
     this.lineWidth = 0.05;
@@ -232,7 +233,7 @@ export default class Engine {
     this.camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 1000);
     // this.camera = new THREE.OrthographicCamera(width / -2, width / 2, height / 2, height / -2, 1, 1000);
     // this.camera.lookAt(new THREE.Vector3(0, 10, -20));
-    this.camera.position.set(0, 0, 20);
+    this.camera.position.set(0, 0, 10);
 
     this.scene = new THREE.Scene();
     this.scene2 = new THREE.Scene();
@@ -470,7 +471,7 @@ export default class Engine {
     this.isCustomLayout = isCustomLayout;
 
     if (!this.scene) this.initEngine();
-    else this.CreateLayout(2, 2, 1, 1, false);
+    else this.CreateLayout(3, 3, 2, 2, false);
   }
 
   // createTextSprite(
@@ -1505,8 +1506,8 @@ export default class Engine {
     }
   }
   createRectLayout(Layout, width, height) {
-    width = Math.round(width);
-    height = Math.round(height);
+    // width = Math.round(width);
+    // height = Math.round(height);
     console.log("rect layout");
     const geometry = new THREE.PlaneGeometry(0.5, 0.5);
     let mat2 = this.panel1.material.clone();
@@ -1519,56 +1520,101 @@ export default class Engine {
     let singleRow = new THREE.Group();
     // singleRow.position.set(-0.25, 0.25, 0);
     let offsetX = 0;
-    for (let w = 0; w < width - 0.25; w += 0.5) {
+    let paternswap = false;
+    for (let w = 0; w < width - 0.5; w += 0.5) {
       const element = plane.clone();
-      if ((w * 2) % 2 === 0) element.material = mat2;
+      if (paternswap) element.material = mat2;
+      paternswap = !paternswap;
       element.position.set(offsetX, 0, 0);
       singleRow.add(element);
       offsetX += 0.5;
     }
-    if (offsetX * 2 < width) {
-      const element = plane.clone();
-      if ((width / 2) % 4 === 0) element.material = mat2;
-      element.position.set(offsetX, 0, 0);
+    if (offsetX < width) {
+      let remwidth = width - offsetX;
+      let geometry2 = new THREE.PlaneGeometry(remwidth, 0.5);
+      const element = new THREE.Mesh(geometry2, mat1);
+      if (paternswap) element.material = mat2;
+      paternswap = !paternswap;
+      element.position.set(offsetX - 0.25 + remwidth / 2, 0, 0);
       singleRow.add(element);
     }
     offsetX = 0;
-    for (let w = 0; w < width - 0.25; w += 0.5) {
+    paternswap = true;
+    for (let w = 0; w < width - 0.5; w += 0.5) {
       const element = plane.clone();
-      if ((w * 2) % 2 !== 0) element.material = mat2;
+      if (paternswap) element.material = mat2;
+      paternswap = !paternswap;
       element.position.set(offsetX, 0.5, 0);
       singleRow.add(element);
       offsetX += 0.5;
     }
     console.log("offsetX", offsetX, width);
-    if (offsetX * 2 < width) {
-      const element = plane.clone();
-      if ((width / 2) % 4 !== 0) element.material = mat2;
-      element.position.set(offsetX, 1, 0);
+    if (offsetX < width) {
+      let remwidth = width - offsetX;
+      let geometry2 = new THREE.PlaneGeometry(remwidth, 0.5);
+      const element = new THREE.Mesh(geometry2, mat1);
+      if (paternswap) element.material = mat2;
+      paternswap = !paternswap;
+      element.position.set(offsetX - 0.25 + remwidth / 2, 0.5, 0);
       singleRow.add(element);
     }
     let offsetY = 0.25;
-    for (let h = 0; h < height; h += 1) {
+    for (let h = 0; h < height - 0.99; h += 1) {
       const element = singleRow.clone();
       element.position.set(0.25, offsetY, 0);
       Layout.add(element);
       offsetY += 1;
     }
-    if (offsetY * 2 < height) {
-      offsetX = 0.25;
-      for (let w = 0; w < width - 1; w += 2) {
-        const element = plane.clone();
-        if (w % 4 === 0) element.material = mat2;
-        element.position.set(offsetX + 0.25, offsetY, 0);
-        Layout.add(element);
-        offsetX += 1;
+    if (height - Math.abs(offsetY - 1.25) > 0 && offsetY - 0.25 < height) {
+      let remheight = height - (offsetY - 0.25);
+      paternswap = false;
+      for (let h = 0; h < remheight; h += 0.5) {
+        let updateHeight = 0;
+        if (h !== 0) paternswap = true;
+        if (remheight > 0.5) {
+          if (h === 0) updateHeight = 0.5;
+          else updateHeight = remheight - 0.5;
+        } else updateHeight = remheight;
+        let geometry2 = new THREE.PlaneGeometry(0.5, updateHeight);
+        offsetX = 0;
+
+        for (let w = 0; w < width - 0.5; w += 0.5) {
+          const element = new THREE.Mesh(geometry2, mat1);
+          // if (h === 0)
+          // if (w % 1 === 0 && w !== 0) element.material = mat2;
+          // else
+          if (paternswap) element.material = mat2;
+          paternswap = !paternswap;
+          element.position.set(
+            offsetX + 0.25,
+            offsetY - 0.25 + updateHeight / 2,
+            0
+          );
+          Layout.add(element);
+          offsetX += 0.5;
+        }
+        if (offsetX < width) {
+          let remwidth = width - offsetX;
+          let geometry2 = new THREE.PlaneGeometry(remwidth, updateHeight);
+          const element = new THREE.Mesh(geometry2, mat1);
+          if (paternswap) element.material = mat2;
+          paternswap = !paternswap;
+          element.position.set(
+            offsetX + remwidth / 2,
+            offsetY - 0.25 + updateHeight / 2,
+            0
+          );
+          Layout.add(element);
+        }
+        offsetY += 0.5;
       }
-      if (offsetX * 2 < width) {
-        const element = plane.clone();
-        if ((width / 2) % 4 === 0) element.material = mat2;
-        element.position.set(offsetX + 0.25, offsetY, 0);
-        Layout.add(element);
-      }
+
+      // if (offsetX < width) {
+      //   const element = plane.clone();
+      //   if ((width / 2) % 4 === 0) element.material = mat2;
+      //   element.position.set(offsetX + 0.25, offsetY, 0);
+      //   Layout.add(element);
+      // }
     }
   }
   createSecondLayerCustom(Layout, width, height, bottomWidth, bottomHeight) {
@@ -1700,7 +1746,10 @@ export default class Engine {
   }
   CreateLayout(height, width, bottomHeight, bottomWidth, isDraging) {
     console.log(height, width);
-
+    height = Number(height.toFixed(2));
+    width = Number(width.toFixed(2));
+    if (bottomHeight) bottomHeight = Number(bottomHeight.toFixed(2));
+    if (bottomWidth) bottomWidth = Number(bottomWidth.toFixed(2));
     this.floorLength = height;
     this.floorWidth = width;
     if (this.onUpdateLayout) this.onUpdateLayout();
@@ -1785,10 +1834,11 @@ export default class Engine {
       }
       console.log("total meters", squareFeet * 10);
       let meterval = squareFeet;
-      meterval = Math.round(meterval) * 0.01;
-      price = Math.round(meterval * this.selectedVariant.price);
+      meterval = Math.ceil(meterval);
+      price = meterval * this.selectedVariant.price * 0.01;
       publish("floorUpdated", {
         price: price,
+        quantity: meterval,
       });
     }
   }
@@ -1937,9 +1987,9 @@ export default class Engine {
         }
       }
     }
-    let heightL = this.converToDisplayUnit(height * 10);
+    let heightL = this.converToDisplayUnit(height.toFixed(2) * 10);
     let heightR = heightL;
-    let widthT = this.converToDisplayUnit(width * 10);
+    let widthT = this.converToDisplayUnit(width.toFixed(2) * 10);
     let widthB = widthT;
     let widthTop = 0;
     let heightRight = 0;
@@ -1974,7 +2024,7 @@ export default class Engine {
     bottom.add(textbottom);
   }
   converToDisplayUnit(val) {
-    if (this.isMeter) return convertCentiMeter(val / 2.54);
+    if (this.isMeter) return Number((val * 0.1).toFixed(2)) + "m";
     else return convertFeetInch(val);
   }
   updateFloorMats(length, width) {
@@ -2093,7 +2143,9 @@ export default class Engine {
       } else {
         if (edge.name.includes("left") || edge.name.includes("right")) {
           if (this.floorWidth - diffx <= 0) return;
-        } else if (edge.name.includes("top") || edge.name.includes("bottom")) {
+        } else if (edge.name.includes("bottom")) {
+          if (this.floorLength - diffx <= 0) return;
+        } else if (edge.name.includes("top")) {
           if (this.floorLength + diffx <= 0) return;
         }
       }
@@ -2704,7 +2756,7 @@ export default class Engine {
     // });
   }
 
-  async updateFloorMaterial(imgsrc) {
+  async updateFloorMaterial(imgsrc, id) {
     // let texture = await this.CreateTexture(
     //   "../assets/pattern1White.png",
     //   "../assets/pattern1Red.png",
@@ -2712,7 +2764,7 @@ export default class Engine {
     //   this.PrimaryColor,
     //   this.secondaryColor
     // );
-
+    this.productId = id;
     this.currentTexture = new THREE.TextureLoader().load(imgsrc, (texture) => {
       //   this.currentTexture.wrapS = this.currentTexture.wrapT = THREE.MirroredRepeatWrapping;
       //   this.currentTexture.repeat.set(this.panel.scale.x, this.panel.scale.y);

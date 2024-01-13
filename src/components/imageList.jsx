@@ -26,11 +26,12 @@ const ImageListMenu = ({ onImageClick }) => {
 
   return (
     <div className="image-list-menu gap-2">
-      <ul className="grid gap-4">
+      <ul className="flex flex-row gap-2 items-center justify-center ">
         {imageList.map((image, index) => (
           <li key={index} className="">
             <img
-              style={{ width: "80px", height: "80px" }}
+              className="hover:cursor-pointer  hover:scale-110 hover:border-sky-400 hover:border-2"
+              // style={{ height: "80px" }}
               src={image.src}
               alt={image.label}
               onClick={() => handleClick(image.texture.toString(), image.label)}

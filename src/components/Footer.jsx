@@ -4,10 +4,11 @@ import { subscribe } from "./EventMediator";
 
 const Footer = ({ title, isLast, tileType }) => {
   const [price, setPrice] = useState(62400);
-
+  const [quantity, setQuantity] = useState(1);
   useEffect(() => {
     const handleFloorUpdate = (payload) => {
       setPrice(payload.price);
+      setQuantity(payload.quantity);
     };
 
     const subscription = subscribe("floorUpdated", handleFloorUpdate);
@@ -57,17 +58,34 @@ const Footer = ({ title, isLast, tileType }) => {
           style={{ height: "50px" }}
         />
       </div>
+      <div className="flex flex-row items-center justify-center gap-6">
+        <p className="text-center font-semibold">
+          {" "}
+          <p className=" right-8 relative">Quantity: {quantity}</p>
+        </p>
 
-      {!isLast && <p className="text-center font-semibold">{title}</p>}
-
-      <div className="text-right right-6 relative">
-        <p className="text-2xl font-bold">&pound; {price}</p>
-        {tileType === "Vented mat" ? (
-          <p className="text-xs">Price Per Metre² = 6.25 tiles</p>
-        ) : (
-          <p className="text-xs">Price Per Metre² = 4 tiles</p>
-        )}
+        <div className="text-left right-6 relative">
+          <p className="text-2xl font-bold">&pound; {price}</p>
+          {tileType === "Vented mat" ? (
+            <p className="text-xs">Price Per Metre² = 6.25 tiles</p>
+          ) : (
+            <p className="text-xs">Price Per Metre² = 4 tiles</p>
+          )}
+        </div>
       </div>
+
+      <div className="w-full flex flex-row-reverse">
+        <button
+          className="bg-[#C11D37] w-1/2  right-0 h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
+          onClick={(e) => {
+            e.preventDefault();
+            this.props.checkoutItem();
+          }}
+        >
+          Check Out
+        </button>
+      </div>
+
       {/* {isLast && (
         <div className="text-right right-6 relative">
           <button
