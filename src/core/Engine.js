@@ -1835,7 +1835,7 @@ export default class Engine {
       console.log("total meters", squareFeet * 10);
       let meterval = squareFeet;
       meterval = Math.ceil(meterval);
-      price = meterval * this.selectedVariant.price * 0.01;
+      price = Number(meterval * this.selectedVariant.price * 0.01).toFixed(2);
       publish("floorUpdated", {
         price: price,
         quantity: meterval,

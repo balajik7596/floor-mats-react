@@ -344,6 +344,7 @@ class Viewer2 extends PureComponent {
                   e.preventDefault();
                   console.log("close");
                   document.getElementById("root2").style.visibility = "hidden";
+                  document.body.style.overflow = "auto";
                   // document
                   //   .getElementById("root2")
                   //   .parentNode.removeChild(document.getElementById("root2"));
