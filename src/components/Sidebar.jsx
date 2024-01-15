@@ -102,6 +102,7 @@ class Sidebar extends PureComponent {
     this.setState({ isCustomLayout: val });
     if (!engine) this.props.initCanvas();
     engine.InitLayout(val, this.props.garageData);
+    this.initTileType();
   }
   UpdatePattern(val) {
     this.setState({ currentPattern: val });
@@ -123,6 +124,9 @@ class Sidebar extends PureComponent {
   updateTileType(imgsrc, type) {
     this.setState({ currentTile: type });
     this.props.handleImageClick(imgsrc, type);
+  }
+  initTileType() {
+    this.updateTileType(tileTypes[0].texture.toString(), tileTypes[0].label);
   }
   updateVariant(primary, secondary) {
     console.log(primary, secondary);

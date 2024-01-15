@@ -1565,7 +1565,10 @@ export default class Engine {
       Layout.add(element);
       offsetY += 1;
     }
-    if (height - Math.abs(offsetY - 1.25) > 0 && offsetY - 0.25 < height) {
+    if (
+      (height - Math.abs(offsetY - 1.25) > 0 && offsetY - 0.25 < height) ||
+      height < 0.99
+    ) {
       let remheight = height - (offsetY - 0.25);
       paternswap = false;
       for (let h = 0; h < remheight; h += 0.5) {
