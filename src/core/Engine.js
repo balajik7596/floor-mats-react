@@ -2002,33 +2002,36 @@ export default class Engine {
       heightRight = this.converToDisplayUnit(bottomHeight * 10);
       widthTop = this.converToDisplayUnit(Math.abs(width - bottomWidth) * 10);
       let textRightB = createText(heightRight, "black", this.textSize);
-      textRightB.position.set(0.3, -0.25, 0.3);
+      textRightB.position.set(0.6, -0.25, 0.3);
       // textRightB.material.rotation = Math.PI / 2;
       bottomRight.add(textRightB);
 
       let textTopB = createText(widthTop, "black", this.textSize);
-      textTopB.position.set(0, -0.2, 0.3);
+      textTopB.position.set(0, -0.5, 0.3);
       bottomTop.add(textTopB);
     }
     let textSprite = createText(heightR, "black", this.textSize);
-    textSprite.position.set(0.3, -0.05, 0.25);
+    textSprite.position.set(0.6, -0.05, 0.25);
     // textSprite.material.rotation = Math.PI / 2;
     right.add(textSprite);
     let textLeft = createText(heightL, "black", this.textSize);
     // textLeft.material.rotation = Math.PI / 2;
-    textLeft.position.set(-0.3, -0.05, 0.3);
+    textLeft.position.set(-0.6, -0.05, 0.3);
     left.add(textLeft);
 
     let textTop = createText(widthT, "black", this.textSize);
-    textTop.position.set(0, 0.1, 0.3);
+    textTop.position.set(0, 0.3, 0.3);
     top.add(textTop);
     let textbottom = createText(widthB, "black", this.textSize);
-    textbottom.position.set(0, -0.3, 0.3);
+    textbottom.position.set(0, -0.5, 0.3);
     bottom.add(textbottom);
   }
   converToDisplayUnit(val) {
     if (this.isMeter) return Number((val * 0.1).toFixed(2)) + "m";
-    else return convertFeetInch(val);
+    else
+      return (
+        Number(Number((val * 0.1).toFixed(2)) * 3.28084).toFixed(2) + " ft"
+      );
   }
   updateFloorMats(length, width) {
     this.CreateLayout(length, width, null, null, true);

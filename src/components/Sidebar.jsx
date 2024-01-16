@@ -273,7 +273,11 @@ class Sidebar extends PureComponent {
                           size="small"
                           value={width}
                           onChange={(e) =>
-                            this.setState({ width: e.target.value })
+                            this.setState({
+                              width: parseFloat(e.target.value)
+                                ? Math.abs(Number(e.target.value))
+                                : e.target.value,
+                            })
                           }
                           id="outlined-adornment-weight"
                           endAdornment={
@@ -296,7 +300,11 @@ class Sidebar extends PureComponent {
                           value={height}
                           size="small"
                           onChange={(e) =>
-                            this.setState({ height: e.target.value })
+                            this.setState({
+                              height: parseFloat(e.target.value)
+                                ? Math.abs(Number(e.target.value))
+                                : e.target.value,
+                            })
                           }
                           id="outlined-adornment-weight"
                           endAdornment={
@@ -325,7 +333,11 @@ class Sidebar extends PureComponent {
                             value={bottomwidth}
                             size="small"
                             onChange={(e) =>
-                              this.setState({ bottomwidth: e.target.value })
+                              this.setState({
+                                bottomwidth: parseFloat(e.target.value)
+                                  ? Math.abs(Number(e.target.value))
+                                  : e.target.value,
+                              })
                             }
                             id="outlined-adornment-weight"
                             endAdornment={
@@ -348,7 +360,11 @@ class Sidebar extends PureComponent {
                             size="small"
                             value={bottomheight}
                             onChange={(e) =>
-                              this.setState({ bottomheight: e.target.value })
+                              this.setState({
+                                bottomheight: parseFloat(e.target.value)
+                                  ? Math.abs(Number(e.target.value))
+                                  : e.target.value,
+                              })
                             }
                             id="outlined-adornment-weight"
                             endAdornment={
@@ -385,7 +401,7 @@ class Sidebar extends PureComponent {
                   </div>
                   <div className="">
                     <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white my-1">
-                      Color
+                      Colour
                     </h2>
                     <div className="flex flex-row items-center content-center gap-x-2">
                       <p className="w-1/2 text-right items-center content-center">

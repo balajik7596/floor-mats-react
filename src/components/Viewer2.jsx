@@ -353,6 +353,7 @@ class Viewer2 extends PureComponent {
                 <CloseIcon sx={{ fontSize: "40px", color: "#ff0029" }} />{" "}
               </button>{" "}
             </div>
+
             <div className="flex flex-row">
               <Sidebar
                 handleImageClick={(val, type) =>
@@ -366,6 +367,16 @@ class Viewer2 extends PureComponent {
                 colorList={colorList}
               />
               <div className="flex flex-col w-full">
+                <div className="absolute z-50 w-full left-[15%] flex justify-center top-4 ">
+                  {" "}
+                  <ToggleButton
+                    leftText="Meter"
+                    rightText="Feet"
+                    onToggle={(toggled) =>
+                      this.engine.changeMeasureUnit(toggled)
+                    }
+                  />
+                </div>
                 <div
                   className=" w-full h-full relative"
                   id={this.props?.CanvasID}
