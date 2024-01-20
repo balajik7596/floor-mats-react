@@ -25,7 +25,7 @@ import {
   Typography,
 } from "@mui/material";
 import { BaseUnits } from "../Utils/BaseUnits";
-import { convertFeetInch } from "../Utils/MeshUtils";
+import { convertCentiMeter, convertFeetInch } from "../Utils/MeshUtils";
 import {
   Add,
   HdrPlus,
@@ -79,6 +79,7 @@ class Sidebar extends PureComponent {
       isCustomLayout: false,
       currentPattern: "No Pattern",
       currentTile: "Vented mat",
+      isMeter: true,
     };
   }
   updateRowscols() {
@@ -90,11 +91,13 @@ class Sidebar extends PureComponent {
   UpdateLayout() {
     let engine = this.props.engine();
     console.log("eid", engine);
+
     this.setState({
-      width: engine.floorWidth,
-      height: engine.floorLength,
-      bottomwidth: engine.floorbottomWidth,
-      bottomheight: engine.floorbottomHeight,
+      width: engine.converToUnit(engine.floorWidth),
+      height: engine.converToUnit(engine.floorLength),
+      bottomwidth: engine.converToUnit(engine.floorbottomWidth),
+      bottomheight: engine.converToUnit(engine.floorbottomHeight),
+      isMeter: engine.isMeter,
     });
   }
   UpdateLayoutType(val) {
@@ -146,6 +149,25 @@ class Sidebar extends PureComponent {
         primary
       );
   }
+  UpdateSize() {
+    let engine = this.props.engine();
+    const { bottomheight, bottomwidth, height, width, isMeter } = this.state;
+    if (isMeter)
+      engine.UpdateWidthHeight(
+        Number.parseFloat(width),
+        Number.parseFloat(height),
+        Number.parseFloat(bottomwidth),
+        Number.parseFloat(bottomheight)
+      );
+    else {
+      engine.UpdateWidthHeight(
+        engine.convertToMeter(Number.parseFloat(width)),
+        engine.convertToMeter(Number.parseFloat(height)),
+        engine.convertToMeter(Number.parseFloat(bottomwidth)),
+        engine.convertToMeter(Number.parseFloat(bottomheight))
+      );
+    }
+  }
   render() {
     const textBoxStyle = `
     form-control
@@ -174,22 +196,59 @@ class Sidebar extends PureComponent {
       secondary,
       currentTile,
       currentPattern,
+      isMeter,
+      isOpenSideBar,
     } = this.state;
     const { currentProduct, colorList } = this.props;
     return (
       <>
+        {!isOpenSideBar && (
+          <button
+            data-drawer-target="default-sidebar"
+            data-drawer-toggle="default-sidebar"
+            aria-controls="default-sidebar"
+            type="button"
+            onClick={() => this.setState({ isOpenSideBar: true })}
+            class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg  sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 "
+          >
+            <span class="sr-only">Open sidebar</span>
+            <svg
+              class="w-6 h-6"
+              aria-hidden="true"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                clip-rule="evenodd"
+                fill-rule="evenodd"
+                d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
+              ></path>
+            </svg>
+          </button>
+        )}
+
         <div
-          className="w-96 bg-gray-200 "
+          id="sidebar"
+          className={` bg-gray-200 transition-transform translate-x  ${
+            isOpenSideBar
+              ? "z-[150] absolute w-full bg-[#6d6f73b3]"
+              : "max-sm:hidden max-w-96"
+          }`}
           style={{
             height: "100vh",
           }}
+          onClick={(e) => {
+            if (e.target.id === "sidebar")
+              this.setState({ isOpenSideBar: false });
+          }}
         >
-          <div>
+          <div className={`${isOpenSideBar ? "w-3/4 bg-gray-200" : ""}`}>
             <div className="grid grid-cols-1 overflow-y-auto h-[100vh]">
               <div>
-                <h6 className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
+                <p className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
                   Layouts
-                </h6>
+                </p>
 
                 <div className="flex flex-row items-center justify-center gap-2 py-1">
                   <img
@@ -218,9 +277,9 @@ class Sidebar extends PureComponent {
                     }}
                   />
                 </div>
-                <h2 className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
+                <p className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
                   Pattern
-                </h2>
+                </p>
                 <div className=" flex flex-row items-center justify-center gap-2 py-1">
                   {imageList.map((item) => (
                     <img
@@ -237,9 +296,9 @@ class Sidebar extends PureComponent {
                     />
                   ))}
                 </div>
-                <h2 className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
-                  Tile Type
-                </h2>
+                <p className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
+                  Tile type
+                </p>
                 <div className=" flex flex-row items-center justify-center gap-2 pt-2">
                   {tileTypes.map((item) => (
                     <img
@@ -261,10 +320,10 @@ class Sidebar extends PureComponent {
                 {/* <ImageListMenu onImageClick={this.handleImageClick} /> */}
                 <div>
                   <div className="grid grid-cols-1 gap-1">
-                    <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
-                      Layout Size
-                    </h2>
-                    <div className="flex flex-row items-center content-center gap-x-2">
+                    <p className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
+                      <p className="pl-6">Layout size</p>
+                    </p>
+                    <div className="flex flex-row items-center content-center gap-x-2 px-6">
                       <p className="w-1/2 text-right items-center content-center">
                         Width
                       </p>
@@ -281,7 +340,9 @@ class Sidebar extends PureComponent {
                           }
                           id="outlined-adornment-weight"
                           endAdornment={
-                            <InputAdornment position="end">M</InputAdornment>
+                            <InputAdornment position="end">
+                              {isMeter ? "m" : "ft"}
+                            </InputAdornment>
                           }
                           type="number"
                           aria-describedby="outlined-weight-helper-text"
@@ -291,7 +352,7 @@ class Sidebar extends PureComponent {
                         />
                       </div>
                     </div>
-                    <div className="flex flex-row items-center content-center gap-x-2">
+                    <div className="flex flex-row items-center content-center gap-x-2 px-6">
                       <p className="w-1/2 text-right items-center content-center">
                         Height
                       </p>
@@ -308,7 +369,9 @@ class Sidebar extends PureComponent {
                           }
                           id="outlined-adornment-weight"
                           endAdornment={
-                            <InputAdornment position="end">M</InputAdornment>
+                            <InputAdornment position="end">
+                              {isMeter ? "m" : "ft"}
+                            </InputAdornment>
                           }
                           type="number"
                           aria-describedby="outlined-weight-helper-text"
@@ -324,7 +387,7 @@ class Sidebar extends PureComponent {
                       <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
                         Bottom Layout Size
                       </h2>
-                      <div className="flex flex-row items-center content-center gap-x-2">
+                      <div className="flex flex-row items-center content-center gap-x-2 px-6">
                         <p className="w-1/2 text-right items-center content-center">
                           Width
                         </p>
@@ -341,7 +404,9 @@ class Sidebar extends PureComponent {
                             }
                             id="outlined-adornment-weight"
                             endAdornment={
-                              <InputAdornment position="end">M</InputAdornment>
+                              <InputAdornment position="end">
+                                {isMeter ? "m" : "ft"}
+                              </InputAdornment>
                             }
                             type="number"
                             aria-describedby="outlined-weight-helper-text"
@@ -351,7 +416,7 @@ class Sidebar extends PureComponent {
                           />
                         </div>
                       </div>
-                      <div className="flex flex-row items-center content-center gap-x-2">
+                      <div className="flex flex-row items-center content-center gap-x-2 px-6">
                         <p className="w-1/2 text-right items-center content-center">
                           Height
                         </p>
@@ -368,7 +433,9 @@ class Sidebar extends PureComponent {
                             }
                             id="outlined-adornment-weight"
                             endAdornment={
-                              <InputAdornment position="end">M</InputAdornment>
+                              <InputAdornment position="end">
+                                {isMeter ? "m" : "ft"}
+                              </InputAdornment>
                             }
                             type="number"
                             aria-describedby="outlined-weight-helper-text"
@@ -380,19 +447,12 @@ class Sidebar extends PureComponent {
                       </div>
                     </div>
                   )}
-                  <div className="pr-4 pl-8">
+                  <div className="pr-4 pl-8 pb-2">
                     <button
                       className="bg-green-600 hover:bg-green-500 rounded-lg shadow-green-800 w-full text-white mt-1 py-1 shadow-lg"
                       onClick={(e) => {
                         e.preventDefault();
-                        this.props
-                          .engine()
-                          .UpdateWidthHeight(
-                            Number.parseFloat(width),
-                            Number.parseFloat(height),
-                            Number.parseFloat(bottomwidth),
-                            Number.parseFloat(bottomheight)
-                          );
+                        this.UpdateSize();
                       }}
                     >
                       {" "}
@@ -400,14 +460,14 @@ class Sidebar extends PureComponent {
                     </button>
                   </div>
                   <div className="">
-                    <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white my-1">
+                    <p className="text-xl font-semibold text-center bg-[#bf0e0e] text-white my-1">
                       Colour
-                    </h2>
-                    <div className="flex flex-row items-center content-center gap-x-2">
+                    </p>
+                    <div className="flex flex-row items-center content-center gap-x-2 px-6">
                       <p className="w-1/2 text-right items-center content-center">
                         Primary
                       </p>
-                      <div className="w-1/2">
+                      <div className="w-1/2 ">
                         <FormControl fullWidth sx={{ m: 0, p: 0 }} size="small">
                           <Select
                             style={{ padding: "0px" }}
@@ -449,7 +509,7 @@ class Sidebar extends PureComponent {
                       </div>
                     </div>
                     {currentPattern !== "No Pattern" && (
-                      <div className="flex flex-row items-center content-center gap-x-2 py-1">
+                      <div className="flex flex-row items-center content-center gap-x-2 py-1 px-6">
                         <p className="w-1/2 text-right items-center content-center">
                           Secondary
                         </p>

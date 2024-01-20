@@ -466,12 +466,12 @@ export default class Engine {
   InitLayout(isCustomLayout, garageData) {
     this.garageData = garageData;
     if (this.garageData && garageData.variants) {
-      this.selectedVariant = garageData.variants[0];
+      this.PrimaryVariant = garageData.variants[0];
     }
     this.isCustomLayout = isCustomLayout;
 
     if (!this.scene) this.initEngine();
-    else this.CreateLayout(3, 3, 2, 2, false);
+    else this.CreateLayout(2, 3, 1, 1.5, false);
   }
 
   // createTextSprite(
@@ -916,6 +916,7 @@ export default class Engine {
       this.floorbottomHeight,
       this.floorbottomWidth
     );
+    if (this.onUpdateLayout) this.onUpdateLayout();
     // if (isMeter) {
     //   this.selectedUnit = " M";
     //   this.conversionFactor = 1;
@@ -1621,10 +1622,10 @@ export default class Engine {
     }
   }
   createSecondLayerCustom(Layout, width, height, bottomWidth, bottomHeight) {
-    width = Math.round(width);
-    height = Math.round(height);
-    bottomWidth = Math.round(bottomWidth);
-    bottomHeight = Math.round(bottomHeight);
+    // width = Math.round(width);
+    // height = Math.round(height);
+    // bottomWidth = Math.round(bottomWidth);
+    // bottomHeight = Math.round(bottomHeight);
     const geometry = new THREE.PlaneGeometry(0.25, 0.25);
 
     let mat1 = this.panel1.material.clone();
@@ -1643,7 +1644,7 @@ export default class Engine {
       SecondLayer.add(element);
       offsetX += 0.25;
     }
-
+    let wright = offsetX - 0.25;
     offsetX = 0.25 + 0.25 / 2;
     for (let w = 0; w < bottomWidth - 0.5; w += 0.25) {
       const element = plane.clone();
@@ -1652,9 +1653,10 @@ export default class Engine {
       SecondLayer.add(element);
       offsetX += 0.25;
     }
-    let remainingWidth = width - bottomWidth;
-    offsetX = -0.25 / 2 + bottomWidth;
-    for (let w = 0; w < remainingWidth; w += 0.25) {
+    let wbottom = offsetX - 0.25;
+    let remainingWidth = wright - wbottom;
+    offsetX = wbottom;
+    for (let w = 0; w <= remainingWidth; w += 0.25) {
       const element = plane.clone();
 
       element.position.set(offsetX, +0.25 + 0.25 / 2, 0);
@@ -1662,25 +1664,19 @@ export default class Engine {
       offsetX += 0.25;
     }
     let offsetY = 0.75;
+    // let wRight = offsetX - 0.25;
+    // if (width - wRight > 0.26) wRight += 0.25;
     for (let h = 0; h < height - 1; h += 0.25) {
       const element = plane.clone();
-      element.position.set(
-        width - 0.25 / 2 - 0.25,
-        -0.25 + 0.25 / 2 + offsetY,
-        0
-      );
+      element.position.set(wright, -0.25 + 0.25 / 2 + offsetY, 0);
       SecondLayer.add(element);
       offsetY += 0.25;
     }
     offsetY = 0.75 - bottomHeight;
     console.log(width);
-    for (let h = 0; h < bottomHeight; h += 0.25) {
+    for (let h = 0; h < bottomHeight - 0.25; h += 0.25) {
       const element = plane.clone();
-      element.position.set(
-        bottomWidth - 0.25 / 2 - 0.25,
-        -0.25 + 0.25 / 2 + offsetY,
-        0
-      );
+      element.position.set(wbottom, -0.25 + 0.25 / 2 + offsetY, 0);
       SecondLayer.add(element);
       offsetY += 0.25;
     }
@@ -1829,7 +1825,7 @@ export default class Engine {
       }
     } else this.UpdateDimensions(height, width, bottomHeight, bottomWidth);
     let price = 0;
-    if (this.selectedVariant) {
+    if (this.PrimaryVariant) {
       let squareFeet = this.floorLength * this.floorWidth;
 
       if (this.isCustomLayout) {
@@ -1838,9 +1834,11 @@ export default class Engine {
       console.log("total meters", squareFeet * 10);
       let meterval = squareFeet;
       meterval = Math.ceil(meterval);
-      price = Number(meterval * this.selectedVariant.price * 0.01).toFixed(2);
+      price = Number(meterval * this.PrimaryVariant.price * 0.01).toFixed(2);
+      let excludeVat = Number(price * 0.8333).toFixed(2);
       publish("floorUpdated", {
         price: price,
+        excludeVat,
         quantity: meterval,
       });
     }
@@ -2026,6 +2024,15 @@ export default class Engine {
     textbottom.position.set(0, -0.5, 0.3);
     bottom.add(textbottom);
   }
+  converToUnit(val) {
+    if (!val) return "";
+    if (this.isMeter) return Number(val.toFixed(2));
+    else return Number(Number(val.toFixed(2)) * 3.28084).toFixed(2);
+  }
+  convertToMeter(val) {
+    if (!val) return "";
+    return Number(Number(Number(val.toFixed(2)) / 3.28084).toFixed(2));
+  }
   converToDisplayUnit(val) {
     if (this.isMeter) return Number((val * 0.1).toFixed(2)) + "m";
     else
@@ -2141,6 +2148,7 @@ export default class Engine {
           if (this.floorWidth - diffx <= 0) return;
         } else if (edge.name.includes("bottomtop")) {
           if (this.floorLength - diffx <= 0) return;
+          if (this.floorbottomHeight + diffx <= 0) return;
         } else if (edge.name.includes("top")) {
           if (this.floorLength + diffx <= 0) return;
         } else if (edge.name.includes("bottom")) {
@@ -2795,12 +2803,15 @@ export default class Engine {
     if (this.selectedPattern === "Checked" || this.selectedPattern === "Box") {
       if (type === "Primary") {
         this.PrimaryColor = color;
+        this.PrimaryVariant = variant;
         this.panel1.material.color = new THREE.Color(color);
       } else {
+        this.SecondaryVariant = variant;
         this.secondaryColor = color;
         this.panel2.material.color = new THREE.Color(color);
       }
     } else {
+      this.PrimaryVariant = variant;
       this.PrimaryColor = color;
       this.panel1.material.color = new THREE.Color(color);
       this.secondaryColor = color;

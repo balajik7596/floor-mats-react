@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import { subscribe } from "./EventMediator";
 
 const Footer = ({ title, isLast, tileType, checkoutItem }) => {
-  const [price, setPrice] = useState(62400);
+  const [price, setPrice] = useState(35.4);
+  const [vatprice, setVatPrice] = useState(29.5);
   const [isLoading, setIsLoading] = useState(false);
   const [quantity, setQuantity] = useState(1);
   useEffect(() => {
     const handleFloorUpdate = (payload) => {
       setPrice(payload.price);
+      setVatPrice(payload.excludeVat);
       setQuantity(payload.quantity);
     };
 
@@ -51,22 +53,28 @@ const Footer = ({ title, isLast, tileType, checkoutItem }) => {
   };
 
   return (
-    <div className="footer-container m-2 bg-white grid grid-cols-3 rounded-lg h-[80px] items-center border-2 shadow-lg">
-      <div className="pl-6">
+    <div className="footer-container m-2 bg-white max-sm:text-xs grid grid-cols-3 max-sm:grid-cols-1 max-sm:z-[100]  max-sm:absolute max-sm:top-[70%] rounded-lg h-[80px] max-sm:h-auto max-sm:w-full  items-center border-2 shadow-lg">
+      <div className="pl-6 max-sm:text-center items-center flex max-sm:justify-center">
         <img
           src="https://cdn.shopify.com/s/files/1/0620/9817/8148/files/storelogo.svg?v=1702842586"
           alt="Store Logo"
           style={{ height: "50px" }}
         />
       </div>
-      <div className="flex flex-row items-center justify-center gap-6">
+      <div className="flex flex-row max-sm:flex-col items-center justify-center gap-6 max-sm:gap-0 ">
         <p className="text-center font-semibold">
           {" "}
           <p className=" right-8 relative">Quantity: {quantity}</p>
         </p>
 
         <div className="text-left right-6 relative">
-          <p className="text-2xl font-bold">&pound; {price}</p>
+          <p className="text-md max-sm:text-sm font-semibold text-green-500">
+            &pound; {vatprice} GBP (exc VAT)
+          </p>
+
+          <p className="text-md font-bold max-sm:text-sm">
+            &pound; {price} (inc VAT)
+          </p>
           {tileType === "Vented mat" ? (
             <p className="text-xs">Price Per Metre² = 6.25 tiles</p>
           ) : (
@@ -77,7 +85,7 @@ const Footer = ({ title, isLast, tileType, checkoutItem }) => {
 
       <div className="w-full flex flex-row-reverse">
         <button
-          className="bg-[#C11D37] w-1/2  right-0 h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
+          className="bg-[#C11D37] w-1/2 max-sm:w-full right-0 h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
           onClick={(e) => {
             e.preventDefault();
             setIsLoading(true);

@@ -254,7 +254,7 @@ class Viewer2 extends PureComponent {
       variant
     );
   }
-  checkoutItem() {
+  async checkoutItem() {
     let squareFeet = this.engine.floorLength * this.engine.floorWidth;
 
     if (this.engine.isCustomLayout) {
@@ -265,15 +265,45 @@ class Viewer2 extends PureComponent {
     meterval = Math.round(meterval);
     console.log(meterval, this.engine.selectedVariant.id);
     {
-      let formData = {
-        quantity: meterval,
-        Color: this.engine.selectedVariant.title,
-        form_type: "product",
-        id: this.engine.selectedVariant.id.toString(),
-        "product-id": "7352159535204",
-      };
-      window.addToCartConfigurator(formData);
+      //SecondaryVariant
 
+      if (
+        this.engine.selectedPattern === "Checked" ||
+        this.engine.selectedPattern === "Box"
+      ) {
+        let primaryCount = Math.floor(meterval / 2);
+        let secondaryCount = meterval - primaryCount;
+        if (this.engine.selectedPattern === "Box") {
+          secondaryCount = Math.floor(meterval / 4);
+          primaryCount = meterval - secondaryCount;
+        }
+        let formData = {
+          quantity: primaryCount,
+          Color: this.engine.PrimaryVariant.title,
+          form_type: "product",
+          id: this.engine.PrimaryVariant.id.toString(),
+          "product-id": "7352159535204",
+        };
+        await window.addToCartConfigurator(formData, false);
+        let formDataSceondary = {
+          quantity: secondaryCount,
+          Color: this.engine.SecondaryVariant.title,
+          form_type: "product",
+          id: this.engine.SecondaryVariant.id.toString(),
+          "product-id": "7352159535204",
+        };
+        await window.addToCartConfigurator(formDataSceondary, true);
+        window.location.href = "/cart";
+      } else {
+        let formData = {
+          quantity: meterval,
+          Color: this.engine.PrimaryVariant.title,
+          form_type: "product",
+          id: this.engine.PrimaryVariant.id.toString(),
+          "product-id": "7352159535204",
+        };
+        await window.addToCartConfigurator(formData, true);
+      }
       // document.getElementById("quantity").value = meterval;
       // document.getElementsByName("id")[0].value =
       //   this.engine.selectedVariant.id.toString();
@@ -337,7 +367,7 @@ class Viewer2 extends PureComponent {
       <>
         <div className="fixed w-full h-full z-50 top-0 left-0 bg-white">
           <div className="flex-col flex font-sans  bg-[#fffdfd] font-[Open_Sans] ">
-            <div className="absolute z-50 right-4 top-6 ">
+            <div className="absolute z-[100] right-4 top-6 ">
               <button
                 className=""
                 onClick={(e) => {
@@ -354,7 +384,7 @@ class Viewer2 extends PureComponent {
               </button>{" "}
             </div>
 
-            <div className="flex flex-row">
+            <div className="flex flex-row max-sm:flex-col">
               <Sidebar
                 handleImageClick={(val, type) =>
                   this.handleImageClick(val, type)
@@ -367,7 +397,7 @@ class Viewer2 extends PureComponent {
                 colorList={colorList}
               />
               <div className="flex flex-col w-full">
-                <div className="absolute z-50 w-full left-[15%] flex justify-center top-4 ">
+                <div className="absolute z-50 w-full left-[5%] flex justify-center top-4 ">
                   {" "}
                   <ToggleButton
                     leftText="Meter"
