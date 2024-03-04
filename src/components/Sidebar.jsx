@@ -59,7 +59,7 @@ const tileTypes = [
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pvcfloormat.svg?v=1702842587",
     label: "Raised disc",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc_5e5fbe5b-6b88-4d35-9333-a776f5daae6a.png?v=1703160296",
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc2.png?v=1709385813",
   },
 ];
 class Sidebar extends PureComponent {
@@ -354,7 +354,7 @@ class Sidebar extends PureComponent {
                     </div>
                     <div className="flex flex-row items-center content-center gap-x-2 px-6">
                       <p className="w-1/2 text-right items-center content-center">
-                        Height
+                        Length
                       </p>
                       <div className="w-1/2">
                         <OutlinedInput
@@ -384,9 +384,9 @@ class Sidebar extends PureComponent {
                   </div>
                   {isCustomLayout && (
                     <div className="grid grid-cols-1 gap-1">
-                      <h2 className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
+                      <p className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
                         Bottom Layout Size
-                      </h2>
+                      </p>
                       <div className="flex flex-row items-center content-center gap-x-2 px-6">
                         <p className="w-1/2 text-right items-center content-center">
                           Width
@@ -418,7 +418,7 @@ class Sidebar extends PureComponent {
                       </div>
                       <div className="flex flex-row items-center content-center gap-x-2 px-6">
                         <p className="w-1/2 text-right items-center content-center">
-                          Height
+                          Length
                         </p>
                         <div className="w-1/2">
                           <OutlinedInput
