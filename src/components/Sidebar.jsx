@@ -53,13 +53,13 @@ const tileTypes = [
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.svg?v=1702842587",
     label: "Vented mat",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.jpg?v=1702842587",
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented2.png?v=1709569132",
   },
   {
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pvcfloormat.svg?v=1702842587",
     label: "Raised disc",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc2.png?v=1709385813",
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc_58d6ad6b-e575-4862-a01b-ba8570bc9ace.png?v=1709608170",
   },
 ];
 class Sidebar extends PureComponent {
@@ -246,7 +246,7 @@ class Sidebar extends PureComponent {
           <div className={`${isOpenSideBar ? "w-3/4 bg-gray-200" : ""}`}>
             <div className="grid grid-cols-1 overflow-y-auto h-[100vh]">
               <div>
-                <p className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
+                <p className="text-lg font-semibold text-center pl-2.5 bg-[#bf0e0e] text-white ">
                   Layouts
                 </p>
 
@@ -277,7 +277,7 @@ class Sidebar extends PureComponent {
                     }}
                   />
                 </div>
-                <p className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
+                <p className="text-lg font-semibold text-center pl-2.5 bg-[#bf0e0e] text-white ">
                   Pattern
                 </p>
                 <div className=" flex flex-row items-center justify-center gap-2 py-1">
@@ -296,7 +296,7 @@ class Sidebar extends PureComponent {
                     />
                   ))}
                 </div>
-                <p className="text-lg font-semibold text-center bg-[#bf0e0e] text-white ">
+                <p className="text-lg font-semibold text-center pl-2.5 bg-[#bf0e0e] text-white ">
                   Tile type
                 </p>
                 <div className=" flex flex-row items-center justify-center gap-2 pt-2">
@@ -384,7 +384,7 @@ class Sidebar extends PureComponent {
                   </div>
                   {isCustomLayout && (
                     <div className="grid grid-cols-1 gap-1">
-                      <p className="text-xl font-semibold text-center bg-[#bf0e0e] text-white mt-1">
+                      <p className="text-xl font-semibold text-center  bg-[#bf0e0e] text-white mt-1 pl-5">
                         Bottom Layout Size
                       </p>
                       <div className="flex flex-row items-center content-center gap-x-2 px-6">
@@ -460,7 +460,7 @@ class Sidebar extends PureComponent {
                     </button>
                   </div>
                   <div className="">
-                    <p className="text-xl font-semibold text-center bg-[#bf0e0e] text-white my-1">
+                    <p className="text-xl font-semibold text-center bg-[#bf0e0e] text-white my-1 pl-2.5">
                       Colour
                     </p>
                     <div className="flex flex-row items-center content-center gap-x-2 px-6">

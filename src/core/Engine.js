@@ -116,15 +116,53 @@ export default class Engine {
     this.isCustomLayout = false;
     this.secondaryColor = "#FF0000";
     this.currentTexture = new THREE.TextureLoader().load(
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.jpg?v=1702842587"
+      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented2.png?v=1709569132"
     );
     this.floormaterial = new THREE.MeshBasicMaterial({
       map: this.currentTexture,
       color: this.PrimaryColor,
-      opacity: 0.9,
-      side: THREE.DoubleSide,
-      transparent: false,
+      // opacity: 0.9,
+      side: THREE.FrontSide,
+      transparent: true,
+      depthTest: true,
     });
+    // shader.vertexShader = ` attribute float colorAlpha;
+
+    //     varying float colorAlphaVal;
+    //         ${shader.vertexShader} `.replace(
+    //       #include <fog_vertex>,
+    //       ` #include <fog_vertex> \n  colorAlphaVal = colorAlpha; `
+    //     );
+    //     shader.fragmentShader =
+    //       `varying float colorAlphaVal;\n ${shader.fragmentShader} `.replace(
+    //         `	#include <dithering_fragment>`,
+    //         `	#include <dithering_fragment>\n
+
+    //         vec4 texColor = texture2D(map, vUv);
+    //         vec3 finalColor = texColor.rgb;
+    //         if(vUv.y > 0.0) {
+    //           finalColor = mix(texColor.rgb, vec3(0.8), vUv.y);
+    //          }
+    //          gl_FragColor = vec4(finalColor,colorAlphaVal);
+    //        `
+    //       );
+    // this.floormaterial.onBeforeCompile = function (shader) {
+    //   shader.fragmentShader = `${shader.fragmentShader} `.replace(
+    //     `	#include <dithering_fragment>`,
+    //     `	#include <dithering_fragment>\n
+
+    //         vec4 texColor = texture2D(map, vUv);
+    //         // vec3 finalColor = texColor.rgb;
+    //         if(gl_FragColor.a > 0.7) {
+    // //discard;
+    //           vec3 finalColor = mix(texColor.rgb, vec3(0.8),0.2);
+    //  gl_FragColor = vec4(1.0,1.0,1.0, 1.0);
+
+    //          }
+    //           gl_FragColor = vec4(texColor.rgb, 1.0);
+    // `
+    //   );
+    // };
     this.draicon = loader.load(
       "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/dragicon.svg?v=1702842585"
     );
@@ -937,7 +975,7 @@ export default class Engine {
       this.selectedTileDimension = this.standardVTileDim;
       this.selectedTilePrice = 35.4;
       this.updateFloorMaterial(
-        "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.jpg?v=1702842587"
+        "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented2.png?v=1709569132"
       );
     }
   }
@@ -1674,13 +1712,13 @@ export default class Engine {
       SecondLayer.add(element);
       offsetX += 0.25;
     }
-    let offsetY = 0.75;
+    let offsetY = 1 - 0.25 / 2;
     // let wRight = offsetX - 0.25;
     // if (width - wRight > 0.26) wRight += 0.25;
-    let endheight = height - 1;
+    let endheight = height - 1.5;
     if (bottomWidth > width) {
       offsetY = offsetY - 0.75;
-      endheight = height - 0.25;
+      endheight = height - 0.5;
     }
 
     for (let h = 0; h < endheight; h += 0.25) {
@@ -1689,25 +1727,57 @@ export default class Engine {
       SecondLayer.add(element);
       offsetY += 0.25;
     }
+    console.log("remain ", endheight, offsetY, height);
+    {
+      let hval = endheight + 1 + 0.25 / 2 - offsetY;
+      if (bottomWidth > width) hval = endheight - offsetY - 0.25 / 2;
+      let geometry2 = new THREE.PlaneGeometry(0.5, hval);
+      const element = new THREE.Mesh(geometry2, plane2.material);
+      element.position.set(wright + 0.25 / 2, -0.25 + hval / 2 + offsetY, 0);
+      SecondLayer.add(element);
+    }
+
     offsetY = 0.75 - bottomHeight;
     let endheightBottom = bottomHeight - 0.25;
     if (bottomWidth > width) endheightBottom = bottomHeight - 0.75;
 
     console.log(width);
-    for (let h = 0; h < endheightBottom; h += 0.25) {
+    for (let h = 0; h < endheightBottom - 0.5; h += 0.25) {
       const element = plane2.clone();
-      element.position.set(wbottom - 0.25 / 2, -0.25 + 0.25 / 2 + offsetY, 0);
+      element.position.set(wbottom - 0.25 / 2, +offsetY, 0);
       SecondLayer.add(element);
       offsetY += 0.25;
     }
+    let remheight = 0.25 - offsetY;
 
+    //    if (offsetY > 0)
+    {
+      let hval = 0.25 - offsetY;
+      if (bottomWidth > width) hval -= 0.25;
+      let geometry2 = new THREE.PlaneGeometry(0.5, hval);
+      const element = new THREE.Mesh(geometry2, plane2.material);
+      element.position.set(
+        wbottom - 0.25 / 2,
+        offsetY + hval / 2 - 0.25 / 2,
+        0
+      );
+      SecondLayer.add(element);
+    }
     offsetY = 0.75 - bottomHeight;
     //  offsetY = 0.75;
-    for (let h = 0; h < height + bottomHeight - 1; h += 0.25) {
+    for (let h = 0; h < height + bottomHeight - 1.5; h += 0.25) {
       const element = plane2.clone();
-      element.position.set(0.25 + 0.25, -0.25 + 0.25 / 2 + offsetY, 0);
+      element.position.set(0.25 + 0.25, +offsetY, 0);
       SecondLayer.add(element);
       offsetY += 0.25;
+    }
+    remheight = height + bottomHeight - offsetY;
+    if (remheight > 0) {
+      let hval = height - offsetY - 0.5;
+      let geometry2 = new THREE.PlaneGeometry(0.5, hval);
+      const element = new THREE.Mesh(geometry2, plane2.material);
+      element.position.set(0.25 + 0.25, -0.25 / 2 + hval / 2 + offsetY, 0);
+      SecondLayer.add(element);
     }
     offsetY = 0.75;
   }
@@ -1743,19 +1813,65 @@ export default class Engine {
       SecondLayer.add(element);
       offsetX += 0.25;
     }
-    let offsetY = 0.75;
-    for (let h = 0; h < height - 1; h += 0.25) {
+    let remwidth = width - offsetX;
+    if (remwidth > 0) {
+      const geometry2 = new THREE.PlaneGeometry(remwidth, 0.5);
+      console.log("widg", remwidth);
+      const element = new THREE.Mesh(geometry2, plane.material);
+      element.position.set(
+        offsetX + remwidth / 2 - 0.25 / 2,
+        0.25 + 0.25 / 2,
+        0
+      );
+      SecondLayer.add(element);
+      let element2 = element.clone();
+      element2.position.set(
+        offsetX + remwidth / 2 - 0.25 / 2,
+        height - 0.25 - 0.25 / 2,
+        0
+      );
+      SecondLayer.add(element2);
+    }
+    let offsetY = 0.75 + 0.25 / 2;
+    for (let h = 0; h < height - 1.5; h += 0.25) {
       const element = plane2.clone();
       element.position.set(0.25 + 0.25 / 2, -0.25 + 0.25 / 2 + offsetY, 0);
       SecondLayer.add(element);
       offsetY += 0.25;
     }
-    offsetY = 0.75;
-    for (let h = 0; h < height - 0.25; h += 0.25) {
+    let remheight = height - offsetY;
+    if (remheight > 0) {
+      //  let remwidth = width - offsetX;
+      let hval = remheight - 0.5 + 0.25 / 2;
+      let geometry2 = new THREE.PlaneGeometry(0.5, hval);
+      const element = new THREE.Mesh(geometry2, plane2.material);
+      element.position.set(0.25 + 0.25 / 2, -0.25 + hval / 2 + offsetY, 0);
+      SecondLayer.add(element);
+    }
+
+    offsetY = 0.75 + 0.25 / 2;
+    for (let h = 0; h < height - 1.5; h += 0.25) {
       const element = plane2.clone();
-      element.position.set(width - 0.25 / 2 - 0.25, -0.5 + offsetY, 0);
+      element.position.set(
+        width - 0.25 / 2 - 0.25,
+        -0.25 + 0.25 / 2 + offsetY,
+        0
+      );
       SecondLayer.add(element);
       offsetY += 0.25;
+    }
+    remheight = height - offsetY;
+    if (remheight > 0) {
+      //  let remwidth = width - offsetX;
+      let hval = remheight - 0.5 + 0.25 / 2;
+      let geometry2 = new THREE.PlaneGeometry(0.5, hval);
+      const element = new THREE.Mesh(geometry2, plane2.material);
+      element.position.set(
+        width - 0.25 / 2 - 0.25,
+        -0.25 + hval / 2 + offsetY,
+        0
+      );
+      SecondLayer.add(element);
     }
   }
   DraggingEnable(isEnable) {
