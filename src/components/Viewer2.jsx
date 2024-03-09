@@ -10,6 +10,12 @@ import Footer from "./Footer";
 import ToggleButton from "./togglebutton";
 import CloseIcon from "@mui/icons-material/Close";
 import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   FormControl,
   FormHelperText,
   IconButton,
@@ -91,6 +97,7 @@ class Viewer2 extends PureComponent {
       bottomheight: 1,
       garageData: props.data ? props.data : defaultData,
       currentProduct: props.data ? props.data.product1 : defaultData.product1,
+      confrimPopup: false,
       backgroundPlaces: [
         "Office",
         "Loft Office",
@@ -293,7 +300,6 @@ class Viewer2 extends PureComponent {
           "product-id": "7352159535204",
         };
         await window.addToCartConfigurator(formDataSceondary, true);
-        window.location.href = "/cart";
       } else {
         let formData = {
           quantity: meterval,
@@ -304,6 +310,7 @@ class Viewer2 extends PureComponent {
         };
         await window.addToCartConfigurator(formData, true);
       }
+      window.location.href = "/cart";
       // document.getElementById("quantity").value = meterval;
       // document.getElementsByName("id")[0].value =
       //   this.engine.selectedVariant.id.toString();
@@ -339,6 +346,7 @@ class Viewer2 extends PureComponent {
       width,
       bottomwidth,
       bottomheight,
+      confrimPopup,
     } = this.state;
     const containerStyle = {
       position: "absolute",
@@ -365,16 +373,54 @@ class Viewer2 extends PureComponent {
     ];
     return (
       <>
-        <div className="fixed w-full h-full z-50 top-0 left-0 bg-white">
+        <Dialog
+          open={confrimPopup}
+          onClose={() => this.setState({ confrimPopup: false })}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            {"Do You about to leave this configuration"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Are you sure you want to leave this page?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                this.setState({ confrimPopup: false });
+              }}
+            >
+              Cancel
+            </Button>
+
+            <Button
+              onClick={(e) => {
+                e.preventDefault();
+                this.setState({ confrimPopup: false });
+                document.getElementById("root2").style.visibility = "hidden";
+                // document.body.style.overflow = "auto";
+                if (window.closeConfigurator) window.closeConfigurator();
+                console.log("close");
+              }}
+              autoFocus
+            >
+              Ok
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <div className="fixed w-screen h-screen  z-50 top-0 left-0 bg-white">
           <div className="flex-col flex font-sans  bg-[#fffdfd] font-[Open_Sans] ">
-            <div className="absolute z-[100] right-4 top-6 ">
+            <div className="absolute z-[100] right-4 top-6 max-sm:top-1">
               <button
                 className=""
                 onClick={(e) => {
                   e.preventDefault();
-                  console.log("close");
-                  document.getElementById("root2").style.visibility = "hidden";
-                  document.body.style.overflow = "auto";
+                  this.setState({ confrimPopup: true });
+
                   // document
                   //   .getElementById("root2")
                   //   .parentNode.removeChild(document.getElementById("root2"));
@@ -397,7 +443,7 @@ class Viewer2 extends PureComponent {
                 colorList={colorList}
               />
               <div className="flex flex-col w-full">
-                <div className="absolute z-50 w-full left-[5%] flex justify-center top-4 ">
+                <div className="absolute z-50 w-full left-[5%] flex justify-center top-4 max-sm:top-14">
                   {" "}
                   <ToggleButton
                     leftText="Meter"
@@ -408,11 +454,11 @@ class Viewer2 extends PureComponent {
                   />
                 </div>
                 <div
-                  className=" w-full h-full relative"
+                  className=" w-full  relative h-[88vh] max-sm:h-[70vh]"
                   id={this.props?.CanvasID}
                   style={{
                     width: "100%",
-                    height: "88vh",
+                    // height: "88vh",
                   }}
                   // onMouseMove={(e) => this.engine.mouseMove(e)}
                   onMouseDown={(e) => this.engine.onClick(e)}
@@ -429,418 +475,7 @@ class Viewer2 extends PureComponent {
               </div>
             </div>
           </div>
-          {/* <div className="flex flex-row absolute top-[40%] left-[40%]">
-            <div
-              style={{
-                width: "150px",
-                height: "150px",
-                marginRight: "10px",
-              }}
-            >
-              <img
-                className="hover:scale-125 hover:cursor-pointer"
-                src="https://cdn.shopify.com/s/files/1/0620/9817/8148/files/sq-layout.png?v=1702842586"
-                alt="Square Image 1"
-                onClick={() => {
-                  this.setState({
-                    showImageBoxes: !this.state.showImageBoxes,
-                    isCustomLayout: false,
-                    selectedButtonIndex: 1,
-                  });
-                  this.SidebarRef.current?.UpdateLayoutType(false);
-                  if (!this.engine) this.initCanvas();
-                  this.engine.InitLayout(false, garageData);
-                }}
-              />
-            </div>
-            <div style={{ width: "150px", height: "150px" }}>
-              <img
-                className="hover:scale-125 hover:cursor-pointer"
-                src="https://cdn.shopify.com/s/files/1/0620/9817/8148/files/custom-layout.png?v=1702842585"
-                alt="Square Image 2"
-                onClick={() => {
-                  this.setState({
-                    showImageBoxes: !this.state.showImageBoxes,
-                    isCustomLayout: true,
-                    selectedButtonIndex: 1,
-                  });
-                  this.SidebarRef.current?.UpdateLayoutType(true);
-                  if (!this.engine) this.initCanvas();
-                  this.engine.InitLayout(true, garageData);
-                }}
-              />
-            </div>
-          </div> */}
-          {/* <div
-              className=" w-full h-full relative"
-              id={this.props?.CanvasID}
-              style={{
-                width: "100%",
-                height: "85vh",
-              }}
-              // onMouseMove={(e) => this.engine.mouseMove(e)}
-              onMouseDown={(e) => this.engine.onClick(e)}
-              // onMouseUp={(e) => this.engine.mouseUp(e)}
-              onContextMenu={(e) => this.OnContextMenu(e)}
-            >
-              <div
-                className="menu-container"
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "10px", // Adjust the right distance as needed
-                  transform: "translateY(-50%)",
-                  display: "flex",
-                  flexDirection: "column", // Display buttons in a column
-                  alignItems: "center",
-                }}
-              >
-                {this.state.selectedButtonIndex == 1 && (
-                  <div className="grid grid-cols-1">
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <div style={{ marginLeft: "50px", marginTop: "70px" }}>
-                        <ImageListMenu onImageClick={this.handleImageClick} />
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {this.state.selectedButtonIndex == 2 && (
-                  <div className="grid grid-cols-1">
-                    <div
-                      style={{
-                        display: "flex",
-                        flexDirection: "row",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <div
-                        className="grid grid-cols-2"
-                        style={{ marginLeft: "20px" }}
-                      >
-                        <div className="col-span-2">
-                          <FormControl fullWidth>
-                            <InputLabel id="demo-simple-select-label">
-                              Color
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              value={patternColor}
-                              label="Color"
-                              onChange={(e) =>
-                                this.setState({
-                                  patternColor: e.target.value,
-                                })
-                              }
-                            >
-                              <MenuItem value="Primary">Primary</MenuItem>
-                              <MenuItem value="Secondary">Secondary</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </div>
-                        {currentProduct &&
-                          currentProduct.variants.map((item) => (
-                            <div>
-                              <ColorButton
-                                key={item.id}
-                                color={colorList[item.title]}
-                                onClick={() =>
-                                  this.handleColorClick(
-                                    colorList[item.title],
-                                    item
-                                  )
-                                }
-                              />
-                            </div>
-                          ))}
-                      </div>
-                    
-                    </div>
-                  </div>
-                )}
-              </div>
-              <div
-                className="round-buttons"
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  right: "10px", // Adjust the right distance as needed
-                  transform: "translateY(-50%)",
-                  display: "flex",
-                  flexDirection: "column", // Display buttons in a column
-                  alignItems: "center",
-                }}
-              >
-                {imageList.map((image, index) => (
-                  <div
-                    key={index}
-                    className="round-button"
-                    style={{
-                      width: "50px",
-                      height: "50px",
-                      borderRadius: "50%",
-                      backgroundColor:
-                        index === selectedButtonIndex ? "#8c1f1f" : "#fff",
-                      marginBottom: "10px",
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                    onClick={() => this.handleButtonClick(index)}
-                  >
-                    <img
-                      src={image.src}
-                      alt={`Button ${index + 1}`}
-                      style={{
-                        width: "80%",
-                        height: "auto",
-                        display: "block",
-                      }}
-                    />
-                  </div>
-                ))}
-                <button
-                  className="bg-[#C11D37] h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    this.checkoutItem();
-                  }}
-                >
-                  Check Out
-                </button>
-              </div>
-            </div> */}
-          {/* {this.state.selectedButtonIndex === 0 && (
-              <div
-                className="w-[40%] h-[40%] bg-gray-50 rounded-lg shadow-lg flex flex-col  justify-center"
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-
-                  transform: "translate(-50%, -50%)",
-
-                  alignItems: "center",
-                }}
-              >
-                <p className="text-2xl font-semibold text-gray-800 -mt-12 pb-4">
-                  {" "}
-                  Select Layout
-                </p>
-                <div className="flex flex-row">
-                  <div
-                    style={{
-                      width: "150px",
-                      height: "150px",
-                      marginRight: "10px",
-                    }}
-                  >
-                    <img
-                      className="hover:scale-125 hover:cursor-pointer"
-                      src="https://cdn.shopify.com/s/files/1/0620/9817/8148/files/sq-layout.png?v=1702842586"
-                      alt="Square Image 1"
-                      onClick={() => {
-                        this.setState({
-                          showImageBoxes: !this.state.showImageBoxes,
-                          isCustomLayout: false,
-                          selectedButtonIndex: 1,
-                        });
-                        if (!this.engine) this.initCanvas();
-                        this.engine.InitLayout(false, garageData);
-                      }}
-                    />
-                  </div>
-                  <div style={{ width: "150px", height: "150px" }}>
-                    <img
-                      className="hover:scale-125 hover:cursor-pointer"
-                      src="https://cdn.shopify.com/s/files/1/0620/9817/8148/files/custom-layout.png?v=1702842585"
-                      alt="Square Image 2"
-                      onClick={() => {
-                        this.setState({
-                          showImageBoxes: !this.state.showImageBoxes,
-                          isCustomLayout: true,
-                          selectedButtonIndex: 1,
-                        });
-                        if (!this.engine) this.initCanvas();
-                        this.engine.InitLayout(true, garageData);
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            )} */}
         </div>
-        {/* {this.state.selectedButtonIndex === 2 && (
-            <div
-              style={{
-                position: "absolute",
-                top: "2%",
-                left: "50%",
-                transform: "translate(-50%, 0)",
-                display: "flex",
-                alignItems: "center",
-              }}
-            >
-              <PatternImageListMenu
-                onImageClick={this.handlePatternImageClick}
-              />
-            </div>
-          )} */}
-
-        {/* <>
-          
-            {this.state.selectedButtonIndex === 1 && (
-              <ToggleButton
-                leftText="Meter"
-                rightText="Feet"
-                onToggle={(toggled) => this.engine.changeMeasureUnit(toggled)}
-              />
-            )}
-          </>
-
-          {this.state.selectedButtonIndex == 1 && (
-            <div
-              className=""
-              style={{
-                zIndex: 100,
-                position: "absolute",
-                left: "50px",
-                top: "0",
-              }}
-            >
-              <div className="grid grid-cols-1 pl-4">
-                <div
-                  className={`grid  gap-2 ${
-                    isCustomLayout ? "grid-cols-2" : "grid-cols-1"
-                  }`}
-                >
-                  <div className="grid grid-cols-1">
-                    <FormControl
-                      sx={{ m: 0, width: "12ch" }}
-                      variant="outlined"
-                    >
-                      <FormHelperText id="outlined-weight-helper-text">
-                        Width
-                      </FormHelperText>
-                      <OutlinedInput
-                        value={width}
-                        onChange={(e) =>
-                          this.setState({ width: e.target.value })
-                        }
-                        id="outlined-adornment-weight"
-                        endAdornment={
-                          <InputAdornment position="end">M</InputAdornment>
-                        }
-                        type="number"
-                        aria-describedby="outlined-weight-helper-text"
-                        inputProps={{
-                          "aria-label": "width",
-                        }}
-                      />
-                    </FormControl>
-                    <FormControl
-                      sx={{ m: 0, width: "12ch" }}
-                      variant="outlined"
-                    >
-                      <FormHelperText id="outlined-weight-helper-text">
-                        Height
-                      </FormHelperText>
-                      <OutlinedInput
-                        type="number"
-                        id="outlined-adornment-weight"
-                        value={height}
-                        onChange={(e) =>
-                          this.setState({ height: e.target.value })
-                        }
-                        endAdornment={
-                          <InputAdornment position="end">M</InputAdornment>
-                        }
-                        aria-describedby="outlined-weight-helper-text"
-                        inputProps={{
-                          "aria-label": "Height",
-                        }}
-                      />
-                    </FormControl>
-                  </div>
-                  {isCustomLayout && (
-                    <div className="grid grid-cols-1">
-                      <FormControl
-                        sx={{ m: 0, width: "15ch" }}
-                        variant="outlined"
-                      >
-                        <FormHelperText id="outlined-weight-helper-text">
-                          Bottom Width
-                        </FormHelperText>
-                        <OutlinedInput
-                          value={bottomwidth}
-                          onChange={(e) =>
-                            this.setState({ bottomwidth: e.target.value })
-                          }
-                          id="outlined-adornment-weight"
-                          endAdornment={
-                            <InputAdornment position="end">M</InputAdornment>
-                          }
-                          type="number"
-                          aria-describedby="outlined-weight-helper-text"
-                          inputProps={{
-                            "aria-label": "width",
-                          }}
-                        />
-                      </FormControl>
-                      <FormControl
-                        sx={{ m: 0, width: "15ch" }}
-                        variant="outlined"
-                      >
-                        <FormHelperText id="outlined-weight-helper-text">
-                          Bottom Height
-                        </FormHelperText>
-                        <OutlinedInput
-                          type="number"
-                          id="outlined-adornment-weight"
-                          value={bottomheight}
-                          onChange={(e) =>
-                            this.setState({ bottomheight: e.target.value })
-                          }
-                          endAdornment={
-                            <InputAdornment position="end">M</InputAdornment>
-                          }
-                          aria-describedby="outlined-weight-helper-text"
-                          inputProps={{
-                            "aria-label": "Height",
-                          }}
-                        />
-                      </FormControl>
-                    </div>
-                  )}
-                </div>
-                <button
-                  className="bg-green-700 w-full text-white mt-2 py-2 rounded-lg shadow-lg"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    this.engine.UpdateWidthHeight(
-                      Number.parseFloat(width),
-                      Number.parseFloat(height),
-                      Number.parseFloat(bottomwidth),
-                      Number.parseFloat(bottomheight)
-                    );
-                  }}
-                >
-                  {" "}
-                  Update
-                </button>
-              </div>
-            </div>
-          )} */}
-        {/* </div> */}
       </>
     );
   }

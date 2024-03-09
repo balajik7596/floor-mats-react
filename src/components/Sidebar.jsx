@@ -53,13 +53,13 @@ const tileTypes = [
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.svg?v=1702842587",
     label: "Vented mat",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented2.png?v=1709569132",
+      "https://cdn.shopify.com/s/files/1/0251/5828/7434/files/vented2.png?v=1709642311",
   },
   {
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pvcfloormat.svg?v=1702842587",
     label: "Raised disc",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc_58d6ad6b-e575-4862-a01b-ba8570bc9ace.png?v=1709608170",
+      "https://cdn.shopify.com/s/files/1/0251/5828/7434/files/Premiumpvc_9c61b5b4-00a7-498b-a30e-f919fb52f3ba.png?v=1709642309",
   },
 ];
 class Sidebar extends PureComponent {
@@ -346,9 +346,7 @@ class Sidebar extends PureComponent {
                           }
                           type="number"
                           aria-describedby="outlined-weight-helper-text"
-                          inputProps={{
-                            "aria-label": "width",
-                          }}
+                          inputProps={{ step: "0.1", "aria-label": "width" }}
                         />
                       </div>
                     </div>
@@ -375,17 +373,15 @@ class Sidebar extends PureComponent {
                           }
                           type="number"
                           aria-describedby="outlined-weight-helper-text"
-                          inputProps={{
-                            "aria-label": "height",
-                          }}
+                          inputProps={{ step: "0.1", "aria-label": "height" }}
                         />
                       </div>
                     </div>
                   </div>
                   {isCustomLayout && (
                     <div className="grid grid-cols-1 gap-1">
-                      <p className="text-xl font-semibold text-center  bg-[#bf0e0e] text-white mt-1 pl-5">
-                        Bottom Layout Size
+                      <p className="text-xl font-semibold text-center  bg-[#bf0e0e] text-white mt-1 pl-10">
+                        Bottom layout size
                       </p>
                       <div className="flex flex-row items-center content-center gap-x-2 px-6">
                         <p className="w-1/2 text-right items-center content-center">
@@ -410,9 +406,7 @@ class Sidebar extends PureComponent {
                             }
                             type="number"
                             aria-describedby="outlined-weight-helper-text"
-                            inputProps={{
-                              "aria-label": "width",
-                            }}
+                            inputProps={{ step: "0.1", "aria-label": "width" }}
                           />
                         </div>
                       </div>
@@ -437,11 +431,13 @@ class Sidebar extends PureComponent {
                                 {isMeter ? "m" : "ft"}
                               </InputAdornment>
                             }
+                            step="0.1"
+                            inputProps={{ step: "0.1", "aria-label": "height" }}
                             type="number"
                             aria-describedby="outlined-weight-helper-text"
-                            inputProps={{
-                              "aria-label": "height",
-                            }}
+                            // inputProps={{
+                            //   "aria-label": "height",
+                            // }}
                           />
                         </div>
                       </div>
@@ -453,6 +449,7 @@ class Sidebar extends PureComponent {
                       onClick={(e) => {
                         e.preventDefault();
                         this.UpdateSize();
+                        this.UpdateLayout();
                       }}
                     >
                       {" "}

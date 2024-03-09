@@ -57,4 +57,67 @@
       }, 1000);
     });
   </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      console.log("Check");
+
+      if (document.getElementById("configBtn")) {
+        document.getElementById("configuratorbtn").style.visibility = "visible";
+        document.body.style.overflowX = "hidden";
+        window.addToCartConfigurator = async function (data, islast) {
+          await jQuery.post("/cart/add", data, function (data, status, jqXHR) {
+            return data;
+            // success callback
+
+            window.location.href = "/cart";
+          });
+        };
+        window.closeConfigurator = function () {
+          let config = document.getElementById("configjs");
+          config.parentNode.removeChild(config);
+          document.getElementById("root2").style.visibility = "hidden";
+          let allstyles = document.getElementsByTagName("style");
+          document
+            .getElementById("root2")
+            .removeChild(document.getElementById("root2").firstChild);
+          for (let i = 0; i < allstyles.length; i++) {
+            if (allstyles[i].innerHTML.includes("tailwindcss ")) {
+              console.log("onclude", allstyles[i].innerHTML);
+              allstyles[i].parentNode.removeChild(allstyles[i]);
+              return;
+            }
+          }
+        };
+
+        const popitup = function (url) {
+          console.log("open");
+          var configJs = document.createElement("script");
+          configJs.id = "configjs";
+          document.getElementById("root2").style.visibility = "visible";
+          configJs.onload = function () {
+            let data = {
+              variants: JSON.parse(
+                document.querySelector("[data-variant-json]").innerHTML
+              ),
+              product2: JSON.parse(
+                document.getElementById(
+                  "copy-of-garage-floor-tile-premium-smooth-3d-configurator"
+                ).innerHTML
+              ),
+              product1: JSON.parse(
+                document.getElementById(
+                  "vented-garage-floor-tiles-per-m2-3d-configurator"
+                ).innerHTML
+              ),
+            };
+            console.log(data);
+            locker.renderReactComponent("root2", data);
+          };
+          configJs.src =
+            "https://cdn.shopify.com/s/files/1/0251/5828/7434/files/locker.js?v=1709819702";
+          document.body.appendChild(configJs);
+        };
+      }
+    });
+  </script>
 </html>

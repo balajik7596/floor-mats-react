@@ -53,15 +53,15 @@ const Footer = ({ title, isLast, tileType, checkoutItem }) => {
   };
 
   return (
-    <div className="footer-container m-2 bg-white max-sm:text-xs grid grid-cols-3 max-sm:grid-cols-1 max-sm:z-[100]  max-sm:absolute max-sm:top-[70%] rounded-lg h-[80px] max-sm:h-auto max-sm:w-full  items-center border-2 shadow-lg">
+    <div className="footer-container m-2 bg-white max-sm:text-xs grid grid-cols-3 max-sm:grid-cols-1 max-sm:z-[100]  max-sm:absolute max-sm:top-[68%] rounded-lg h-[80px] max-sm:h-auto max-sm:w-[95vw]  items-center border-2 shadow-lg">
       <div className="pl-6 max-sm:text-center items-center flex max-sm:justify-center">
         <img
-          src="https://cdn.shopify.com/s/files/1/0620/9817/8148/files/storelogo.svg?v=1702842586"
+          src="https://cdn.shopify.com/s/files/1/0251/5828/7434/files/storelogo.png?v=1709641056"
           alt="Store Logo"
           style={{ height: "50px" }}
         />
       </div>
-      <div className="flex flex-row max-sm:flex-col items-center justify-center gap-6 max-sm:gap-0 ">
+      <div className="flex flex-row max-sm:flex-col items-center justify-center gap-6 max-sm:gap-0 max-sm:pl-12 ">
         <p className="text-center font-semibold">
           {" "}
           <p className=" right-8 relative">Quantity: {quantity}</p>
@@ -83,9 +83,9 @@ const Footer = ({ title, isLast, tileType, checkoutItem }) => {
         </div>
       </div>
 
-      <div className="w-full flex flex-row-reverse">
+      <div className="w-full flex flex-row-reverse max-sm:pt-1">
         <button
-          className="bg-[#C11D37] w-1/2 max-sm:w-full right-0 h-16 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
+          className="bg-[#C11D37] w-1/2 max-sm:w-full right-0 h-16 max-sm:h-8 rounded-lg px-4 text-xl font-semibold text-white hover:bg-[#cf4b4b]"
           onClick={(e) => {
             e.preventDefault();
             setIsLoading(true);
@@ -96,7 +96,7 @@ const Footer = ({ title, isLast, tileType, checkoutItem }) => {
         </button>
       </div>
       {isLoading && (
-        <div className="absolute z-150 top-0 left-0  bg-[#f9b1b15e] w-full h-full">
+        <div className="fixed z-150 top-0 left-0  bg-[#f9b1b15e] w-full h-full max-sm:h-[100vh] ">
           <div className="relative top-[40%] left-[50%] ">
             <div className="grid grid-cols-1 w-32">
               <div>

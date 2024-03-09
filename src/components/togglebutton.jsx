@@ -12,7 +12,7 @@ const ToggleButton = ({ onToggle, leftText, rightText }) => {
   const buttonStyle = {
     position: "absolute",
     width: "240px", // Adjust the width of the oval
-    height: "40px",
+    // height: "40px",
     top: "2%", // Position 25% down from the top
     left: "50%", // Center horizontally
     transform: "translateX(-50%)", // Center horizontally
@@ -44,7 +44,7 @@ const ToggleButton = ({ onToggle, leftText, rightText }) => {
 
   const circleStyle = {
     width: "120px", // Adjust the width of the oval
-    height: "40px", // Adjust the height of the oval
+    // height: "40px", // Adjust the height of the oval
     borderRadius: "20px", // Half the height for a circular shape
     background: isToggled ? "#8c1f1f" : "#fff",
     position: "absolute",
@@ -67,7 +67,7 @@ const ToggleButton = ({ onToggle, leftText, rightText }) => {
         <p
           className={`${
             isToggled ? "" : "rounded-full bg-red-600 text-white"
-          }  h-full  py-2`}
+          }  h-full  py-2 max-sm:py-1`}
         >
           {" "}
           {leftText}
@@ -75,7 +75,7 @@ const ToggleButton = ({ onToggle, leftText, rightText }) => {
         <p
           className={`${
             isToggled ? "rounded-full bg-red-600 text-white" : ""
-          }  h-full  py-2`}
+          }  h-full  py-2 max-sm:py-1`}
         >
           {" "}
           {rightText}

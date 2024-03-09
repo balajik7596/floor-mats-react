@@ -18,7 +18,7 @@ class EntryPage extends PureComponent {
           <div className="relative left-[15%] top-[15%]">
             <img
               className=""
-              src="https://cdn.shopify.com/s/files/1/0620/9817/8148/files/storelogo.svg?v=1702842586"
+              src="https://cdn.shopify.com/s/files/1/0251/5828/7434/files/storelogo.png?v=1709641056"
             ></img>
             <p className="premiumGarage text-5xl" style={{}}>
               PREMIUM GARAGE{" "}

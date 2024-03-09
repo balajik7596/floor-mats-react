@@ -116,7 +116,7 @@ export default class Engine {
     this.isCustomLayout = false;
     this.secondaryColor = "#FF0000";
     this.currentTexture = new THREE.TextureLoader().load(
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented2.png?v=1709569132"
+      "https://cdn.shopify.com/s/files/1/0251/5828/7434/files/vented2.png?v=1709642311"
     );
     this.floormaterial = new THREE.MeshBasicMaterial({
       map: this.currentTexture,
@@ -245,7 +245,9 @@ export default class Engine {
   }
 
   async initEngine() {
+    // let width = screen.width;
     let width = this.CanvasContainer.offsetWidth;
+    if (screen.width < 500) width = screen.width;
     let height = this.CanvasContainer.offsetHeight;
     if (width === 0) width = 500;
     if (height === 0) height = 500;
@@ -975,7 +977,7 @@ export default class Engine {
       this.selectedTileDimension = this.standardVTileDim;
       this.selectedTilePrice = 35.4;
       this.updateFloorMaterial(
-        "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented2.png?v=1709569132"
+        "https://cdn.shopify.com/s/files/1/0251/5828/7434/files/vented2.png?v=1709642311"
       );
     }
   }

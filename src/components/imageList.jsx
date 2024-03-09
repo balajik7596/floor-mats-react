@@ -6,13 +6,13 @@ const imageList = [
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented.svg?v=1702842587",
     label: "Vented mat",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/vented2.png?v=1709569132",
+      "https://cdn.shopify.com/s/files/1/0251/5828/7434/files/vented2.png?v=1709642311",
   },
   {
     src: "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/pvcfloormat.svg?v=1702842587",
     label: "Raised disc",
     texture:
-      "https://cdn.shopify.com/s/files/1/0620/9817/8148/files/Premiumpvc_58d6ad6b-e575-4862-a01b-ba8570bc9ace.png?v=1709608170",
+      "https://cdn.shopify.com/s/files/1/0251/5828/7434/files/Premiumpvc_9c61b5b4-00a7-498b-a30e-f919fb52f3ba.png?v=1709642309",
   },
 ];
 
